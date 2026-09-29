@@ -24,7 +24,7 @@ def fakes(monkeypatch):
     def load_slice(e,i,root=None):seen['slice']=(e,i,root);return {},{'t':[1,2]}
     inst.load_slice=load_slice
     monkeypatch.setitem(sys.modules,'slac_assistant.instruments',inst)
-    def node_summary(e,i,arrays):return dict(kind='node_report',instrument=i,event_id=e)
+    def node_summary(e,i,arrays,role_source='assigned'):return dict(kind='node_report',instrument=i,role_source=role_source,event_id=e)
     monkeypatch.setattr(tools,'node_summary',node_summary,raising=False)
     monkeypatch.setenv('SLAC_NODE_DATA_DIR','/data/node')
     return inst,seen

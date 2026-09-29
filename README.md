@@ -71,7 +71,18 @@ insecure = true
 FLWR_HOME=$PWD/.flower .venv/bin/flwr supernode list grid   # 3 nodes, status online
 ```
 
-Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. State is local under ignored `.flower/`; the startup script configures `.flower/slac.sqlite` for subsequent launches. Restart durability of the currently serving instance has not been verified; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
+Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. The SuperLink keeps its state in memory (flwr 1.39 creates no SQLite tables when the repo path contains a space), so Flower runs and follow-up context are lost when it stops; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
+
+## Talk to it in flwr chat
+
+```sh
+flwr chat
+/load <repo path>
+/federation            # pick @<you>/personal
+Was the beam disturbed during slac-001, and do we know why?
+```
+
+Plain-English prompts run the collaborative Grid on the event named in the text (`slac-001` if none). The personal federation has no nodes unless you add your own, so the three instruments run in-process (fallback `none (local fallback)`); the local 3-node grid (`scripts/start_grid.sh`) is where nodes really hold their own data.
 
 ## Demonstration flow
 
@@ -116,6 +127,8 @@ The external evaluator reads source labels only after investigations and records
 The four events in `data/events/` are small extracts (about 3 MB) from SLAC National Accelerator Laboratory's public klystron RF anomaly dataset ([dataset index](https://www.slac.stanford.edu/grp/ad/ard/rfanom/rfanom.html), [DOE catalog entry](https://www.osti.gov/biblio/1869296)). All credit for the data goes to SLAC and the dataset authors. We did not find an explicit reuse license. They are included here, and in the Flower Hub app, only to demo this non-commercial hackathon project, and we will remove them if asked. This project is not affiliated with or endorsed by SLAC. See [data provenance](docs/DATA_PROVENANCE.md).
 
 ## Evidence and limitations
+
+Grid vs single agent (`scripts/evaluate.py --events slac-001`, one live run, same model): both reported beam disturbance corroborated / unique cause not established. The Grid (3 node agents + orchestrator, 4 model calls, 23.7 s) shared 0.92% of the raw bytes, while the single-agent baseline (2 model calls, 21.2 s) needs 100% of them in one place. In that Grid run the orchestrator's model reply came back incomplete, so its final was the deterministic combine of the three node reports; the model final was accepted in only 2 of the 4 recorded Grid model runs at a 4000-token output budget. One case, not a benchmark.
 
 Each finding includes its ID/agent, observation, channels and interval, tool references, supporting and conflicting evidence, limitations and requested next check. Tools return stable content-derived references. Schema, reference and channel checks reject malformed evidence; semantic claim support still needs operator review.
 

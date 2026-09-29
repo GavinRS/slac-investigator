@@ -68,7 +68,7 @@ class Investigation:
     def __init__(self,event_id,emit,client=None,model=DEFAULT_MODEL,mode='collaborative',max_calls=12):
         self.event_id=event_id;self.meta,_=load_event(event_id);self.emit=emit;self.client=client;self.model=model;self.mode=mode
         self.max_calls=max_calls;self.calls=0;self.tool_calls=0;self.input_chars=0;self.input_tokens=0;self.output_tokens=0;self.usage_known=True
-        self.results={};self.findings=[];self.started=time.perf_counter();self.delegations=0
+        self.results={};self.findings=[];self.started=time.perf_counter();self.delegations=0;self.max_output_tokens=1600
     def publish(self,kind,data): self.emit(dict(kind=kind,**data))
     def tool(self,role,kind):
         if self.tool_calls>=24:raise RuntimeError('Total analysis budget exhausted')
@@ -108,7 +108,7 @@ class Investigation:
             self.input_chars+=size;self.calls+=1
             last=turn>=cap-1 or self.calls==self.max_calls
             tools=[] if last else [TOOL]+([DELEGATE] if allow_delegate and self.delegations<2 and self.calls<self.max_calls-2 else [])
-            response=self.client.responses.create(model=self.model,input=history,instructions=instructions,tools=tools,max_output_tokens=1600)
+            response=self.client.responses.create(model=self.model,input=history,instructions=instructions,tools=tools,max_output_tokens=self.max_output_tokens)
             if getattr(response,'status',None) not in (None,'completed'):raise RuntimeError('Model response incomplete; no assessment accepted')
             usage=getattr(response,'usage',None)
             if usage:self.input_tokens+=usage.input_tokens;self.output_tokens+=usage.output_tokens
@@ -141,7 +141,7 @@ class Investigation:
         raise RuntimeError('Model budget exhausted without a valid finding')
     def run(self,question='',prior=None):
         if self.client is None:raise RuntimeError('Model client required; use explicit smoke mode for deterministic verification')
-        self.publish('started',dict(event_id=self.event_id,mode=self.mode,model=self.model,budget=dict(model_calls=self.max_calls,max_output_tokens_per_call=1600,total_input_characters=300000,tool_calls=24)))
+        self.publish('started',dict(event_id=self.event_id,mode=self.mode,model=self.model,budget=dict(model_calls=self.max_calls,max_output_tokens_per_call=self.max_output_tokens,total_input_characters=300000,tool_calls=24)))
         if self.mode=='baseline':
             # Same initial measurements and all the same analysis tools, one investigator.
             initial=[self.tool('single',k) for k in ('quality','equipment','beam')]
@@ -155,10 +155,10 @@ class Investigation:
             self.loop('beam','Assess beam evidence independently; identify low-charge or timing concerns.',[beam,quality],2)
             final=self.loop('lead','Reconcile independent findings. Use a requested next check when it can change the assessment. Delegate focused follow-ups when useful. Do not invent disagreement. Human question: '+question+' Prior operator-visible assessment: '+json.dumps(prior),[],self.max_calls-self.calls,allow_delegate=True,previous=self.findings.copy())
         return self.finish(final)
-    def finish(self,final):
+    def finish(self,final,**extra):
         report=dict(result_schema_version=2,benchmark_eligible=False,event_id=self.event_id,mode=self.mode,model=self.model,final=final,findings=self.findings,evidence=list(self.results.values()),metrics=dict(model_calls=self.calls,tool_calls=self.tool_calls,latency_s=round(time.perf_counter()-self.started,3),input_tokens=self.input_tokens if self.usage_known else None,output_tokens=self.output_tokens if self.usage_known else None,input_characters=self.input_chars,cost_usd=None,cost_note='Provider pricing/cost not returned; no estimate assumed.',unsupported_claims=None,unsupported_claims_note='Requires human claim-by-claim review; reference validation is not semantic verification.'))
-        report['model_execution_path']='No model called' if self.mode=='smoke' else 'Flower runtime Responses endpoint and model tasks'
-        self.publish('report',dict(report=report));return report
+        report['model_execution_path']='No model called' if self.client is None else 'Flower runtime Responses endpoint and model tasks'
+        report.update(extra);self.publish('report',dict(report=report));return report
     def smoke(self,question=''):
         """Explicit deterministic harness; never represented as model collaboration."""
         self.mode='smoke';self.model='none (deterministic harness)'

@@ -59,10 +59,11 @@ def main():
     os.chdir(ROOT)
     (ROOT / 'artifacts').mkdir(exist_ok=True)
     (ROOT / '.flower').mkdir(exist_ok=True)
+    # No --database: flwr 1.39's Alembic setup splits migration paths on spaces, so a
+    # SQLite file under a path with spaces gets no tables. In-memory state works.
     os.execve(ROOT / '.venv/bin/flower-superlink', [
         'flower-superlink', '--insecure', '--host', '127.0.0.1',
         '--fleet-api-address', '127.0.0.1:19092',
-        '--database', str(ROOT / '.flower/slac.sqlite'),
         '--disable-runtime-dependency-installation',
     ], env)
 
