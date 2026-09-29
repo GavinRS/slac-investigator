@@ -14,6 +14,13 @@
       "station": "KLYS:LI21:81",
       "file": "./data/slac-003.json",
       "run_count": 1
+    },
+    {
+      "id": "slac-001-grid",
+      "station": "KLYS:LI29:11",
+      "file": "./data/slac-001-grid.json",
+      "run_count": 1,
+      "note": "Grid run on Nebius MiniMax-M3"
     }
   ]
 }
