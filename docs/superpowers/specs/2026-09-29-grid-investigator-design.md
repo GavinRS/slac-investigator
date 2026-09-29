@@ -14,7 +14,7 @@ Architecture, bottom to top: **machines (instrument nodes) → tools (local read
 | Nodes | 3: `rf` (klystron `health` columns), `ltu` (`BPMS:LTUH:*`), `dump` (`BPMS:DMPH:*`). |
 | Node role | **C with A fallback.** A node first looks for a local instrument slice (C). If none, it uses the role the orchestrator assigns and loads that slice from the bundled data (A). |
 | Node replies | Assessment plus summary numbers only. **Never raw samples.** Matches Flower's federated-analytics pattern. |
-| Model | Nebius Token Factory (event-provided, `MiniMax-M3`) by default; Groq, Ollama and Flower's gateway as swaps. Provider is swappable by env vars only (see Providers). |
+| Model | **Endeavor** (`flwrlabs/endeavor-1.0` via Flower's gateway; challenge bonus) by default; Nebius Token Factory (`MiniMax-M3`) as the fast fallback; Groq and Ollama as further swaps. Provider is swappable by env vars only (see Providers). |
 | Human surfaces | `flwr chat` (always works), a small HTTP API, and Streamlit and Lovable as thin clients of that API. |
 | Hub | The AgentApp (with bundled data) is what gets published. UIs never go to the Hub. |
 | Git | Old `main` saved as `backup/streamlit-local`. This work becomes `main`. |
@@ -28,6 +28,7 @@ Architecture, bottom to top: **machines (instrument nodes) → tools (local read
 - `pull_messages` timeout is 0-300 s.
 - The filesystem connector reads folders allowed by `FLWR_FILESYSTEM_ALLOWED_DIRS`, max 1 MB per file. In `flwr chat` it can only be attached in the personal federation.
 - Probe on 2026-09-29: `@iamsorenl/workspace` on SuperGrid has 0 nodes. Access to Flower Agent is requested at flower.ai → personal federation → Request access.
+- Flower's gateway lists `flwrlabs/endeavor-1.0` at `GET https://api.flower.ai/v1/models`; a Responses request with a tool returned a correct `function_call` (2026-09-29). One call took ~21 s and returned no usage block.
 - Nebius Token Factory's event endpoint supports the Responses API with tool calling (verified 2026-09-29 with MiniMax-M3). No translator needed.
 - We can run **our own SuperNodes on Nebius Serverless** (console.nebius.com, guide "Spinning up a Flower SuperNode on a Nebius Serverless AI endpoint" in the Flower Discuss post). That gives real remote nodes holding our instrument slices (mode C on real infrastructure).
 
@@ -86,10 +87,10 @@ Python-driven for reliability; the model is used for judgment, not plumbing.
 
 | Provider | `FLWR_MODEL_API_ENDPOINT` | `FLWR_MODEL_API_KEY` | model |
 |---|---|---|---|
-| Nebius Token Factory (default, event keys) | `https://api.tokenfactory.tf-ca1.nebius.com/v1/responses` | event key (shared privately, never commit) | `dedicated/flowerai/MiniMax-M3-OOLI9o` or `dedicated/flowerai/Kimi-K2.7-Code-1OUHWL` |
+| Nebius Token Factory (fast fallback, event keys) | `https://api.tokenfactory.tf-ca1.nebius.com/v1/responses` | event key (shared privately, never commit) | `dedicated/flowerai/MiniMax-M3-OOLI9o` or `dedicated/flowerai/Kimi-K2.7-Code-1OUHWL` |
 | Groq | `https://api.groq.com/openai/v1/responses` | Groq key | `openai/gpt-oss-20b` |
 | Ollama | `http://localhost:11434/v1/responses` | blank | `gpt-oss:20b` |
-| Flower gateway | blank | Flower key | `openai/gpt-5.6-sol` |
+| **Flower gateway: Endeavor (default)** | blank (Flower's default `https://api.flower.ai/v1/responses`) | Flower key (flower.ai → Profile → Settings → API Keys; never commit) | `flwrlabs/endeavor-1.0` |
 
 Rules: agent code never names a provider; it uses only `FLWR_RUNTIME_BASE_URL`/`FLWR_RUNTIME_API_KEY` injected by Flower. `start.sh` loads `.env`. `check_model.py` sends one tool-calling Responses request to the configured provider and prints pass/fail. The run-config `model` default follows `INVESTIGATOR_MODEL` from `.env`.
 
@@ -131,4 +132,4 @@ GitHub issues #1-#13 implement this spec; #12 tracks questions for Flower.
 
 ## Open
 
-Flower Agent access approval; whether Nebius-hosted SuperNodes can join the hackathon federation; Hub bundle size limits; team registration (Typeform).
+Whether Nebius-hosted SuperNodes can join the hackathon federation; Hub bundle size limits; team registration (Typeform).
