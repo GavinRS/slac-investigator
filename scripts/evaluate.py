@@ -17,12 +17,13 @@ def summarize(reports,labels):
 
 def table(reports):
     """Grid vs single-agent side by side. No accuracy column: labels are not adjudicated per verdict dimension."""
-    out=['| event | mode | agents | beam_disturbance | unique_cause | model calls | latency s | raw data shared |','|'+'---|'*8]
+    out=['| event | mode | agents | beam_disturbance | unique_cause | final by | model calls | latency s | raw data shared |','|'+'---|'*9]
     for r in reports:
         m=r['metrics'];nodes=r.get('node_observation_source') or {};d=r.get('data_shared')
         calls=m['model_calls']+sum(v=='model' for v in nodes.values())
+        by='deterministic' if r.get('provider')=='none' or any('model final was not accepted' in x for x in r['final'].get('data_limitations',[])) else 'model'
         share=f"{d['percent_shared']}% ({d['payload_bytes']}/{d['raw_bytes_held']} B)" if d else '100% (one agent reads all raw)'
-        out.append(f"| {r['event_id']} | {r['mode']} | {1+len(nodes)} | {r['final']['beam_disturbance']['status']} | {r['final']['unique_cause']['status']} | {calls} | {r.get('wall_latency_s',m['latency_s'])} | {share} |")
+        out.append(f"| {r['event_id']} | {r['mode']} | {1+len(nodes)} | {r['final']['beam_disturbance']['status']} | {r['final']['unique_cause']['status']} | {by} | {calls} | {r.get('wall_latency_s',m['latency_s'])} | {share} |")
     return '\n'.join(out)
 
 def main():

@@ -118,7 +118,9 @@ def test_comparison_table_has_no_accuracy_column():
     fin={'beam_disturbance':{'status':'corroborated'},'unique_cause':{'status':'not_established'}}
     grid=dict(event_id='slac-001',mode='grid',final=fin,metrics=dict(model_calls=1,latency_s=21.1),wall_latency_s=23.7,node_observation_source={'rf':'model','ltu':'model','dump':'deterministic'},data_shared=dict(percent_shared=0.905,payload_bytes=5862,raw_bytes_held=647400))
     base=dict(event_id='slac-001',mode='baseline',final=fin,metrics=dict(model_calls=6,latency_s=40.0))
-    lines=table([grid,base]).splitlines()
+    fb=dict(grid,final=dict(fin,data_limitations=['Deterministic combine of node summaries; the model final was not accepted.']))
+    lines=table([grid,base,fb]).splitlines()
     assert 'agree' not in lines[0].lower() and 'accura' not in lines[0].lower()
-    assert lines[2]=='| slac-001 | grid | 4 | corroborated | not_established | 3 | 23.7 | 0.905% (5862/647400 B) |'
-    assert lines[3]=='| slac-001 | baseline | 1 | corroborated | not_established | 6 | 40.0 | 100% (one agent reads all raw) |'
+    assert lines[2]=='| slac-001 | grid | 4 | corroborated | not_established | model | 3 | 23.7 | 0.905% (5862/647400 B) |'
+    assert lines[3]=='| slac-001 | baseline | 1 | corroborated | not_established | model | 6 | 40.0 | 100% (one agent reads all raw) |'
+    assert '| deterministic |' in lines[4]

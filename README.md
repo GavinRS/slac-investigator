@@ -117,7 +117,7 @@ The four events in `data/events/` are small extracts (about 3 MB) from SLAC Nati
 
 ## Evidence and limitations
 
-Grid vs single agent (`scripts/evaluate.py --events slac-001`, one live run, same model): both reached beam disturbance corroborated / unique cause not established; the Grid (3 node agents + orchestrator, 4 model calls, 23.7 s) shared 0.92% of the raw bytes, while the single-agent baseline (2 model calls, 21.2 s) needs 100% of them in one place. One case, not a benchmark.
+Grid vs single agent (`scripts/evaluate.py --events slac-001`, one live run, same model): both reported beam disturbance corroborated / unique cause not established. The Grid (3 node agents + orchestrator, 4 model calls, 23.7 s) shared 0.92% of the raw bytes, while the single-agent baseline (2 model calls, 21.2 s) needs 100% of them in one place. In that Grid run the orchestrator's model reply came back incomplete, so its final was the deterministic combine of the three node reports; the model final was accepted in only 2 of the 4 recorded Grid model runs at a 4000-token output budget. One case, not a benchmark.
 
 Each finding includes its ID/agent, observation, channels and interval, tool references, supporting and conflicting evidence, limitations and requested next check. Tools return stable content-derived references. Schema, reference and channel checks reject malformed evidence; semantic claim support still needs operator review.
 
