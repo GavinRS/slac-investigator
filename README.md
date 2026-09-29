@@ -51,6 +51,26 @@ To run from the terminal:
 
 To run the instrument nodes on Nebius Serverless via SuperGrid, see [docs/NEBIUS_NODES.md](docs/NEBIUS_NODES.md).
 
+### 3-node Grid (data lives on the node)
+
+Instead of `start.sh`, run one SuperLink plus 3 SuperNodes (`rf`, `ltu`, `dump`) on this laptop:
+
+```sh
+./scripts/start_grid.sh
+```
+
+It loads `.env`, starts the SuperLink through `scripts/start_flower.py` when a model key is configured (same model credentials as `start.sh`), runs `scripts/split_nodes.py` to write `nodes/<instrument>/`, then starts each SuperNode with `SLAC_NODE_DATA_DIR` and `FLWR_FILESYSTEM_ALLOWED_DIRS` set to its own folder (runtime ports 9094-9096). Both variables are visible inside each node's agent process. Without a configured key, it starts a plain smoke-only SuperLink instead. Ctrl+C stops everything. To see the nodes, add a connection to `.flower/config.toml` and list them:
+
+```toml
+[superlink.grid]
+address = "127.0.0.1:8000"
+insecure = true
+```
+
+```sh
+FLWR_HOME=$PWD/.flower .venv/bin/flwr supernode list grid   # 3 nodes, status online
+```
+
 Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. State is local under ignored `.flower/`; the startup script configures `.flower/slac.sqlite` for subsequent launches. Restart durability of the currently serving instance has not been verified; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
 
 ## Demonstration flow
