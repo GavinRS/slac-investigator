@@ -47,6 +47,6 @@ def run_flower(event_id,mode='collaborative',question='',model=None,series_id=No
 
 if __name__=='__main__':
     import argparse
-    p=argparse.ArgumentParser();p.add_argument('--event',default='slac-001');p.add_argument('--mode',choices=['smoke','collaborative','baseline'],default='collaborative');p.add_argument('--question',default='');p.add_argument('--model');p.add_argument('--address',default='http://127.0.0.1:8000');args=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument('--event',default='slac-001');p.add_argument('--mode',choices=['smoke','collaborative','baseline','grid'],default='collaborative');p.add_argument('--question',default='');p.add_argument('--model');p.add_argument('--address',default='http://127.0.0.1:8000');args=p.parse_args()
     report,_=run_flower(args.event,args.mode,args.question,args.model,on_event=lambda e:print(json.dumps(e),flush=True),address=args.address)
     print('Flower run',report['flower_run_id'],'beam disturbance',report['final']['beam_disturbance']['status'],'unique cause',report['final']['unique_cause']['status'])
