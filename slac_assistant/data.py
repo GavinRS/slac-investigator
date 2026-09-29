@@ -3,11 +3,12 @@ from pathlib import Path
 import json, re
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
-def event_ids(): return sorted(p.stem for p in (ROOT/'data/events').glob('slac-???.json'))
-def load_event(event_id):
-    if not re.fullmatch(r'slac-\d{3}',event_id) or event_id not in event_ids(): raise ValueError('Unknown event')
-    meta=json.loads((ROOT/'data/events'/f'{event_id}.json').read_text())
-    payload=json.loads((ROOT/'data/events'/f'{event_id}.arrays.json').read_text())
+def event_ids(root=None): return sorted(p.stem for p in Path(root or ROOT/'data/events').glob('slac-???.json'))
+def load_event(event_id,root=None):
+    if not re.fullmatch(r'slac-\d{3}',event_id) or event_id not in event_ids(root): raise ValueError('Unknown event')
+    d=Path(root or ROOT/'data/events')
+    meta=json.loads((d/f'{event_id}.json').read_text())
+    payload=json.loads((d/f'{event_id}.arrays.json').read_text())
     arrays={k:np.asarray(v,dtype=np.int64 if k.endswith('_time_ns') else float) for k,v in payload.items()}
     for a in arrays.values(): a.flags.writeable=False
     return meta,arrays
