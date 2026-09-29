@@ -82,7 +82,68 @@ def test_percent_shared_math():
     assert grid_workflow.shared({'rf':(r(0),5)})['percent_shared'] is None
 
 def test_agent_app_dispatches_grid_mode(monkeypatch):
-    got=[];monkeypatch.setattr(agent_app,'run_grid',lambda *a,**k:got.append((a,k)))
+    got=[];monkeypatch.setattr(agent_app,'run_grid',lambda *a,**k:got.append((a,k)) or {'final':{}})
     a=SimpleNamespace(prompt=json.dumps({'event_id':'slac-002','mode':'grid'}),grid=FakeGrid(3),events=SimpleNamespace(emit=lambda e:None))
     agent_app.main(a,SimpleNamespace(state={},run_config={'grid-timeout':30}))
     assert got[0][0][1]=='slac-002' and got[0][1]['timeout']==30
+
+# Collaborative mode (#7): fixture model on nodes and orchestrator.
+from slac_assistant import node as node_mod
+
+class Item:
+    def __init__(self,**kw):self.__dict__.update(kw)
+    def model_dump(self,**kw):return dict(self.__dict__)
+
+class FixtureModel:
+    """Node calls get node_reply; lead calls pop from finals (callables of the evidence refs)."""
+    def __init__(self,node_reply='{"assessment":"suspicious","observation":"Model note."}',finals=()):
+        self.responses=self;self.node_reply=node_reply;self.finals=list(finals);self.node_calls=[];self.lead_calls=[]
+    def create(self,**kw):
+        if kw['instructions']==node_mod.NODE_RULES:self.node_calls.append(kw);text=self.node_reply
+        else:
+            self.lead_calls.append(kw);refs=[e['ref'] for e in json.loads(kw['input'][0]['content'])['initial_evidence']]
+            text=self.finals.pop(0)(refs)
+        return SimpleNamespace(status='completed',usage=None,output_text=text,output=[Item(type='message',role='assistant',content=[{'type':'output_text','text':text}])])
+
+def finding(refs,beam='corroborated',cause='not_established'):
+    d=lambda s:dict(status=s,rationale='r',tool_result_refs=refs[:1])
+    return json.dumps(dict(finding_id='x',agent='x',observation='Model final.',source_channels=[],time_interval_ns=[0,1],tool_result_refs=refs,
+        supporting_evidence=[],conflicting_evidence=[],data_limitations=[],requested_next_check=None,beam_disturbance=d(beam),unique_cause=d(cause)))
+
+def run_collab(fm,n=3,monkeypatch=None):
+    monkeypatch.setattr(node_mod,'runtime_client',lambda:fm)
+    events=[];g=FakeGrid(n)
+    return grid_workflow.run_grid(SimpleNamespace(grid=g),'slac-001',events.append,mode='collaborative',model='m',client=fm,prior={'p':1}),events
+
+def test_collaborative_models_on_nodes_and_orchestrator(monkeypatch):
+    fm=FixtureModel(finals=[finding]);report,events=run_collab(fm,monkeypatch=monkeypatch)
+    assert len(fm.node_calls)==3 and len(fm.lead_calls)==1 and report['metrics']['model_calls']==1
+    assert all('arrays' not in c['input'] and json.loads(c['input'])['summary'] for c in fm.node_calls)
+    assert report['node_observation_source']=={'rf':'model','ltu':'model','dump':'model'}
+    assert {e['observation'] for e in events if e['kind']=='node_report'}=={'Model note.'}
+    assert report['final']['observation']=='Model final.' and report['final']['agent']=='lead' and report['provider']=='flower'
+    assert set(report['final']['tool_result_refs'])=={e['ref'] for e in report['evidence']}
+    assert 'assessment: {"p": 1}' in json.loads(fm.lead_calls[0]['input'][0]['content'])['task']
+
+def test_invalid_node_reply_keeps_deterministic_observation(monkeypatch):
+    fm=FixtureModel(node_reply='{"assessment":"broken"}',finals=[finding]);report,events=run_collab(fm,monkeypatch=monkeypatch)
+    assert report['node_observation_source']=={'rf':'deterministic','ltu':'deterministic','dump':'deterministic'}
+    assert all(any('Node model reply unusable (ValueError)' in x for x in e['limitations']) for e in events if e['kind']=='node_report')
+
+def test_orchestrator_one_correction_turn(monkeypatch):
+    fm=FixtureModel(finals=[lambda r:finding(['T-bogus']),finding]);report,events=run_collab(fm,monkeypatch=monkeypatch)
+    assert report['metrics']['model_calls']==2 and [e['kind'] for e in events].count('finding_rejected')==1
+    assert report['final']['observation']=='Model final.'
+
+def test_orchestrator_rejected_twice_falls_back_to_deterministic(monkeypatch):
+    fm=FixtureModel(finals=[lambda r:finding(r,'not_corroborated','established')]*2);report,events=run_collab(fm,monkeypatch=monkeypatch)
+    assert report['metrics']['model_calls']==2 and [e['kind'] for e in events].count('finding_rejected')==2
+    lim=report['final']['data_limitations'];assert any('Model final not accepted (ValueError' in x for x in lim)
+    assert 'Deterministic combine of node summaries; the model final was not accepted.' in lim
+
+def test_zero_nodes_collaborative_calls_node_model_in_process(monkeypatch):
+    fm=FixtureModel(finals=[finding]);report,_=run_collab(fm,0,monkeypatch)
+    assert len(fm.node_calls)==3 and report['grid']['fallback']=='none (local fallback)'
+
+def test_model_mode_requires_client():
+    with pytest.raises(ValueError):grid_workflow.run_grid(SimpleNamespace(grid=FakeGrid(3)),'slac-001',print,mode='collaborative')

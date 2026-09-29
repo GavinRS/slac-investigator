@@ -1,5 +1,5 @@
 """Small adapter for Flower 1.39.0's Control API (version-pinned internal client)."""
-import hashlib,io,json,time,zipfile
+import hashlib,io,json,os,time,zipfile
 from pathlib import Path
 from flwr.cli.build import build_fab_from_disk
 from flwr.cli.chat.chat_app import start_chat_run,parse_task_event
