@@ -64,3 +64,52 @@ def test_remote_provider_requires_its_own_private_key(tmp_path):
     key_file.chmod(0o600)
     with pytest.raises(ValueError, match='provider key'):
         launcher.flower_environment({'FLWR_MODEL_API_KEY':'inherited-key'}, key_file)
+
+
+@pytest.mark.parametrize('endpoint', ['', 'https://api.flower.ai/v1/responses'])
+def test_explicit_flower_endpoint_defaults_to_endeavor(tmp_path, endpoint):
+    key_file = tmp_path / '.env'
+    key_file.write_text('FLWR_MODEL_API_ENDPOINT=' + endpoint + '\nFLWR_MODEL_API_KEY=test-placeholder\n')
+    key_file.chmod(0o600)
+    env = launcher.flower_environment({'INVESTIGATOR_MODEL':'stale/model'}, key_file)
+    assert env['INVESTIGATOR_MODEL'] == 'flwrlabs/endeavor-1.0'
+
+
+def test_nebius_default_model_matches_explicit_nebius_endpoint(tmp_path):
+    key_file = tmp_path / '.env'
+    key_file.write_text('FLWR_MODEL_API_ENDPOINT=' + launcher.DEFAULT_ENDPOINT + '\nFLWR_MODEL_API_KEY=test-placeholder\n')
+    key_file.chmod(0o600)
+    env = launcher.flower_environment({}, key_file)
+    assert env['INVESTIGATOR_MODEL'] == 'dedicated/flowerai/MiniMax-M3-OOLI9o'
+
+
+def test_unknown_private_settings_are_not_silently_loaded(tmp_path):
+    key_file = tmp_path / '.env'
+    key_file.write_text('FLWR_MODEL_API_KEY=test-placeholder\nPACTERRA_API_KEY=stale\n')
+    key_file.chmod(0o600)
+    with pytest.raises(ValueError, match='unsupported'):
+        launcher.flower_environment({}, key_file)
+
+
+@pytest.mark.parametrize('existing', [False, True])
+def test_private_helper_pairs_new_defaults_and_preserves_existing_flower(tmp_path, monkeypatch, existing):
+    import sys
+    scripts = Path(__file__).resolve().parents[1] / 'scripts'
+    monkeypatch.syspath_prepend(str(scripts))
+    spec = importlib.util.spec_from_file_location('configure_flower_fixture', scripts / 'configure_flower.py')
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    path = tmp_path / '.env'
+    if existing:
+        path.write_text('FLWR_MODEL_API_KEY=test-original\n')
+        path.chmod(0o600)
+    monkeypatch.setattr(helper, 'ROOT', tmp_path)
+    monkeypatch.setattr(helper, 'KEY_FILE', path)
+    monkeypatch.setattr(sys, 'argv', ['configure_flower.py'])
+    monkeypatch.setattr(sys.stdin, 'isatty', lambda: True)
+    monkeypatch.setattr(helper.getpass, 'getpass', lambda prompt: 'test-new-placeholder')
+    helper.main()
+    values = launcher.flower_environment({}, path)
+    assert path.stat().st_mode & 0o777 == 0o600
+    assert values['FLWR_MODEL_API_ENDPOINT'] == (launcher.ENDPOINT if existing else launcher.DEFAULT_ENDPOINT)
+    assert values['INVESTIGATOR_MODEL'] == (launcher.FLOWER_MODEL if existing else launcher.DEFAULT_MODEL)

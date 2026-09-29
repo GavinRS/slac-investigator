@@ -58,3 +58,19 @@ export function evidenceDetails(reports, ref) {
   return {title:`${ref} · ${pretty(found.analysis || found.kind || 'evidence')}`,
     note:`${found.event_id || ''} · ${interval}`, evidence:found};
 }
+
+const ROLE_SOURCE_LABEL = {local_data: 'Local data', assigned: 'Assigned by orchestrator'};
+// Grid node report: one card per instrument. role_source is shown as text + class, never colour alone.
+export function nodeReportCard(e) {
+  const cls = e.role_source === 'local_data' ? 'role-local' : 'role-assigned';
+  const label = ROLE_SOURCE_LABEL[e.role_source] || pretty(e.role_source);
+  return `<div class="node-card ${cls}"><h3>${escapeHTML(pretty(e.instrument))}</h3>` +
+    `<p><span class="role-badge ${cls}">${escapeHTML(label)}</span> <span class="status-tag">${escapeHTML(pretty(e.assessment))}</span></p>` +
+    `<p>${escapeHTML(e.observation)}</p>` +
+    `<p class="node-bytes small muted"><span>Payload sent: ${Number(e.payload_bytes)} bytes</span> <span>Raw held: ${Number(e.raw_bytes_held)} bytes</span></p></div>`;
+}
+export function dataSharedHeadline(event) {
+  const shared=event.data_shared || event;
+  const percent=shared.complete !== false && Number.isFinite(shared.percent_shared) ? `${shared.percent_shared.toFixed(3)}%` : 'unavailable';
+  return `<div class="data-shared-headline"><strong>${escapeHTML(percent)}</strong> <span>summary / raw bytes</span></div>`;
+}

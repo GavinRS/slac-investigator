@@ -143,8 +143,8 @@ class AgentContextTests(unittest.TestCase):
         from slac_assistant.agent_app import main
         state={'investigation':{'event_id':'slac-001','final':'{"observation":"saved"}'}}
         context=SimpleNamespace(state=state,run_config={})
-        agent=SimpleNamespace(prompt=json.dumps({'src_node_id':'1','message_id':'m1','payload':json.dumps({'kind':'node_task','discover':True,'mode':'smoke'})}))
-        with patch('slac_assistant.agent_app.reply_to_node') as reply,patch('slac_assistant.agent_app.OpenAI') as create:
+        agent=SimpleNamespace(prompt=json.dumps({'src_node_id':'1','message_id':'m1','payload':json.dumps({'kind':'node_task','discover':True,'mode':'smoke'})}),events=SimpleNamespace(emit=lambda event:None))
+        with patch('slac_assistant.agent_app.run_node') as reply,patch('slac_assistant.agent_app.OpenAI') as create:
             main(agent,context)
             reply.assert_called_once(); create.assert_not_called()
         self.assertEqual(context.state['investigation']['final'],'{"observation":"saved"}')

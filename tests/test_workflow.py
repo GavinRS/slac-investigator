@@ -160,3 +160,16 @@ def test_correction_turn_cannot_execute_unadvertised_analysis():
         inv.run()
     assert len(model.requests)==2
     assert inv.tool_calls==3
+
+
+def test_model_setting_env_then_dotenv_then_default(tmp_path,monkeypatch):
+    import tomllib
+    from pathlib import Path
+    from slac_assistant.workflow import configured_model,DEFAULT_MODEL
+    pyproject=tomllib.loads((Path(__file__).resolve().parents[1]/'pyproject.toml').read_text())
+    assert pyproject['tool']['flwr']['app']['config']['model']==DEFAULT_MODEL
+    monkeypatch.delenv('INVESTIGATOR_MODEL',raising=False)
+    env=tmp_path/'.env';assert configured_model(env)==DEFAULT_MODEL
+    env.write_text('FLWR_MODEL_API_KEY=secret\nexport INVESTIGATOR_MODEL="flwrlabs/endeavor-1.0"\n')
+    assert configured_model(env)=='flwrlabs/endeavor-1.0'
+    monkeypatch.setenv('INVESTIGATOR_MODEL','from-env');assert configured_model(env)=='from-env'

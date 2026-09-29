@@ -2,5 +2,5 @@
 set +x
 set -eu
 cd "$(dirname "$0")/.."
-# Keep the previous .env.local intact; Flower credentials are isolated from it.
+# Model endpoint, key and INVESTIGATOR_MODEL come from the private .env.
 exec .venv/bin/python scripts/start_flower.py

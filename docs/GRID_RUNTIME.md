@@ -10,7 +10,7 @@ uv sync
 ./scripts/start_grid.sh
 ```
 
-The credential helper prompts privately in your terminal and stores the key in ignored mode-600 local configuration. The launcher passes the explicitly selected provider into SuperLink. It does not source unrelated provider settings. `.env` selects `FLWR_MODEL_API_ENDPOINT`, `FLWR_MODEL_API_KEY` and `INVESTIGATOR_MODEL`; a blank endpoint selects Flower’s gateway, and the default model is `flwrlabs/endeavor-1.0`. Agents consume only Flower’s injected runtime configuration.
+The credential helper prompts privately in your terminal and stores the key in ignored mode-600 local configuration. The launcher passes the explicitly selected provider into SuperLink. It does not source unrelated provider settings. `.env` selects `FLWR_MODEL_API_ENDPOINT`, `FLWR_MODEL_API_KEY` and `INVESTIGATOR_MODEL`; a blank endpoint selects Flower’s gateway. Rev 2.1 defaults new setup to Nebius MiniMax-M3; an existing explicit Flower/Endeavor selection is preserved. Agents consume only Flower’s injected runtime configuration.
 
 The supervisor generates `nodes/{rf,ltu,dump}/`, starts a separate persistent SuperLink on `127.0.0.1:18000`, and starts three SuperNodes on runtime ports 19094–19096, connected through Fleet port 19093. Existing port-8000 services are untouched. Occupied ports cause startup to stop without killing existing services. Ctrl+C stops only the four processes started by this supervisor and their workers. State is under ignored `.flower-grid/`; logs are under ignored `artifacts/grid-logs/*.log`.
 

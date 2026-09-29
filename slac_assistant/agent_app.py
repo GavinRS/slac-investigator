@@ -2,31 +2,33 @@
 import json,os
 from flwr.agentapp import AgentApp,AgentSession
 from flwr.app import Context,ConfigRecord
-from .workflow import Investigation
+from .workflow import Investigation,DEFAULT_MODEL
 from .grid_workflow import GridInvestigation
-from .node_agent import reply_to_node
+from .node import node_task,run_node
 from openai import OpenAI
 app=AgentApp()
 @app.main()
 def main(agent:AgentSession,context:Context)->None:
-    request=json.loads(agent.prompt)
-    node_request='src_node_id' in request
-    if node_request:
-        request=json.loads(request['payload'])
-        if request.get('discover'):
-            reply_to_node(agent,request)
-            return
+    node=node_task(agent.prompt)
+    request=node[1] if node else json.loads(agent.prompt)
+    if node and request.get('discover'):
+        run_node(agent,node[0],request)
+        agent.events.emit({'type':'response.completed'})
+        return
+    if not node and 'src_node_id' in request:
+        raise ValueError('Invalid node task envelope')
     mode=request.get('mode','grid')
     if mode not in ('grid','collaborative','baseline','smoke'):raise ValueError('Unknown mode')
     def emit(payload):
         # Only concise application events. No private model/reasoning events are forwarded.
         agent.events.emit({'type':'response.output_text.delta','delta':json.dumps(payload)+'\n'})
     client=None
-    model=request.get('model') or os.environ.get('INVESTIGATOR_MODEL') or context.run_config.get('model') or 'flwrlabs/endeavor-1.0'
+    model=request.get('model') or os.environ.get('INVESTIGATOR_MODEL') or context.run_config.get('model') or DEFAULT_MODEL
     if mode!='smoke':
         client=OpenAI(base_url=os.environ['FLWR_RUNTIME_BASE_URL'],api_key=os.environ['FLWR_RUNTIME_API_KEY'],max_retries=0,timeout=300)
-    if node_request:
-        reply_to_node(agent,request,client,model)
+    if node:
+        run_node(agent,node[0],request,client,model)
+        agent.events.emit({'type':'response.completed'})
         return
     inv=(Investigation(request['event_id'],emit,client,model,mode) if mode=='baseline' else
          GridInvestigation(request['event_id'],emit,agent.grid,client,model,mode,request.get('node_timeout',context.run_config.get('node-timeout',120))))

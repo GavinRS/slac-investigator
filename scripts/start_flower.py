@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Load private provider settings without executing shell code, then run SuperLink."""
-import json
 import os
 from pathlib import Path
 import stat
@@ -9,7 +8,10 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 ENDPOINT = 'https://api.flower.ai/v1/responses'
-DEFAULT_MODEL = 'flwrlabs/endeavor-1.0'
+GATEWAY = ENDPOINT
+DEFAULT_ENDPOINT = 'https://api.tokenfactory.tf-ca1.nebius.com/v1/responses'
+DEFAULT_MODEL = 'dedicated/flowerai/MiniMax-M3-OOLI9o'
+FLOWER_MODEL = 'flwrlabs/endeavor-1.0'
 
 
 def read_configuration(key_file):
@@ -32,6 +34,10 @@ def read_configuration(key_file):
     return settings
 
 
+# Public compatibility name used by the provider configuration helpers.
+read_env = read_configuration
+
+
 def flower_environment(inherited, key_file):
     settings = read_configuration(key_file)
     endpoint = settings.get('FLWR_MODEL_API_ENDPOINT') or ENDPOINT
@@ -42,10 +48,10 @@ def flower_environment(inherited, key_file):
     key = settings.get('FLWR_MODEL_API_KEY', '')
     if (not key and not local) or any(c.isspace() for c in key):
         raise ValueError('Private configuration requires a valid provider key.')
-    model = settings.get('INVESTIGATOR_MODEL') or DEFAULT_MODEL
+    model = settings.get('INVESTIGATOR_MODEL') or (FLOWER_MODEL if endpoint == ENDPOINT else DEFAULT_MODEL)
     if any(c.isspace() for c in model): raise ValueError('Invalid model identifier.')
     env = {k: v for k, v in inherited.items()
-           if not k.startswith(('OPENAI_', 'FLWR_MODEL_', 'FLWR_RUNTIME_', 'PACTERRA_'))}
+           if not k.startswith(('OPENAI_', 'FLWR_MODEL_', 'FLWR_RUNTIME_', 'PACTERRA_', 'INVESTIGATOR_'))}
     env.update(FLWR_MODEL_API_ENDPOINT=endpoint, FLWR_MODEL_API_KEY=key, INVESTIGATOR_MODEL=model,
                FLWR_HOME=str(ROOT / '.flower'), MPLBACKEND='Agg',
                MPLCONFIGDIR='/tmp/slac-mpl', XDG_CACHE_HOME='/tmp/slac-cache',

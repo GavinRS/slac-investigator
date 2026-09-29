@@ -4,11 +4,11 @@ import csv
 import json
 import os
 import time
-import tomllib
 from pathlib import Path
 
 from slac_assistant.data import ROOT, event_ids
 from slac_assistant.runtime import run_flower
+from slac_assistant.workflow import configured_model
 
 SELECTION = 'Four label-selected demonstrations; not representative or held-out; no superiority claim is supported.'
 SCORING = 'N/A: source RF anomaly labels are not adjudicated beam-disturbance or unique-cause labels.'
@@ -150,8 +150,7 @@ def main(argv=None):
     p.add_argument('--output-dir', type=Path, default=ROOT / 'artifacts')
     args = p.parse_args(argv)
     if not 0<=args.node_timeout<=300:p.error('Node timeout must be between 0 and 300 seconds.')
-    configured = tomllib.loads((ROOT / 'pyproject.toml').read_text())['tool']['flwr']['app']['config']['model']
-    model = args.model or os.environ.get('INVESTIGATOR_MODEL') or configured
+    model = args.model or configured_model()
     reports, failures = [], []
     events = event_ids()
     expected = len(events) * (1 if args.smoke_only else 2)

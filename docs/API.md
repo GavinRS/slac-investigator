@@ -10,7 +10,7 @@ This is a **local, single-user development API**, bound to loopback, with **one 
 
 **GitHub Pages stays in saved-run replay mode.** This service is not a hosted backend and does not promise that an HTTPS Pages origin can reach localhost. Public live execution requires an authenticated HTTPS backend deployment, explicit origin configuration, and an authorization policy; that deployment is not implemented by this local API. Do not expose this server publicly or add a provider credential to browser code.
 
-The browser never supplies provider keys, provider names, model IDs, Flower addresses, or Flower internal credentials. Unknown request fields are rejected without echoing their values. SuperLink alone loads its existing local provider configuration through `scripts/start.sh`. The API reads the model from `pyproject.toml` (server-only optional override `INVESTIGATOR_MODEL`), uses Flower's Control API (`FLOWER_CONTROL_URL`, default `http://127.0.0.1:8000`), and never makes direct provider requests. The API startup script does not source `.env.local`.
+The browser never supplies provider keys, provider names, model IDs, Flower addresses, or Flower internal credentials. Unknown request fields are rejected without echoing their values. SuperLink alone loads the model provider from the private `.env` through `scripts/start.sh`. The API reads the model from `INVESTIGATOR_MODEL` (environment, then `.env`, then the app default), uses Flower's Control API (`FLOWER_CONTROL_URL`, default `http://127.0.0.1:8000`), and never makes direct provider requests. The API never reads the provider key.
 
 ## Endpoints
 
@@ -43,7 +43,7 @@ The 202 response and subsequent status responses use the same shape (the job may
   "series_id": "api-series-uuid",
   "event_id": "slac-001",
   "mode": "grid",
-  "model": "flwrlabs/endeavor-1.0",
+  "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
   "status": "queued",
   "created_at": "2026-09-29T22:00:00+00:00",
   "updated_at": "2026-09-29T22:00:00+00:00",
@@ -70,7 +70,7 @@ States: `queued` → `running` → `completed` or `failed`; `interrupted` marks 
   "investigation_id": "api-investigation-uuid",
   "status": "running",
   "events": [
-    {"seq":1,"created_at":"2026-09-29T22:00:01+00:00","event":{"kind":"started","event_id":"slac-001","mode":"grid","model":"flwrlabs/endeavor-1.0"}},
+    {"seq":1,"created_at":"2026-09-29T22:00:01+00:00","event":{"kind":"started","event_id":"slac-001","mode":"grid","model":"dedicated/flowerai/MiniMax-M3-OOLI9o"}},
     {"seq":2,"created_at":"2026-09-29T22:00:02+00:00","event":{"kind":"tool_request","agent":"equipment","analysis":"equipment"}}
   ],
   "next_cursor": 2,
@@ -94,6 +94,12 @@ Activity `event.kind` values:
 - `failed`: sanitized `error` with `code` and `message`.
 
 Ignore unfamiliar event kinds gracefully. These are application activity and concise findings, not private model reasoning.
+
+#### Grid event envelopes
+
+Node events use `{"kind":"node_report","report":{...}}`; the nested report follows the instrument contract below. Sharing events use `{"kind":"data_shared","data_shared":{"raw_bytes_held":370368,"payload_bytes":1536,"percent_shared":0.4147,"raw_samples_shared":0,"complete":true}}`. These are illustrative values, not measurements from a run.
+
+`payload_bytes / raw_bytes_held * 100` is the summary/raw byte ratio, not raw-sample disclosure. Label it **summary / raw bytes**. Baseline 100% represents conceptual centralized access, not raw arrays sent to the model. Incomplete accounting must be displayed as unavailable.
 
 ### Retrieve results: two independent questions
 

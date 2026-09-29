@@ -29,3 +29,4 @@ build/
 
 # Generated local instrument slices
 nodes/
+nebius-supernode-key-*

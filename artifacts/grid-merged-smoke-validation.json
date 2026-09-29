@@ -1,0 +1,1019 @@
+{
+  "result_schema_version": 2,
+  "benchmark_eligible": false,
+  "event_id": "slac-001",
+  "mode": "grid",
+  "execution_mode": "smoke",
+  "model": "flwrlabs/endeavor-1.0",
+  "final": {
+    "finding_id": "F-001",
+    "agent": "lead",
+    "observation": "Deterministic instrument summaries reconciled; no model was called. 3 of 3 available recorded instrument onsets fall within the candidate window; no timestamp shifts were applied.",
+    "source_channels": [],
+    "time_interval_ns": [
+      1604277197901922048,
+      1604277203201922048
+    ],
+    "tool_result_refs": [
+      "T-3a2fadf861bc",
+      "T-15af068318a7",
+      "T-30d4d5591764",
+      "T-f666597a478b",
+      "T-0502105af3eb",
+      "T-2b3057db7872",
+      "T-5b9daa7a0c67",
+      "T-7d5df38f9fad",
+      "T-062709e28882"
+    ],
+    "supporting_evidence": [
+      "Charge-valid beam aggregates assessed separately from RF amplitude."
+    ],
+    "conflicting_evidence": [],
+    "data_limitations": [
+      "Smoke harness only; no causal inference.",
+      "RF timestamps reflect sparse, approximately delayed reporting; no fixed reporting delay or timestamp shift is assumed. Recorded onset coincidence or ordering does not establish a unique RF cause."
+    ],
+    "requested_next_check": null,
+    "beam_disturbance": {
+      "status": "corroborated",
+      "rationale": "Deterministic charge-valid beam heuristic.",
+      "tool_result_refs": [
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764",
+        "T-5b9daa7a0c67",
+        "T-7d5df38f9fad",
+        "T-062709e28882"
+      ]
+    },
+    "unique_cause": {
+      "status": "not_established",
+      "rationale": "Aggregate coincidence cannot establish unique RF causation.",
+      "tool_result_refs": [
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764",
+        "T-f666597a478b",
+        "T-0502105af3eb",
+        "T-2b3057db7872",
+        "T-5b9daa7a0c67",
+        "T-7d5df38f9fad",
+        "T-062709e28882"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "finding_id": "F-001",
+      "agent": "lead",
+      "observation": "Deterministic instrument summaries reconciled; no model was called. 3 of 3 available recorded instrument onsets fall within the candidate window; no timestamp shifts were applied.",
+      "source_channels": [],
+      "time_interval_ns": [
+        1604277197901922048,
+        1604277203201922048
+      ],
+      "tool_result_refs": [
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764",
+        "T-f666597a478b",
+        "T-0502105af3eb",
+        "T-2b3057db7872",
+        "T-5b9daa7a0c67",
+        "T-7d5df38f9fad",
+        "T-062709e28882"
+      ],
+      "supporting_evidence": [
+        "Charge-valid beam aggregates assessed separately from RF amplitude."
+      ],
+      "conflicting_evidence": [],
+      "data_limitations": [
+        "Smoke harness only; no causal inference.",
+        "RF timestamps reflect sparse, approximately delayed reporting; no fixed reporting delay or timestamp shift is assumed. Recorded onset coincidence or ordering does not establish a unique RF cause."
+      ],
+      "requested_next_check": null,
+      "beam_disturbance": {
+        "status": "corroborated",
+        "rationale": "Deterministic charge-valid beam heuristic.",
+        "tool_result_refs": [
+          "T-3a2fadf861bc",
+          "T-15af068318a7",
+          "T-30d4d5591764",
+          "T-5b9daa7a0c67",
+          "T-7d5df38f9fad",
+          "T-062709e28882"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "Aggregate coincidence cannot establish unique RF causation.",
+        "tool_result_refs": [
+          "T-3a2fadf861bc",
+          "T-15af068318a7",
+          "T-30d4d5591764",
+          "T-f666597a478b",
+          "T-0502105af3eb",
+          "T-2b3057db7872",
+          "T-5b9daa7a0c67",
+          "T-7d5df38f9fad",
+          "T-062709e28882"
+        ]
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "ref": "T-3a2fadf861bc",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "dump",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      }
+    },
+    {
+      "ref": "T-15af068318a7",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "dump",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      }
+    },
+    {
+      "ref": "T-30d4d5591764",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "dump",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      }
+    },
+    {
+      "ref": "T-f666597a478b",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "rf",
+      "result": {
+        "quality": {
+          "samples": 725,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.00314112,
+          "max_gap_s": 2.074037504,
+          "fraction_120hz": 0.0,
+          "nonfinite_values": 58672
+        },
+        "baseline": 69.1162109375,
+        "peak_deviation_pct": 99.96467679265277,
+        "onset_ns": 1604277203201922048,
+        "valid_updates": 20,
+        "no_update_count": 705,
+        "suspicious": 1,
+        "quality_adequate": 1,
+        "neighbor_columns": 82,
+        "neighbor_unknown_baselines": 28,
+        "neighbor_suspicious": 1
+      }
+    },
+    {
+      "ref": "T-0502105af3eb",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "rf",
+      "result": {
+        "quality": {
+          "samples": 725,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.00314112,
+          "max_gap_s": 2.074037504,
+          "fraction_120hz": 0.0,
+          "nonfinite_values": 58672
+        },
+        "baseline": 69.1162109375,
+        "peak_deviation_pct": 99.96467679265277,
+        "onset_ns": 1604277203201922048,
+        "valid_updates": 20,
+        "no_update_count": 705,
+        "suspicious": 1,
+        "quality_adequate": 1,
+        "neighbor_columns": 82,
+        "neighbor_unknown_baselines": 28,
+        "neighbor_suspicious": 1
+      }
+    },
+    {
+      "ref": "T-2b3057db7872",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "rf",
+      "result": {
+        "quality": {
+          "samples": 725,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.00314112,
+          "max_gap_s": 2.074037504,
+          "fraction_120hz": 0.0,
+          "nonfinite_values": 58672
+        },
+        "baseline": 69.1162109375,
+        "peak_deviation_pct": 99.96467679265277,
+        "onset_ns": 1604277203201922048,
+        "valid_updates": 20,
+        "no_update_count": 705,
+        "suspicious": 1,
+        "quality_adequate": 1,
+        "neighbor_columns": 82,
+        "neighbor_unknown_baselines": 28,
+        "neighbor_suspicious": 1
+      }
+    },
+    {
+      "ref": "T-5b9daa7a0c67",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "ltu",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:LTUH:250:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1069156544.0,
+            "baseline_robust_sigma": 13705676.2752,
+            "score_available": 1,
+            "peak_robust_z": 5.372694825226744,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 0,
+            "longest_consecutive_samples": 0,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:250:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.004453808069229126,
+            "baseline_robust_sigma": 0.4764147436380386,
+            "score_available": 1,
+            "peak_robust_z": 62.489665879713186,
+            "invalid_position_samples": 0,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 42,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200689428941,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 914030208.0,
+            "baseline_robust_sigma": 11570922.047999999,
+            "score_available": 1,
+            "peak_robust_z": 78.69056819524432,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.06770539283752441,
+            "baseline_robust_sigma": 0.5092561598539352,
+            "score_available": 1,
+            "peak_robust_z": 59.811973515553476,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200689428941
+      }
+    },
+    {
+      "ref": "T-7d5df38f9fad",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "ltu",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:LTUH:250:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1069156544.0,
+            "baseline_robust_sigma": 13705676.2752,
+            "score_available": 1,
+            "peak_robust_z": 5.372694825226744,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 0,
+            "longest_consecutive_samples": 0,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:250:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.004453808069229126,
+            "baseline_robust_sigma": 0.4764147436380386,
+            "score_available": 1,
+            "peak_robust_z": 62.489665879713186,
+            "invalid_position_samples": 0,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 42,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200689428941,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 914030208.0,
+            "baseline_robust_sigma": 11570922.047999999,
+            "score_available": 1,
+            "peak_robust_z": 78.69056819524432,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.06770539283752441,
+            "baseline_robust_sigma": 0.5092561598539352,
+            "score_available": 1,
+            "peak_robust_z": 59.811973515553476,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200689428941
+      }
+    },
+    {
+      "ref": "T-062709e28882",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "ltu",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:LTUH:250:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1069156544.0,
+            "baseline_robust_sigma": 13705676.2752,
+            "score_available": 1,
+            "peak_robust_z": 5.372694825226744,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 0,
+            "longest_consecutive_samples": 0,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:250:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.004453808069229126,
+            "baseline_robust_sigma": 0.4764147436380386,
+            "score_available": 1,
+            "peak_robust_z": 62.489665879713186,
+            "invalid_position_samples": 0,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 42,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200689428941,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 914030208.0,
+            "baseline_robust_sigma": 11570922.047999999,
+            "score_available": 1,
+            "peak_robust_z": 78.69056819524432,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.06770539283752441,
+            "baseline_robust_sigma": 0.5092561598539352,
+            "score_available": 1,
+            "peak_robust_z": 59.811973515553476,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200689428941
+      }
+    }
+  ],
+  "node_reports": [
+    {
+      "kind": "node_report",
+      "instrument": "dump",
+      "role_source": "local_data",
+      "event_id": "slac-001",
+      "assessment": "suspicious",
+      "observation": "Charge-valid beam checks detect a sustained disturbance.",
+      "summary": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      },
+      "tool_refs": [
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764"
+      ],
+      "raw_bytes_held": 83000,
+      "payload_bytes": 2611,
+      "limitations": [
+        "No RF phase data in this extract",
+        "No protein measurements",
+        "Sparse RF updates; leading missing values remain unknown",
+        "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+        "Candidate association is not proof of causation",
+        "Neighboring station columns may be missing or inactive",
+        "Low-charge positions and sentinel values are masked.",
+        "A negative heuristic is limited evidence, not proof of normality.",
+        "Beam observations cannot establish a unique RF cause."
+      ],
+      "metrics": {
+        "model_calls": 0,
+        "input_characters": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    {
+      "kind": "node_report",
+      "instrument": "rf",
+      "role_source": "local_data",
+      "event_id": "slac-001",
+      "assessment": "suspicious",
+      "observation": "RF amplitude crosses the exploratory deviation threshold.",
+      "summary": {
+        "quality": {
+          "samples": 725,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.00314112,
+          "max_gap_s": 2.074037504,
+          "fraction_120hz": 0.0,
+          "nonfinite_values": 58672
+        },
+        "baseline": 69.1162109375,
+        "peak_deviation_pct": 99.96467679265277,
+        "onset_ns": 1604277203201922048,
+        "valid_updates": 20,
+        "no_update_count": 705,
+        "suspicious": 1,
+        "quality_adequate": 1,
+        "neighbor_columns": 82,
+        "neighbor_unknown_baselines": 28,
+        "neighbor_suspicious": 1
+      },
+      "tool_refs": [
+        "T-f666597a478b",
+        "T-0502105af3eb",
+        "T-2b3057db7872"
+      ],
+      "raw_bytes_held": 481400,
+      "payload_bytes": 1359,
+      "limitations": [
+        "No RF phase data in this extract",
+        "No protein measurements",
+        "Sparse RF updates; leading missing values remain unknown",
+        "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+        "Candidate association is not proof of causation",
+        "Neighboring station columns may be missing or inactive",
+        "Sparse RF NaNs mean no new update; never backfill unknown leading data.",
+        "RF amplitude alone cannot corroborate beam disturbance or establish a unique cause.",
+        "Neighbor column presence does not establish station completeness."
+      ],
+      "metrics": {
+        "model_calls": 0,
+        "input_characters": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    {
+      "kind": "node_report",
+      "instrument": "ltu",
+      "role_source": "local_data",
+      "event_id": "slac-001",
+      "assessment": "suspicious",
+      "observation": "Charge-valid beam checks detect a sustained disturbance.",
+      "summary": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:LTUH:250:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1069156544.0,
+            "baseline_robust_sigma": 13705676.2752,
+            "score_available": 1,
+            "peak_robust_z": 5.372694825226744,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 0,
+            "longest_consecutive_samples": 0,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:250:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.004453808069229126,
+            "baseline_robust_sigma": 0.4764147436380386,
+            "score_available": 1,
+            "peak_robust_z": 62.489665879713186,
+            "invalid_position_samples": 0,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 42,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200689428941,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 914030208.0,
+            "baseline_robust_sigma": 11570922.047999999,
+            "score_available": 1,
+            "peak_robust_z": 78.69056819524432,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:LTUH:450:X": {
+            "baseline_samples": 1439,
+            "baseline_median": 0.06770539283752441,
+            "baseline_robust_sigma": 0.5092561598539352,
+            "score_available": 1,
+            "peak_robust_z": 59.811973515553476,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200689428941
+      },
+      "tool_refs": [
+        "T-5b9daa7a0c67",
+        "T-7d5df38f9fad",
+        "T-062709e28882"
+      ],
+      "raw_bytes_held": 83000,
+      "payload_bytes": 2608,
+      "limitations": [
+        "No RF phase data in this extract",
+        "No protein measurements",
+        "Sparse RF updates; leading missing values remain unknown",
+        "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+        "Candidate association is not proof of causation",
+        "Neighboring station columns may be missing or inactive",
+        "Low-charge positions and sentinel values are masked.",
+        "A negative heuristic is limited evidence, not proof of normality.",
+        "Beam observations cannot establish a unique RF cause."
+      ],
+      "metrics": {
+        "model_calls": 0,
+        "input_characters": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    }
+  ],
+  "data_shared": {
+    "raw_bytes_held": 647400,
+    "payload_bytes": 6578,
+    "percent_shared": 1.0160642570281124,
+    "raw_samples_shared": 0,
+    "measurement": "UTF-8 node report bytes / instrument array bytes; includes repeated follow-up reports, excludes transport overhead",
+    "complete": true
+  },
+  "metrics": {
+    "model_calls": 0,
+    "input_characters": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "latency_s": 7.972,
+    "tool_calls": 9,
+    "cost_usd": null,
+    "cost_note": "Provider cost not returned; no estimate assumed.",
+    "unsupported_claims": null,
+    "unsupported_claims_note": "Requires human claim review.",
+    "accounting_complete": true
+  },
+  "onset_alignment": {
+    "recorded_onset_ns": {
+      "rf": 1604277203201922048,
+      "ltu": 1604277200689428941,
+      "dump": 1604277200697686480
+    },
+    "relative_to_candidate_start_ns": {
+      "rf": 5300000000,
+      "ltu": 2787506893,
+      "dump": 2795764432
+    },
+    "pairwise_difference_ns": {
+      "ltu_minus_rf": -2512493107,
+      "dump_minus_rf": -2504235568,
+      "dump_minus_ltu": 8257539
+    },
+    "candidate_window_ns": [
+      1604277197901922048,
+      1604277203201922048
+    ],
+    "within_candidate_window": {
+      "rf": true,
+      "ltu": true,
+      "dump": true
+    },
+    "applied_shift_ns": 0,
+    "caveat": "RF timestamps reflect sparse, approximately delayed reporting; no fixed reporting delay or timestamp shift is assumed. Recorded onset coincidence or ordering does not establish a unique RF cause."
+  },
+  "grid": {
+    "nodes_seen": 3,
+    "assignment": {
+      "rf": "3862240917147745236",
+      "ltu": "13029384255262264237",
+      "dump": "4030024869246012011"
+    },
+    "fallback": false
+  },
+  "model_execution_path": "No model called",
+  "limitations": [],
+  "flower_run_id": "16431664826785006833",
+  "flower_series_id": "11321137797030907240",
+  "runtime": "Flower 1.39.0 local SuperLink",
+  "runtime_status": "finished/completed",
+  "wall_latency_s": 10.674
+}

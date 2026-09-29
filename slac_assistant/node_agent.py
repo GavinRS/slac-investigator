@@ -153,14 +153,20 @@ def grid_call(grid, name, arguments):
     return json.loads(result['output'])
 
 
-def reply_to_node(agent, task, client=None, model=None):
+def reply_to_node(agent, task, client=None, model=None, message=None):
+    from .node import reply
     if task.get('discover'):
         local=detect_local_instrument()
+        report=None
         payload=json.dumps({'kind':'node_capabilities','instruments':[local] if local else list(INSTRUMENTS)})
-        result=grid_call(agent.grid,'push_reply_message',{'payload':payload})
-        if result.get('error') or not result.get('message_id'): raise RuntimeError('Grid rejected discovery reply')
-        return None
-    report=run_node(task,client,model)
-    result=grid_call(agent.grid,'push_reply_message',{'payload':serialize_node_report(report)})
+    else:
+        report=run_node(task,client,model)
+        payload=serialize_node_report(report)
+    output=reply(agent.grid,message,payload)
+    if output.get('type')!='function_call_output': raise ValueError('Invalid Grid reply result')
+    result=json.loads(output['output'])
+    if 'results' in result:
+        if len(result['results'])!=1: raise RuntimeError('Invalid Grid reply result count')
+        result=result['results'][0]
     if result.get('error') or not result.get('message_id'): raise RuntimeError('Grid rejected node reply')
     return report

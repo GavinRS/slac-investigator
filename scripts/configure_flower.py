@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Enter a Flower credential privately, outside chat and shell history."""
+"""Enter a provider credential privately, outside chat and shell history."""
 import getpass
 import json
 import os
@@ -7,10 +7,11 @@ from pathlib import Path
 import sys
 import tempfile
 import argparse
-from start_flower import read_configuration, DEFAULT_MODEL
+from start_flower import read_configuration, DEFAULT_MODEL, DEFAULT_ENDPOINT, ENDPOINT, FLOWER_MODEL
 
 ROOT = Path(__file__).resolve().parents[1]
 KEY_FILE = ROOT / '.env'
+ENV_FILE = KEY_FILE
 
 
 def main():
@@ -24,8 +25,8 @@ def main():
         settings = read_configuration(KEY_FILE) if KEY_FILE.exists() else {}
     except (OSError, ValueError):
         raise SystemExit('Existing private configuration is invalid; unchanged.') from None
-    settings['FLWR_MODEL_API_ENDPOINT'] = args.endpoint if args.endpoint is not None else settings.get('FLWR_MODEL_API_ENDPOINT', '')
-    settings['INVESTIGATOR_MODEL'] = args.model or settings.get('INVESTIGATOR_MODEL') or DEFAULT_MODEL
+    settings['FLWR_MODEL_API_ENDPOINT'] = args.endpoint if args.endpoint is not None else settings.get('FLWR_MODEL_API_ENDPOINT', '' if KEY_FILE.exists() else DEFAULT_ENDPOINT)
+    settings['INVESTIGATOR_MODEL'] = args.model or settings.get('INVESTIGATOR_MODEL') or (FLOWER_MODEL if not settings['FLWR_MODEL_API_ENDPOINT'] or settings['FLWR_MODEL_API_ENDPOINT'] == ENDPOINT else DEFAULT_MODEL)
     key = getpass.getpass('Provider API key (hidden; blank only for local endpoints): ').strip()
     if any(c.isspace() for c in key):
         raise SystemExit('No valid key entered; existing configuration is unchanged.')

@@ -14,7 +14,7 @@ uv sync
 ./scripts/start_grid.sh
 ```
 
-The credential helper uses hidden terminal input and private, gitignored local storage. Never paste a key into chat, command arguments or source code. The default provider is Flower's Responses endpoint, `https://api.flower.ai/v1/responses`, with Endeavor (`flwrlabs/endeavor-1.0`). Startup reads the explicit local provider configuration and passes it to SuperLink; it must not inherit unrelated provider credentials. See `.env.example` for `FLWR_MODEL_API_ENDPOINT`, `FLWR_MODEL_API_KEY` and `INVESTIGATOR_MODEL`. A blank endpoint selects Flower's gateway. Agent code uses only Flower's injected runtime endpoint and credential.
+The credential helper uses hidden terminal input and private, gitignored local storage. Never paste a key into chat, command arguments or source code. The rev-2.1 project default is Nebius Token Factory with MiniMax-M3; Flower's gateway (`https://api.flower.ai/v1/responses`) and Endeavor (`flwrlabs/endeavor-1.0`) remain supported. An existing private selection is preserved; the recorded verification below used Flower/Endeavor. Startup reads the explicit local provider configuration and passes it to SuperLink; it must not inherit unrelated provider credentials. See `.env.example` for `FLWR_MODEL_API_ENDPOINT`, `FLWR_MODEL_API_KEY` and `INVESTIGATOR_MODEL`. A blank endpoint selects Flower's gateway. Agent code uses only Flower's injected runtime endpoint and credential.
 
 The Grid supervisor starts an independent SuperLink on **127.0.0.1:18000** and three instrument nodes. Existing port-8000 services stay untouched. Stop the demo processes with **Ctrl+C** in the supervisor terminal. See [Grid runtime instructions](docs/GRID_RUNTIME.md) for routing, ports and data-locality limits.
 
@@ -80,3 +80,14 @@ node --test frontend/tests/*.test.js
 Offline tests cover slice partitioning, read-only instrument checks, raw-array exclusion, schema/reference guards, Grid routing and byte accounting. They do not establish live provider availability or remote deployment. The live sequence is three-node smoke, provider check, then an Endeavor Grid run; only actual completed traces count as live results.
 
 See [data provenance](docs/DATA_PROVENANCE.md) for source files, timestamps, transformations and unresolved dataset licensing. Labels and development artifacts stay outside the AgentApp bundle. There is no training, federated learning or live machine control.
+
+## Data credit and disclaimer
+
+The four events in `data/events/` are small extracts (about 3 MB) from SLAC National Accelerator Laboratory's public klystron RF anomaly dataset ([dataset index](https://www.slac.stanford.edu/grp/ad/ard/rfanom/rfanom.html), [DOE catalog entry](https://www.osti.gov/biblio/1869296)). All credit for the data goes to SLAC and the dataset authors. We did not find an explicit reuse license. They are included here, and in the Flower Hub app, only to demo this non-commercial hackathon project, and we will remove them if asked. This project is not affiliated with or endorsed by SLAC. See [data provenance](docs/DATA_PROVENANCE.md).
+
+
+## Switching models
+
+Use `scripts/configure_flower.py --endpoint RESPONSES_URL --model MODEL_ID` for private key entry. The helper keeps an existing selection unless you explicitly change it; `.env.example` documents Nebius, Flower/Endeavor, Groq and Ollama. A blank endpoint selects Flower. Restart the relevant SuperLink after a change and run `.venv/bin/python scripts/check_model.py` to check tool calling. Do not overwrite an existing private `.env` with the example.
+
+For Nebius Serverless instrument nodes, see [docs/NEBIUS_NODES.md](docs/NEBIUS_NODES.md).

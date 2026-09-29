@@ -7,10 +7,10 @@ from .data import ROOT, event_ids
 from .instruments import INSTRUMENTS
 from .node_agent import ModelBudget, grid_call, run_node, validate_node_report, normalize_json_response
 from .tools import serialize_node_report
-from .workflow import Finding, RULES, MAX_OUTPUT_TOKENS
+from .workflow import Finding, RULES, MAX_OUTPUT_TOKENS, DEFAULT_MODEL
 
 class GridInvestigation:
-    def __init__(self,event_id,emit,grid,client=None,model='flwrlabs/endeavor-1.0',mode='grid',timeout=120):
+    def __init__(self,event_id,emit,grid,client=None,model=DEFAULT_MODEL,mode='grid',timeout=120):
         if event_id not in event_ids(): raise ValueError('Unknown event')
         if mode not in ('grid','collaborative','smoke'): raise ValueError('Invalid Grid mode')
         if not 0<=float(timeout)<=300: raise ValueError('Node timeout must be between 0 and 300 seconds')

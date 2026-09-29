@@ -2,13 +2,23 @@
 import json,time,os
 from typing import Literal
 from pydantic import BaseModel,Field
-from .data import load_event
+from .data import ROOT,load_event
 from .tools import analyze,KINDS
 
 # Shared per-call ceiling for the centralized and Grid comparison paths.
 # 1,600 tokens truncated a real structured response before a valid finding.
 MAX_OUTPUT_TOKENS=4096
-DEFAULT_MODEL='flwrlabs/endeavor-1.0'
+DEFAULT_MODEL='dedicated/flowerai/MiniMax-M3-OOLI9o'
+
+def configured_model(env_file=ROOT/'.env'):
+    """INVESTIGATOR_MODEL from the environment, else the private .env (only that line is read), else the default."""
+    if os.environ.get('INVESTIGATOR_MODEL'):return os.environ['INVESTIGATOR_MODEL']
+    try:lines=env_file.read_text().splitlines()
+    except OSError:lines=[]
+    for line in lines:
+        name,_,value=line.strip().removeprefix('export ').partition('=')
+        if name.strip()=='INVESTIGATOR_MODEL' and value.strip():return value.strip().strip('\'"')
+    return DEFAULT_MODEL
 
 class BeamAssessment(BaseModel):
     status:Literal['corroborated','not_corroborated','insufficient_evidence','not_assessed']
