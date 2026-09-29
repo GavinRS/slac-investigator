@@ -17,7 +17,8 @@ def shared(reports):
     return dict(raw_bytes_held=raw,payload_bytes=sent,percent_shared=round(100*sent/raw,3) if raw else None)
 
 def collect(grid,event_id,assignment,mode,question,timeout):
-    """Push every node_task first, then pull once so nodes work in parallel. Returns {instrument:(report,bytes_received)}, problems."""
+    """Push every node_task first, then pull once so nodes work in parallel. Returns {instrument:(report,bytes_received)}, problems.
+    A node holding a local slice answers for that instrument (role_source local_data), so assignment is updated from the replies."""
     reports,problems={},[]
     if all(n=='local' for n in assignment.values()):
         for i in INSTRUMENTS:
@@ -32,13 +33,13 @@ def collect(grid,event_id,assignment,mode,question,timeout):
     if not sent:return reports,problems
     out=grid_call(grid,'pull_messages',{'message_ids':list(sent),'timeout':timeout})
     for m in out['messages']:
-        i=sent.get(m['reply_to_message_id'])
-        try:r=json.loads(m['payload']) if m['payload'] and i else None
+        try:r=json.loads(m['payload']) if m['payload'] and m['reply_to_message_id'] in sent else None
         except ValueError:r=None
-        if not(isinstance(r,dict) and r.get('kind')=='node_report' and r.get('instrument')==i and r.get('event_id')==event_id):
-            problems.append(f'{i or "unknown"} reply from node {m["src_node_id"]} unusable: {m["error"] or "not a matching node_report"}');continue
-        reports[i]=(r,len(m['payload'].encode()))
-    problems+=[f'{sent[x]} node gave no reply within {timeout} s' for x in out['pending_message_ids']]
+        i=r.get('instrument') if isinstance(r,dict) else None
+        if not(i in INSTRUMENTS and i not in reports and r.get('kind')=='node_report' and r.get('event_id')==event_id):
+            problems.append(f'reply from node {m["src_node_id"]} unusable: {m["error"] or "not a new matching node_report"}');continue
+        reports[i]=(r,len(m['payload'].encode()));assignment[i]=m['src_node_id']
+    problems+=[f'{sent[x]} task: no reply within {timeout} s' for x in out['pending_message_ids']]
     return reports,problems
 
 def smoke_final(inv,reports,problems):

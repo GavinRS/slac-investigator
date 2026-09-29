@@ -2,7 +2,7 @@
 import json
 from types import SimpleNamespace
 import pytest
-from slac_assistant import agent_app,grid_workflow
+from slac_assistant import agent_app,grid_workflow,instruments
 from slac_assistant.node import node_task,run_node
 
 class NodeGrid:
@@ -11,7 +11,7 @@ class NodeGrid:
     def call(self,c):self.sent=c['arguments']['payload'];return {'output':'{}'}
 
 class FakeGrid:
-    def __init__(self,n,drop=()):self.n=n;self.drop=drop;self.names=[];self.inbox={}
+    def __init__(self,n,drop=(),local=None):self.n=n;self.drop=drop;self.local=local or {};self.names=[];self.inbox={}
     def call(self,c):
         self.names.append(c['name']);a=c['arguments']
         if c['name']=='get_nodes':out={'nodes':[{'id':str(10+k),'name':None,'location':None} for k in range(self.n)],'num_available':self.n}
@@ -23,6 +23,7 @@ class FakeGrid:
             for i in a['message_ids']:
                 m=self.inbox[i];prompt=json.dumps({'message_id':i,'src_node_id':'1','payload':m['payload']})
                 if json.loads(m['payload'])['instrument'] in self.drop:pending.append(i);continue
+                instruments.detect_local_instrument=lambda:self.local.get(m['dst_node_id'])
                 ng=NodeGrid();run_node(SimpleNamespace(grid=ng),*node_task(prompt))
                 msgs.append({'message_id':'r'+i,'reply_to_message_id':i,'src_node_id':m['dst_node_id'],'payload':ng.sent,'error':None})
             out={'messages':msgs,'pending_message_ids':pending}
@@ -30,6 +31,7 @@ class FakeGrid:
 
 @pytest.fixture(autouse=True)
 def no_local(monkeypatch):
+    monkeypatch.setattr(instruments,'detect_local_instrument',instruments.detect_local_instrument)
     monkeypatch.delenv('SLAC_NODE_DATA_DIR',raising=False);monkeypatch.delenv('FLWR_FILESYSTEM_ALLOWED_DIRS',raising=False)
 
 def run(n,event='slac-001',**kw):
@@ -65,8 +67,14 @@ def test_zero_nodes_local_fallback():
 
 def test_missing_reply_is_a_limitation():
     report,events,g=run(3,drop=('dump',))
-    assert 'dump node gave no reply within 120.0 s' in report['final']['data_limitations']
+    assert 'dump task: no reply within 120.0 s' in report['final']['data_limitations']
     assert {e['instrument'] for e in events if e['kind']=='node_report'}=={'rf','ltu'}
+
+def test_local_data_node_overrides_assignment():
+    # Node 10 was assigned rf but holds dump locally, and vice versa (spec: C with A fallback).
+    report,events,g=run(3,local={'10':'dump','12':'rf'})
+    assert report['grid']['assignment']=={'rf':'12','ltu':'11','dump':'10'}
+    assert {e['instrument']:e['role_source'] for e in events if e['kind']=='node_report'}=={'rf':'local_data','ltu':'assigned','dump':'local_data'}
 
 def test_percent_shared_math():
     r=lambda raw:{'raw_bytes_held':raw}
