@@ -6,8 +6,10 @@ os.environ.setdefault('XDG_CACHE_HOME','/tmp/slac-cache')
 import json
 import matplotlib.pyplot as plt
 import streamlit as st
-from slac_assistant.data import event_ids,load_event,plot_event
+from slac_assistant.data import ROOT,event_ids,load_event,plot_event
 from slac_assistant.runtime import run_flower
+from slac_assistant.api import failure
+from slac_assistant.workflow import configured_model
 st.set_page_config(page_title='RF Investigation | SLAC replay',page_icon='🔎',layout='wide')
 st.markdown('''<style>.block-container{padding-top:4rem;max-width:1400px}h1{letter-spacing:-.04em}div[data-testid="stMetric"]{background:#edf5f6;padding:1rem;border-radius:8px}</style>''',unsafe_allow_html=True)
 st.caption('FLOWER AGENTAPP • HUMAN-SUPERVISED INVESTIGATION • ARCHIVED DATA')
@@ -18,7 +20,7 @@ with st.sidebar:
     event=st.selectbox('Selected event',event_ids())
     mode_name=st.selectbox('Investigation mode',['Specialist collaboration','Single-agent baseline','Deterministic runtime check'])
     mode={'Specialist collaboration':'collaborative','Single-agent baseline':'baseline','Deterministic runtime check':'smoke'}[mode_name]
-    model=st.text_input('Model',value=os.environ.get('INVESTIGATOR_MODEL','openai/gpt-5.6-sol'))
+    model=st.text_input('Model',value=configured_model())
     st.caption('Model modes require a provider configured on the local Flower SuperLink.')
     start=st.button('Start investigation',type='primary',use_container_width=True)
     if mode=='smoke':st.warning('Software check only. No model or specialist agents are invoked.')
@@ -50,7 +52,7 @@ def show_event(e,container):
         elif e['kind']=='tool_request':st.caption(f"{e['agent']} requests {e['analysis']}")
         elif e['kind']=='finding':
             f=e['finding']
-            with st.expander(f"{f['finding_id']} · {f['agent']} · {f['assessment']}",expanded=True):
+            with st.expander(f"{f['finding_id']} · {f['agent']}",expanded=True):
                 st.write(f['observation']);st.caption('Evidence: '+', '.join(f['tool_result_refs']))
                 if f.get('requested_next_check'):st.write('Next check: '+f['requested_next_check'])
                 with st.expander('Structured finding'):st.json(f)
@@ -65,7 +67,8 @@ def execute(question=''):
         st.session_state.report=report;st.session_state.series=series
         if question:st.session_state.questions.append(question)
     except Exception as exc:
-        st.error(f'Investigation did not complete: {exc}')
+        error=failure(exc)
+        st.error(f"Investigation did not complete ({error['code']}): {error['message']}")
         st.info('Check the local Flower SuperLink and provider configuration. No final diagnosis was accepted.')
         st.session_state.report=None
     st.rerun()
@@ -75,7 +78,13 @@ for e in st.session_state.events:show_event(e,activity)
 report=st.session_state.report
 with assessment_box:
     if report:
-        f=report['final'];st.subheader(f['assessment'].replace('_',' ').title());st.write(f['observation'])
+        f=report['final']
+        for field,label in [('beam_disturbance','Beam disturbance corroborated?'),('unique_cause','Unique cause established?')]:
+            dimension=f.get(field,{'status':'not_assessed','rationale':'Legacy mixed-scope result; no automatic reinterpretation.'})
+            st.markdown('**'+label+'** '+dimension['status'].replace('_',' ').title())
+            st.caption(dimension['rationale'])
+        st.write(f['observation'])
+        st.caption('Separate evidence assessments. These demonstration results are not benchmark scores.')
         if report['mode']=='smoke':st.warning('Deterministic runtime check. This is not an agent-generated assessment.')
         st.write('**Limitations**')
         for limitation in f['data_limitations']:st.write('• '+limitation)

@@ -15,13 +15,14 @@ def build_bundle():
         if 'data/events/slac-001.arrays.json' not in names:raise ValueError('Event data missing from bundle')
     return fab
 
-def run_flower(event_id,mode='collaborative',question='',model=None,series_id=None,on_event=None,address='http://127.0.0.1:8000'):
+def run_flower(event_id,mode='collaborative',question='',model=None,series_id=None,on_event=None,address='http://127.0.0.1:8000',on_started=None):
     fab=build_bundle();client=ControlHttpClient(address,timeout=180)
     request=dict(event_id=event_id,mode=mode,question=question)
     if model:request['model']=model
     started=time.perf_counter(); events=[];report=None;buffer=''
     try:
         run_id,series_id=start_chat_run(client,json.dumps(request),None,series_id,fab_hash=hashlib.sha256(fab).hexdigest(),fab_content=fab)
+        if on_started:on_started(str(run_id),str(series_id))
         for response in client.StreamRunEvents(StreamRunEventsRequest(run_id=run_id)):
             kind,payload=parse_task_event(response.task_event)
             if kind in ('error','response.failed','run.failed'):raise RuntimeError('Flower run failed: '+json.dumps(payload))
@@ -46,6 +47,6 @@ def run_flower(event_id,mode='collaborative',question='',model=None,series_id=No
 
 if __name__=='__main__':
     import argparse
-    p=argparse.ArgumentParser();p.add_argument('--event',default='slac-001');p.add_argument('--mode',choices=['smoke','collaborative','baseline'],default='collaborative');p.add_argument('--question',default='');p.add_argument('--model');args=p.parse_args()
-    report,_=run_flower(args.event,args.mode,args.question,args.model,on_event=lambda e:print(json.dumps(e),flush=True))
-    print('Flower run',report['flower_run_id'],'assessment',report['final']['assessment'])
+    p=argparse.ArgumentParser();p.add_argument('--event',default='slac-001');p.add_argument('--mode',choices=['smoke','collaborative','baseline'],default='collaborative');p.add_argument('--question',default='');p.add_argument('--model');p.add_argument('--address',default='http://127.0.0.1:8000');args=p.parse_args()
+    report,_=run_flower(args.event,args.mode,args.question,args.model,on_event=lambda e:print(json.dumps(e),flush=True),address=args.address)
+    print('Flower run',report['flower_run_id'],'beam disturbance',report['final']['beam_disturbance']['status'],'unique cause',report['final']['unique_cause']['status'])

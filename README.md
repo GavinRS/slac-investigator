@@ -2,9 +2,13 @@
 
 A human-supervised replay tool for investigating SLAC RF candidates against beam evidence. It uses one Flower AgentApp with equipment, beam and lead investigator loops. Python handles calculations and read-only data access. There are no equipment-write tools.
 
-**Status:** real public SLAC cases retrieved and plotted; deterministic tools, Flower execution and operator UI verified. Model collaboration and the single-agent baseline are implemented, but live model verification and their comparison require a configured model provider. The no-model runtime check is explicitly labeled and does not simulate intelligent agent findings.
+**Status:** real public SLAC cases, deterministic tools, model collaboration inside the Flower AgentApp, a human follow-up, and the operator dashboard have been exercised. Those earlier live runs used OpenAI models (api.openai.com), not the Nebius or Endeavor models this project now defaults to. In their review, the slac-001 main conclusions were supported with an onset-precision caveat; slac-003 exposed a misleading assessment headline despite a supported explanation. The baseline comparison remains unevaluated. Deterministic checks remain explicitly labeled and are not model results.
 
 ## Start locally
+
+Frontend integrations use the [HTTP API contract](docs/API.md). Start the local API with `./scripts/start_api.sh` after SuperLink; interactive documentation is at `http://127.0.0.1:8080/docs`. It supports asynchronous investigation start, durable activity polling/results, event plots, and same-series follow-ups. This is a local development service; GitHub Pages remains saved-run replay until an authenticated HTTPS backend exists.
+
+New result schema v2 separates **beam disturbance corroboration** from **unique causal attribution**, with independent evidence and rationale. Earlier runs, including those in the frontend's saved-run replay, used a single mixed-scope label; it is not converted into scores.
 
 Python 3.11+ and uv are required. Flower is pinned to **1.39.0**, matching the APIs inspected in the installed package and [current AgentApp documentation](https://flower.ai/docs/agent/explanations/agentapp-runtime.html).
 
@@ -12,14 +16,22 @@ Python 3.11+ and uv are required. Flower is pinned to **1.39.0**, matching the A
 uv sync
 ```
 
-In terminal 1, configure the event-provided Flower key in your shell if available. Do not put keys into code, git or the UI. Then start the local runtime:
+In terminal 1, set the model provider in a private `.env` at the repository root, then start SuperLink:
 
 ```sh
-# FLWR_MODEL_API_KEY must be set for the default Flower provider.
+.venv/bin/python scripts/configure_flower.py
 ./scripts/start.sh
 ```
 
-Alternatively set `FLWR_MODEL_API_ENDPOINT` to a compatible provider's full `/responses` URL before starting SuperLink, and set its credential through `FLWR_MODEL_API_KEY` if required. The app itself uses Flower's injected runtime endpoint and credential. For local Ollama, see Flower's [official guide](https://flower.ai/docs/agent/how-to-guides/run-with-ollama.html); no Ollama model is installed by this project.
+The helper requires an interactive terminal and hides input. It writes only the `FLWR_MODEL_API_KEY` line of `.env`, which is git-ignored and owner-readable/writable (mode 600). Never put a key into chat, a command argument, or source code. Re-run the helper to replace the key, then restart SuperLink.
+
+`.env` holds three settings, which `scripts/start.sh` passes into the SuperLink's environment:
+
+- `FLWR_MODEL_API_ENDPOINT`: the provider's Responses endpoint. Blank means Flower's gateway (`https://api.flower.ai/v1/responses`).
+- `FLWR_MODEL_API_KEY`: the key for that provider. Required when the endpoint is blank.
+- `INVESTIGATOR_MODEL`: the model ID. The default is Nebius Token Factory's `dedicated/flowerai/MiniMax-M3-OOLI9o`; the fallback is Endeavor (`flwrlabs/endeavor-1.0`) through Flower's gateway. Set the endpoint and key to match the model.
+
+Provider endpoints and where each key comes from are listed in the [design spec's provider table](docs/superpowers/specs/2026-09-29-grid-investigator-design.md). The AgentApp never talks to a provider directly; it uses only the `FLWR_RUNTIME_BASE_URL`/`FLWR_RUNTIME_API_KEY` that Flower injects. The launcher discards inherited `OPENAI_*`, `FLWR_MODEL_*`, `FLWR_RUNTIME_*` and `INVESTIGATOR_*` variables, so shell settings cannot redirect it. A missing or invalid `.env` stops startup; it never falls back to an inherited credential. It prints the endpoint and model at startup, never the key.
 
 In terminal 2:
 
@@ -33,11 +45,11 @@ To run from the terminal:
 
 ```sh
 .venv/bin/python -m slac_assistant.runtime --mode smoke --event slac-001
-.venv/bin/python -m slac_assistant.runtime --mode collaborative --event slac-001 --model openai/gpt-5.6-sol
-.venv/bin/python -m slac_assistant.runtime --mode baseline --event slac-001 --model openai/gpt-5.6-sol
+.venv/bin/python -m slac_assistant.runtime --mode collaborative --event slac-001
+.venv/bin/python -m slac_assistant.runtime --mode baseline --event slac-001
 ```
 
-Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. State is local under ignored `.flower/`. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
+Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. State is local under ignored `.flower/`; the startup script configures `.flower/slac.sqlite` for subsequent launches. Restart durability of the currently serving instance has not been verified; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
 
 ## Demonstration flow
 
@@ -75,7 +87,7 @@ PYTHONPATH=. .venv/bin/python scripts/evaluate.py --model YOUR_PROVIDER_MODEL_ID
 
 The single investigator gets the same initial equipment, beam and quality results, all six deterministic analysis tools, and the same model as the specialists. Each approach has at most 12 total model calls, 1,600 output tokens per call, 300,000 cumulative input characters and 24 analysis calls. The specialist budget includes lead and delegated calls. These are equal ceilings, not a claim of equal actual usage; reports record usage and alternate execution order across events.
 
-The external evaluator reads labels only after investigations. It records agreement, abstentions, tool calls, model calls, token usage, application and end-to-end latency. Cost is null when provider cost is unavailable. Unsupported claims require manual review; invalid-reference counts are a separate structural measure, not a substitute. The generated claim-review CSV has reviewer fields. No model comparison result is fabricated when provider access is absent.
+The external evaluator reads source labels only after investigations and records the two separate assessments, tool calls, model calls, token usage, application and end-to-end latency. It does not score agreement: source anomaly labels are not separately adjudicated labels for beam disturbance and unique cause, and historical mixed-scope labels are unsuitable for scoring. Cost is null when provider cost is unavailable. Unsupported claims require manual review; invalid-reference counts are a separate structural measure, not a substitute. The generated claim-review CSV has reviewer fields.
 
 ## Evidence and limitations
 
