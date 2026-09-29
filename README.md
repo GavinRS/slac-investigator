@@ -15,7 +15,7 @@ The older design, one Flower AgentApp with equipment, beam and lead investigator
   - slac-001: beam disturbance corroborated, unique cause not established, 0.9% of raw data shared, about 24 s.
   - slac-003: RF node insufficient evidence, LTU insufficient evidence, dump normal. Beam disturbance not corroborated, unique cause not established, 0.79% shared, 23 s, model final accepted.
 - In 2 of 4 earlier slac-001 runs the orchestrator's model final came back incomplete, and the app used a labeled rule-based combine instead.
-- Endeavor (flwrlabs/endeavor-1.0): run pending
+- Endeavor (`flwrlabs/endeavor-1.0`, via Flower's gateway), slac-001: all 3 nodes suspicious, beam disturbance corroborated, unique cause not established, model final accepted, 0.86% of raw data shared, 148 s
 - Our SuperGrid personal federation has 0 nodes today, so on SuperGrid the app runs the three instruments in one process and labels it "none (local fallback)".
 - Four hand-picked events. No accuracy claim.
 
