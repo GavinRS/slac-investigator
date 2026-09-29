@@ -55,3 +55,10 @@ def test_non_node_prompt_uses_old_path(fakes,monkeypatch):
     a=agent(json.dumps({'event_id':'slac-001','mode':'smoke'}),());agent_app.main(a,ctx)
     assert got and got[0][0]=='slac-001' and a.grid.calls==[]
     assert agent_app.node_task(json.dumps({'src_node_id':'1','payload':'{"kind":"other"}'})) is None
+
+
+def test_chat_answer_is_plain_english():
+    report={'final':{'beam_disturbance':{'status':'not_corroborated','rationale':'No sustained beam change.'},
+                     'unique_cause':{'status':'not_established','rationale':'Beam not disturbed.'}},'data_shared':{'percent_shared':0.78}}
+    text=agent_app.answer('slac-003',report,[{'instrument':'rf','assessment':'insufficient_evidence','observation':'Sparse RF data.'}])
+    assert '── Answer ──' in text and 'NOT CORROBORATED' in text and 'RF: insufficient evidence' in text and '0.78%' in text
