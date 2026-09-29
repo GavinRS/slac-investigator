@@ -31,7 +31,7 @@ POST requests must use `Content-Type: application/json`. There is no SSE or WebS
 {"event_id":"slac-001","mode":"collaborative"}
 ```
 
-`mode` is `collaborative` (default), `baseline`, `smoke`, or `grid`. Smoke performs deterministic software checks and no inference. `grid` runs the Grid orchestrator (three independent instrument nodes, each replying with a summary only — see `node_report`/`data_shared` below); until that orchestrator ships it falls back to the single-agent collaborative path, still under `mode: "grid"`. The event must exist in `/events`. No human question or series ID is accepted here; use the follow-up route to continue.
+`mode` is `collaborative` (default), `baseline`, `smoke`, or `grid`. Smoke performs deterministic software checks and no inference. `grid` runs the Grid orchestrator (three instrument nodes, each replying with a summary only; see `node_report`/`data_shared` below). The API accepts `grid` now; until the AgentApp's Grid orchestrator lands, a `grid` job fails with `workflow_failed` rather than running a single-agent path under the `grid` label. The event must exist in `/events`. No human question or series ID is accepted here; use the follow-up route to continue.
 
 The 202 response and subsequent status responses use the same shape (the job may already be running when 202 arrives):
 
@@ -81,7 +81,7 @@ States: `queued` → `running` → `completed` or `failed`; `interrupted` marks 
 Activity `event.kind` values:
 
 - `started`: `event_id`, `mode`, `model`, optional `budget`.
-- `delegation`: `agent`, `to`, `question`, `analysis`.
+- `delegation`: `agent`, `to`, `question`, `analysis`. In `mode: "grid"`: `node_id`, `instrument`.
 - `tool_request`: `agent`, `analysis`.
 - `tool_result`: `agent`, `evidence` (ref, analysis, event_id, source, hdf5_group, interval_ns, result, limitations).
 - `finding`: `finding` with schema-v2 fields described below.
@@ -119,7 +119,7 @@ Ignore unfamiliar event kinds gracefully. These are application activity and con
 {"kind": "data_shared", "raw_bytes_held": 370368, "payload_bytes": 1536, "percent_shared": 0.41}
 ```
 
-`raw_bytes_held` is the total raw sample bytes held across nodes; `payload_bytes` is what actually crossed the wire in node replies; `percent_shared` is `payload_bytes / raw_bytes_held * 100`, rounded.
+`raw_bytes_held` is the total raw sample bytes held across nodes; `payload_bytes` is what actually crossed the wire in node replies; `percent_shared` is `payload_bytes / raw_bytes_held * 100`.
 
 ### Retrieve results: two independent questions
 
@@ -127,7 +127,7 @@ Ignore unfamiliar event kinds gracefully. These are application activity and con
 
 The report contains `result_schema_version: 2`, `benchmark_eligible: false`, `event_id`, `mode`, `model`, `provider`, `model_execution_path`, `final`, `findings`, `evidence`, `metrics`, `flower_run_id`, `flower_series_id`, `runtime`, and `wall_latency_s`. Metrics include actual model/tool calls, token usage (nullable), latency, and cost (nullable); null cost does not mean free.
 
-For `mode: "grid"`, the report additionally carries `grid`: `{"nodes_seen": 3, "assignment": {"rf": "node-1", "ltu": "node-2", "dump": "node-3"}, "fallback": null}` (`fallback` is a short note, e.g. `"local (0 nodes)"`, when fewer than 3 nodes were available) and `data_shared` (same shape as the `data_shared` activity event above). Frontends render `data_shared.percent_shared` as the headline "% raw data shared" figure.
+For `mode: "grid"`, the report additionally carries `grid`: `{"nodes_seen": 3, "assignment": {"rf": "node-1", "ltu": "node-2", "dump": "node-3"}, "fallback": null}` (`fallback` is a short note when fewer than 3 nodes were available; with 0 nodes all three instruments run in-process) and `data_shared` (`raw_bytes_held`, `payload_bytes`, `percent_shared`, as in the activity event above). Frontends render `data_shared.percent_shared` as the headline "% raw data shared" figure.
 
 Every finding, including `final`, has independent dimensions:
 

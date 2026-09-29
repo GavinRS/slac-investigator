@@ -156,6 +156,7 @@ def test_grid_mode_accepted_and_node_events_pass_through_intact(tmp_path):
                        'summary': {'baseline': 1.0, 'peak_deviation': 2.5}, 'tool_refs': ['T-rf-1'],
                        'raw_bytes_held': 123456, 'payload_bytes': 512, 'limitations': []}
         data_shared = {'kind': 'data_shared', 'raw_bytes_held': 123456, 'payload_bytes': 512, 'percent_shared': 0.41}
+        kwargs['on_event']({'kind': 'delegation', 'node_id': 7, 'instrument': 'rf'})
         kwargs['on_event'](node_report)
         kwargs['on_event'](data_shared)
         report = Investigation(event_id, kwargs['on_event']).smoke()
@@ -176,6 +177,7 @@ def test_grid_mode_accepted_and_node_events_pass_through_intact(tmp_path):
                        'event_id': 'slac-001', 'assessment': 'suspicious', 'observation': 'RF deviation noted.',
                        'summary': {'baseline': 1.0, 'peak_deviation': 2.5}, 'tool_refs': ['T-rf-1'],
                        'raw_bytes_held': 123456, 'payload_bytes': 512, 'limitations': []}
+        assert by_kind['delegation'] == {'kind': 'delegation', 'node_id': 7, 'instrument': 'rf'}
         assert by_kind['data_shared'] == {'kind': 'data_shared', 'raw_bytes_held': 123456, 'payload_bytes': 512, 'percent_shared': 0.41}
         report = client.get(job['links']['result']).json()['report']
         assert report['mode'] == 'grid'
