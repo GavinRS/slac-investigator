@@ -26,3 +26,7 @@ build/
 *.egg-info/
 nebius-supernode-key-*
 nodes/
+node_modules/
+frontend/story/
+presentation/src/evidence.json
+presentation/public/console/
