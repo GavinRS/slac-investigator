@@ -116,7 +116,7 @@ Starts one local SuperLink plus 3 SuperNodes, each with its own `nodes/<instrume
 
 - Existing tests stay green.
 - New: slices partition the data exactly; node payloads contain no raw arrays; `% shared` math; orchestrator routing with a fake grid (3 nodes, 1 node, 0 nodes); API endpoints respond.
-- Live: `check_model.py` against Groq; one local 3-node smoke run end to end; one Groq model run when a key is available.
+- Live: `check_model.py` against Endeavor and Nebius; one local 3-node smoke run end to end; one Endeavor model run.
 
 ## Out of scope today
 
