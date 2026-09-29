@@ -49,8 +49,8 @@ async function submit(question){
     if(question===undefined){
       live.question=live.question.trim();if(!live.question)throw new Error('Enter a question to start the investigation.');live.questionSent=true;
       // Older backends reject unknown start fields with 422 (nothing queued), so retry once without the question and say so.
-      try{job=await live.api.start(live.selected,{mode:'grid',question:live.question});}
-      catch(e){if(!/^API 422/.test(e.message))throw e;live.questionSent=false;job=await live.api.start(live.selected,{mode:'grid'});}
+      try{job=await live.api.start(live.selected,{mode:'collaborative',question:live.question});}
+      catch(e){if(!/^API 422/.test(e.message))throw e;live.questionSent=false;job=await live.api.start(live.selected,{mode:'collaborative'});}
     }else job=await live.api.followup(live.status.series_id,question);
     if(question===undefined)live.history=[];
     await observe(job);
