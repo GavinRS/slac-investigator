@@ -30,7 +30,9 @@ Smoke requests exercise deterministic Grid routing without model calls. Their re
 
 ## Demo surfaces and team handoff
 
-**Fieldnote** in `frontend/` is the demo UI, with local live operation and recorded-run replay. The FastAPI job API, documented in [docs/API.md](docs/API.md), supports investigation creation with `mode: grid`, durable status/activity polling and same-series follow-ups under `/api/v1`. API and Fieldnote integration are owned separately; the frozen Grid contract below is the dependency handoff. GitHub Pages deployment waits until the repository is public.
+**Fieldnote** in `frontend/` is the demo UI, with local live operation and recorded-run replay. The FastAPI job API, documented in [docs/API.md](docs/API.md), supports investigation creation with `mode: grid`, durable status/activity polling and same-series follow-ups under `/api/v1`. API and Fieldnote integration are owned separately; the frozen Grid contract below is the dependency handoff. GitHub Pages deployment is a separate manual step; see the frontend deployment instructions.
+
+For local live Fieldnote against the three-node Grid, start the API with `FLOWER_CONTROL_URL=http://127.0.0.1:18000 ./scripts/start_api.sh`. Its default port-8000 target is the separate developer runtime; the explicit address connects the API to the Grid supervisor.
 
 The report keeps Finding v2 in `final`/`findings`, with `result_schema_version: 2`, `mode: grid`, `grid: {nodes_seen, assignment, fallback}`, `node_reports`, `data_shared` and `metrics`. Grid adds `node_report` and `data_shared` events while preserving the existing event framing. Consumers should distinguish `execution_mode: smoke` and explicitly display fallback. Instrument replies contain assessments, numeric summaries, tool references and byte counts; no raw sample arrays.
 
@@ -64,6 +66,8 @@ The table reports actual model calls, input/output tokens, end-to-end latency an
 **Data locality:** Grid “data shared %” is serialized summary report bytes divided by raw instrument bytes held. It measures summary size, not raw-sample disclosure; raw samples in node replies are zero. Baseline **100%** describes centralized access to all instrument data, not raw arrays sent to the model. Grid reports identify local fallback and incomplete accounting explicitly. Payload measurements exclude transport overhead.
 
 Agreement is **N/A**. The evaluator reads source RF labels only after investigations, and those labels cannot score beam disturbance or unique cause. Four deliberately selected cases support no accuracy-superiority claim. Invalid-reference counts check citation existence only; semantic support needs human review in the generated claim-review CSV. Cost is null when unavailable.
+
+Recorded [comparison results](artifacts/grid-comparison/comparison.md): all four Grid runs and three baseline runs completed; the `slac-003` baseline failed. Grid summary/raw byte ratios range from 1.187% to 1.396%, with zero raw samples in replies. Earlier failed attempts are retained.
 
 ## Verification and limits
 

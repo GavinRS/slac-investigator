@@ -35,7 +35,7 @@ export function sharingHeadline(report) {
   if (!shared) return '';
   const percent = shared.complete !== false && Number.isFinite(shared.percent_shared) ? `${shared.percent_shared.toFixed(3)}%` : 'unavailable';
   const fallback = report.grid?.fallback ? ' Local fallback.' : '';
-  return `Summary / raw bytes: ${percent}. Raw samples shared: ${shared.raw_samples_shared === 0 ? '0' : 'unavailable'}. This ratio measures summary size, not raw-sample disclosure.${fallback}`;
+  return `Summary / raw bytes: ${percent}. Raw samples shared: ${shared.raw_samples_shared === 0 ? '0' : 'unavailable'}. Baseline centralized access: 100% (conceptual). This ratio measures summary size, not raw-sample disclosure.${fallback}`;
 }
 export function sharingHTML(report) {
   const headline = sharingHeadline(report);

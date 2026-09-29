@@ -2,6 +2,8 @@
 
 Authoritative implementation: `slac_assistant/api.py`. Start with `./scripts/start_api.sh` after starting Flower with `./scripts/start.sh`. Default API base is **http://127.0.0.1:8080**. Interactive OpenAPI documentation: `/docs`; machine-readable schema: `/openapi.json`. The existing Streamlit UI remains usable independently.
 
+For the three-node demo started by `./scripts/start_grid.sh`, instead use `FLOWER_CONTROL_URL=http://127.0.0.1:18000 ./scripts/start_api.sh`. This selects the isolated Grid runtime rather than the port-8000 developer runtime.
+
 ## Deployment, credentials and ownership
 
 This is a **local, single-user development API**, bound to loopback, with **one Uvicorn worker**. There is no frontend login or public authentication endpoint. Default CORS origins are `http://localhost:3000`, `http://127.0.0.1:3000`, `http://localhost:5173`, and `http://127.0.0.1:5173`. `INVESTIGATOR_CORS_ORIGINS` can set an explicit comma-separated list. Cookies are not used; allowed methods are GET/POST and the allowed request header is Content-Type. Only localhost/127.0.0.1 hosts are accepted. CORS is not authentication.
