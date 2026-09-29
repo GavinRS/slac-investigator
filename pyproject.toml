@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+[project]
+name = "slac-investigator"
+version = "0.1.0"
+description = "Human-supervised RF fault evidence investigation"
+requires-python = ">=3.11"
+dependencies = ["flwr==1.39.0", "openai>=2.16,<3", "numpy>=2,<3", "pandas>=2,<4", "matplotlib>=3.9,<4", "streamlit>=1.40,<2", "h5py>=3.12,<4", "pytest>=8,<10"]
+[tool.hatch.build.targets.wheel]
+packages = ["slac_assistant"]
+[tool.flwr.app]
+publisher = "hackathon"
+flwr-version-target = "1.39.0"
+fab-include = ["slac_assistant/**", "data/events/**"]
+[tool.flwr.app.components]
+agentapp = "slac_assistant.agent_app:app"
+[tool.flwr.app.config]
+model = "openai/gpt-5.6-sol"

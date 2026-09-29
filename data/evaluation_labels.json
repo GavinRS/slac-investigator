@@ -1,0 +1,18 @@
+{
+  "slac-001": {
+    "is_anom": true,
+    "anom_type": "f"
+  },
+  "slac-002": {
+    "is_anom": true,
+    "anom_type": "s"
+  },
+  "slac-003": {
+    "is_anom": false,
+    "anom_type": null
+  },
+  "slac-004": {
+    "is_anom": false,
+    "anom_type": null
+  }
+}

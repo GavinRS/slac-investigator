@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.env*
+.flower/
+*.fab
+artifacts/runs/
+.streamlit/secrets.toml
+data/raw/*.h5
+
+# Local logs, credentials, and workstation files
+*.log
+*.pem
+*.key
+.DS_Store
+.idea/
+.vscode/
+.coverage
+htmlcov/
+.ruff_cache/
+dist/
+build/
+*.egg-info/

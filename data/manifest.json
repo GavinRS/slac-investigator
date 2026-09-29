@@ -1,0 +1,28 @@
+{
+  "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/",
+  "retrieved": "2026-09-29",
+  "selection": "First two positive and first two negative AMPL labels; demo selection only",
+  "downloaded_hdf5_bytes": 4980736,
+  "events": [
+    {
+      "event_id": "slac-001",
+      "sha256": "125d2940864cd47f05f2258298b23a14f2b21f53ef40bd36fc265c4862dbe836",
+      "hdf5_group": "candidates/1604277203201922048"
+    },
+    {
+      "event_id": "slac-002",
+      "sha256": "d09b34c226259675c82f1c0a815197608edb35174c6a0ebb21e59489e2838d8f",
+      "hdf5_group": "candidates/1604278211445212672"
+    },
+    {
+      "event_id": "slac-003",
+      "sha256": "2169b75c948b21a0eee895a8d773b494d71b60824a242a7bb42e847efcae5f3c",
+      "hdf5_group": "candidates/1604275937439720192"
+    },
+    {
+      "event_id": "slac-004",
+      "sha256": "1a57625f90b677e3d06f51028e18e4c2eb1442d428ec417d25824c5c56075a91",
+      "hdf5_group": "candidates/1604275977433064192"
+    }
+  ]
+}

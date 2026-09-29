@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>LCLS RF Station Anomaly Candidate Dataset</title>
+        <meta name="description" content="Public dataset of RF station anomaly candidates at SLAC's LCLS">
+        <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+        <style type="text/css">
+            footer, header, main {
+                padding-top: 0 ;
+                padding-bottom: 0;
+            }
+            hr {
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <header style="position: sticky; top: 0; background-color: white;">
+            <nav style="margin-bottom: 0">
+                LCLS RF Station Anomaly Candidate Dataset
+                <ul>
+                    <li><a href="#paper">Paper</a></li>
+                    <li><a href="#dataset">Dataset</a></li>
+                    <li><a href="#citations">Citations</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <!-- <h1 id="lcls-rf-station-anomaly-candidate-dataset">LCLS RF Station Anomaly Candidate Dataset</h1> -->
+            <p>A public anomaly detection dataset constructed from RF station faults at SLAC&#39;s LCLS (Linac Coherent Light Source).</p>
+            <section>
+                <header>
+                    <h2 id="paper">Paper</h2>
+                </header>
+                <p>This anomaly detection dataset was first published in <a href="https://www.osti.gov/pages/biblio/1905656-beam-based-rf-station-fault-identification-slac-linac-coherent-light-source">Beam-based rf station fault identification at the Linac Coherent Light Source.</a> Our paper presents a method for detecting failures in RF stations at LCLS, as described in our paper&#39;s abstract:</p>
+                <blockquote style="max-width: var(--width-card-wide); font-size: medium; text-align: inherit; padding: 0">
+                    Accelerators produce too many signals for a small operations team to monitor in real time. In addition, many of these signals are only interpretable by subject matter experts with years of experience. As a result, changes in accelerator performance can require time-intensive consultations with experts to identify the underlying problem. Herein, we focus on a particular anomaly detection task for radio-frequency (rf) stations at the SLAC Linac Coherent Light Source (LCLS). The existing rf station diagnostics are bandwidth limited, resulting in slow, unreliable signals. As a result, anomaly detection is currently a manual process. We propose a beam-based method, identifying changes in the accelerator status using shot-to-shot data from the beam position monitoring system; by comparing the beam-based anomalies to data from rf stations, we identify the source of the change. We find that our proposed method can be fully automated while identifying more events with fewer false positives than the rf station diagnostics alone. Our automated fault identification system has been used to create a new dataset for investigating the interaction between the rf stations and accelerator performance.
+                </blockquote>
+            </section>
+            <hr>
+            <section>
+                <header>
+                    <h2 id="dataset">Dataset</h2>
+                </header>
+                <p>We have compiled a dataset of the RF station diagnostic data and the beam-position monitor (BPM) signals, alongside the hand labels, for a labeled study period. The dataset consists of two HDF5 files (one for AMM and one for AMPL) containing the raw data, two CSV files containing information about the candidates, and two CSV files containing the hand labels. We also include in the HDF5 files random samples of beam operation to serve as negative or background examples.</p>
+                <p>A complete description of the dataset is given <a href="./description.pdf">here</a> and also in the Appendix of the paper. The dataset is also published on the DOE&#39;s <a href="https://www.osti.gov/biblio/1869296">osti.gov site</a>. </p>
+                <p>The files can be accessed as follows:</p>
+                <aside>
+                    <h3>AMM</h3>
+                    <ul>
+                        <li><a href="./labels_AMM.csv">Labels</a></li>
+                        <li><a href="./candidates_AMM.csv">Candidates</a></li>
+                        <li><a href="./klys_anom_dset_AMM.h5">Data</a></li>
+                    </ul>
+                </aside>
+                <aside>
+                    <h3>AMPL</h3>
+                    <ul>
+                        <li><a href="./labels_AMPL.csv">Labels</a></li>
+                        <li><a href="./candidates_AMPL.csv">Candidates</a></li>
+                        <li><a href="./klys_anom_dset_AMPL.h5">Data</a></li>
+                    </ul>
+                </aside>
+            </section>
+            <hr>
+            <section>
+                <header>
+                    <h2 id="citations">Citations</h2>
+                </header>
+                <aside style="width: var(--width-card-medium);">
+                    <h3>Dataset</h3>
+                    <pre><samp>
+@article{osti_1869296,
+    title = {LCLS RF Station Anomaly Candidates, SLAC, Nov 2020 to Dec 2020, Version 1},
+    author = {Ratner, Daniel and Humble, Ryan and Colocho, William and Gibbs, Matt},
+    abstractNote = {The data consists of radio-frequency (RF) station process variables (amplitude and amplitude-mean-out-of-tolerance bit) and beam position monitor (BPM) values for about a month of Linac Coherent Light Source (LCLS) time. The data is all from normal conducting hard X-ray operation. The dataset contains roughly 5000 anomaly “candidates.” For each candidate, we include 3.5 minutes of data from the 82 RF stations and ~20 seconds of data from 4 BPMs. We also include several CSV files with additional information and labels for each candidate.},
+    doi = {10.11578/1869296},
+    url = {https://www.osti.gov/biblio/1869296}, journal = {},
+    number = ,
+    volume = ,
+    place = {United States},
+    year = {2022},
+    month = {5}
+}
+                    </samp></pre>
+                </aside>
+                <aside style="width: var(--width-card-medium);">
+                    <h3>Paper</h3>
+                    <pre><samp>
+@article{osti_1905656,
+    title = {Beam-based rf station fault identification at the SLAC Linac Coherent Light Source},
+    author = {Humble, Ryan and O’Shea, Finn H. and Colocho, William and Gibbs, Matt and Chaffee, Helen and Darve, Eric and Ratner, Daniel},
+    abstractNote = {},
+    doi = {10.1103/PhysRevAccelBeams.25.122804},
+    journal = {Physical Review Accelerators and Beams},
+    number = 12,
+    volume = 25,
+    place = {United States},
+    year = {2022},
+    month = {12}
+} 
+                    </samp></pre>
+                </aside>
+            </section>
+        </main>
+   </body>
+</html>

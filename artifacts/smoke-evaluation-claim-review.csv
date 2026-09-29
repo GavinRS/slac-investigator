@@ -1,0 +1,5 @@
+event_id,mode,finding_id,observation,refs,supported_yes_no_uncertain,reviewer_notes
+slac-001,smoke,F-001,Exploratory checks detect a sustained beam disturbance alongside the RF candidate.,T-37ec9e46fff8;T-f507fbefd015;T-99c3f5f383b3;T-2c31c73f97c7,,
+slac-002,smoke,F-001,Exploratory checks detect a sustained beam disturbance alongside the RF candidate.,T-a6422d484cad;T-248ade7edd3b;T-d06ccad4971d;T-db3071bd8aec,,
+slac-003,smoke,F-001,Exploratory checks do not establish a corroborated RF/beam disturbance.,T-2fff22895fd0;T-c8e1f3c21ae1;T-ef437fff2bd1;T-c6ba9e7c29f1,,
+slac-004,smoke,F-001,Exploratory checks do not establish a corroborated RF/beam disturbance.,T-593cd4302f77;T-ae63163bd754;T-74a33b68e376;T-359893eae550,,
