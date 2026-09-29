@@ -52,7 +52,7 @@ Unsupported: raw-stream anomaly detection validation; unique causal station diag
 
 ## Licensing
 
-No explicit dataset reuse license was located in the inspected SLAC index, description PDF, or DOE catalog HTML. Public download access is verified; redistribution rights are not established. The papers' licenses must not be treated as dataset licenses. No dataset license has been invented, and nothing has been published externally.
+No explicit dataset reuse license was located in the inspected SLAC index, description PDF, or DOE catalog HTML. Public download access is verified; redistribution rights are not established. The papers' licenses must not be treated as dataset licenses. No dataset license has been invented. The four small extracts in `data/events/` are redistributed in this repo and the Flower Hub app for the non-commercial hackathon demo only, with credit and a removal-on-request note (see the README's data disclaimer).
 
 ## Research context
 
