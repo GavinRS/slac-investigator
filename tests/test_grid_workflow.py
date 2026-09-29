@@ -87,6 +87,13 @@ def test_agent_app_dispatches_grid_mode(monkeypatch):
     agent_app.main(a,SimpleNamespace(state={},run_config={'grid-timeout':30}))
     assert got[0][0][1]=='slac-002' and got[0][1]['timeout']==30
 
+def test_agent_app_plain_text_prompt_runs_collaborative_grid(monkeypatch):
+    got=[];monkeypatch.setattr(agent_app,'run_grid',lambda *a,**k:got.append((a,k)) or {'final':{}});monkeypatch.setattr(agent_app,'runtime_client',lambda:'client')
+    q='Was the beam disturbed during SLAC-003?'
+    a=SimpleNamespace(prompt=q,grid=FakeGrid(3),events=SimpleNamespace(emit=lambda e:None))
+    agent_app.main(a,SimpleNamespace(state={},run_config={}))
+    assert got[0][0][1]=='slac-003' and got[0][1]['mode']=='collaborative' and got[0][1]['question']==q and got[0][1]['client']=='client'
+
 # Collaborative mode (#7): fixture model on nodes and orchestrator.
 from slac_assistant import node as node_mod
 

@@ -73,6 +73,17 @@ FLWR_HOME=$PWD/.flower .venv/bin/flwr supernode list grid   # 3 nodes, status on
 
 Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. The SuperLink keeps its state in memory (flwr 1.39 creates no SQLite tables when the repo path contains a space), so Flower runs and follow-up context are lost when it stops; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
 
+## Talk to it in flwr chat
+
+```sh
+flwr chat
+/load <repo path>
+/federation            # pick @<you>/personal
+Was the beam disturbed during slac-001, and do we know why?
+```
+
+Plain-English prompts run the collaborative Grid on the event named in the text (`slac-001` if none). The personal federation has no nodes unless you add your own, so the three instruments run in-process (fallback `none (local fallback)`); the local 3-node grid (`scripts/start_grid.sh`) is where nodes really hold their own data.
+
 ## Demonstration flow
 
 1. Select a measured event and inspect its source, RF and beam plots. The shaded candidate interval comes from the source metadata; no timestamp fitting occurs.

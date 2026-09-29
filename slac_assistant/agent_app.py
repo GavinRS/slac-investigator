@@ -1,5 +1,5 @@
 """Flower 1.39.0 is the actual application executor, not an imported decoration."""
-import json,os
+import json,os,re
 from flwr.agentapp import AgentApp,AgentSession
 from flwr.app import Context,ConfigRecord
 from .workflow import Investigation,DEFAULT_MODEL
@@ -11,7 +11,12 @@ def main(agent:AgentSession,context:Context)->None:
     node=node_task(agent.prompt)
     if node:
         run_node(agent,*node);agent.events.emit({'type':'response.completed'});return
-    request=json.loads(agent.prompt)
+    try:request=json.loads(agent.prompt)
+    except ValueError:request=None
+    if not isinstance(request,dict):
+        # Plain English from `flwr chat`: collaborative Grid run on the event named in the text.
+        text=str(agent.prompt);m=re.search(r'slac-00[1-4]',text,re.I)
+        request=dict(event_id=m.group(0).lower() if m else 'slac-001',mode='collaborative',question=text)
     mode=request.get('mode','collaborative')
     if mode not in ('collaborative','baseline','smoke','grid'):raise ValueError('Unknown mode')
     def emit(payload):
