@@ -14,7 +14,7 @@ Architecture, bottom to top: **machines (instrument nodes) → tools (local read
 | Nodes | 3: `rf` (klystron `health` columns), `ltu` (`BPMS:LTUH:*`), `dump` (`BPMS:DMPH:*`). |
 | Node role | **C with A fallback.** A node first looks for a local instrument slice (C). If none, it uses the role the orchestrator assigns and loads that slice from the bundled data (A). |
 | Node replies | Assessment plus summary numbers only. **Never raw samples.** Matches Flower's federated-analytics pattern. |
-| Model | Groq `openai/gpt-oss-20b` by default. Provider is swappable by env vars only (see Providers). |
+| Model | Nebius Token Factory (event-provided, `MiniMax-M3`) by default; Groq, Ollama and Flower's gateway as swaps. Provider is swappable by env vars only (see Providers). |
 | Human surfaces | `flwr chat` (always works), a small HTTP API, and Streamlit and Lovable as thin clients of that API. |
 | Hub | The AgentApp (with bundled data) is what gets published. UIs never go to the Hub. |
 | Git | Old `main` saved as `backup/streamlit-local`. This work becomes `main`. |
@@ -27,7 +27,9 @@ Architecture, bottom to top: **machines (instrument nodes) → tools (local read
 - Grid tools can be called from Python, not only by the model: `agent.grid.call({"type":"function_call","name":...,"arguments":{...},"call_id":...})`.
 - `pull_messages` timeout is 0-300 s.
 - The filesystem connector reads folders allowed by `FLWR_FILESYSTEM_ALLOWED_DIRS`, max 1 MB per file. In `flwr chat` it can only be attached in the personal federation.
-- Probe on 2026-09-29: `@iamsorenl/workspace` on SuperGrid has 0 nodes. Hackathon-federation access and files-on-nodes are **pending an answer from Flower**.
+- Probe on 2026-09-29: `@iamsorenl/workspace` on SuperGrid has 0 nodes. Access to Flower Agent is requested at flower.ai → personal federation → Request access.
+- Nebius Token Factory's event endpoint supports the Responses API with tool calling (verified 2026-09-29 with MiniMax-M3). No translator needed.
+- We can run **our own SuperNodes on Nebius Serverless** (console.nebius.com, guide "Spinning up a Flower SuperNode on a Nebius Serverless AI endpoint" in the Flower Discuss post). That gives real remote nodes holding our instrument slices (mode C on real infrastructure).
 
 ## Components
 
@@ -80,12 +82,12 @@ Python-driven for reliability; the model is used for judgment, not plumbing.
 
 `agent_app.py` dispatches: if the prompt is a node task (has `src_node_id`), run the node path and reply with `push_reply_message`; otherwise run the orchestrator. The old single-process `Investigation` stays as the `baseline` mode for comparison.
 
-### 5. Providers (`.env.example`, `litellm.yaml`, `scripts/start-litellm.sh`, `scripts/check_model.py`)
+### 5. Providers (`.env.example`, `scripts/check_model.py`)
 
 | Provider | `FLWR_MODEL_API_ENDPOINT` | `FLWR_MODEL_API_KEY` | model |
 |---|---|---|---|
-| Groq (default) | `https://api.groq.com/openai/v1/responses` | Groq key | `openai/gpt-oss-20b` |
-| Nebius via LiteLLM | `http://localhost:4000/v1/responses` | LiteLLM master key | `nebius/<model>` |
+| Nebius Token Factory (default, event keys) | `https://api.tokenfactory.tf-ca1.nebius.com/v1/responses` | event key (shared privately, never commit) | `dedicated/flowerai/MiniMax-M3-OOLI9o` or `dedicated/flowerai/Kimi-K2.7-Code-1OUHWL` |
+| Groq | `https://api.groq.com/openai/v1/responses` | Groq key | `openai/gpt-oss-20b` |
 | Ollama | `http://localhost:11434/v1/responses` | blank | `gpt-oss:20b` |
 | Flower gateway | blank | Flower key | `openai/gpt-5.6-sol` |
 
@@ -117,8 +119,16 @@ Starts one local SuperLink plus 3 SuperNodes, each with its own `nodes/<instrume
 
 ## Out of scope today
 
-Live control, new data fetching, a published detector benchmark, Nebius credits, Lovable app code.
+Live control, new data fetching, a published detector benchmark, Lovable app code.
 
-## Open (waiting on Flower)
+### 9. Remote nodes on Nebius (stretch)
 
-Hackathon-federation access for `iamsorenl`; whether SuperGrid nodes can hold our files; Hub bundle size limits.
+Run the 3 instrument SuperNodes on Nebius Serverless following Flower's guide, each with its own `nodes/<instrument>/` folder, connected to our federation. Same code as the local runtime (§6).
+
+## Work breakdown
+
+GitHub issues #1-#13 implement this spec; #12 tracks questions for Flower.
+
+## Open
+
+Flower Agent access approval; whether Nebius-hosted SuperNodes can join the hackathon federation; Hub bundle size limits; team registration (Typeform).
