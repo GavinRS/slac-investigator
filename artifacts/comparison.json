@@ -1,0 +1,3549 @@
+{
+  "selection": "Four label-selected demonstrations; not representative or held-out; no superiority claim is supported.",
+  "budget": "Same model, 12 total model requests, 4000 output tokens per baseline/orchestrator request (1200 per node model call), 300000 cumulative input characters, 24 tool calls per run. Actual usage reported; no extra baseline deprivation.",
+  "rows": [
+    {
+      "event_id": "slac-001",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": true,
+      "beam_disturbance": {
+        "status": "corroborated",
+        "rationale": "Three charge-valid BPM stations (LTUH:450:TMIT z=78.69, DMPH:502:TMIT z=43.35, DMPH:693:TMIT z=5.11) register sustained TMIT drops with 301 consecutive samples at a common onset of 1604277200697686480, accompanied by ~300-301 low-charge flags and concurrent large position-channel deviations (LTUH:250:X z=62.49, LTUH:450:X z=59.81, DMPH:502:Y z=20.21, DMPH:693:Y z=11.50). Data quality is adequate across the BPMs. These co-located, sustained, charge-valid signals corroborate a sustained beam disturbance independent of any single RF station.",
+        "tool_result_refs": [
+          "T-7780401fa8db",
+          "T-99d32a7e9a89",
+          "T-20306a3bb748",
+          "T-09c24a118b64",
+          "T-c219b18edba5",
+          "T-487ff2e30b45"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "The candidate RF station KLYS:LI29:11 reports a 99.96% peak deviation but the RF evidence is too sparse to confirm a real fault: 97% no-update fraction, only 20 finite updates, no RF phase corroboration, and only 1 of 82 neighbors independently flagged as suspicious. Per policy, coincidence, an RF excursion, or a positive beam heuristic alone cannot establish a unique cause. The 8.26 ms offset between the LTUH:250:X position onset and the LTUH:450/DMPH charge-loss onset is not linked to this RF station by calibrated timing or phase data, so available checks do not establish KLYS:LI29:11 as the unique cause.",
+        "tool_result_refs": [
+          "T-1fe48759d321",
+          "T-b5fcbdd329e4",
+          "T-58a9a357f355"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 1,
+      "tool_calls": 9,
+      "latency_s": 19.387,
+      "input_tokens": 4743,
+      "output_tokens": 3689,
+      "cost_usd": null,
+      "wall_latency_s": 22.206
+    },
+    {
+      "event_id": "slac-001",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": true,
+      "beam_disturbance": {
+        "status": "corroborated",
+        "rationale": "Charge-valid TMIT channels at BPMS:LTUH:450, BPMS:DMPH:502, and BPMS:DMPH:693 each show sustained low-charge episodes (~300\u2013301 consecutive samples, peak_robust_z 78.69, 43.35, 5.11 respectively) beginning ~1604277200697686480 ns. These TMIT excursions are not low-charge sentinels and meet the sustained-charge-loss criterion, providing corroborating beam evidence of a sustained beam disturbance coincident with the candidate window.",
+        "tool_result_refs": [
+          "T-f507fbefd015",
+          "T-2c31c73f97c7",
+          "T-095069d88481"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "Although KLYS:LI29:11:AMPL shows a near-total excursion (99.96% deviation) at the recorded time, unique causation cannot be established: (1) BPMS:LTUH:250:X \u2014 upstream of LI29:11 \u2014 shows a sustained position excursion (peak_robust_z 62.49, 42 samples) beginning ~1604277200689428941 ns, indicating beam disturbance existed upstream of LI29:11; (2) RF diagnostics are asynchronous with up to ~5 s delay and only ~3% of timestamps carry updates, so the recorded RF drop time does not pin the actual fault onset; (3) no RF phase data is available to assess energy/phase impact; (4) neighboring station RF columns cannot be confirmed as continuously active. Coincidence and a positive RF excursion alone do not establish a unique cause.",
+        "tool_result_refs": [
+          "T-37ec9e46fff8",
+          "T-f507fbefd015",
+          "T-095069d88481",
+          "T-adc89116ae80"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 2,
+      "tool_calls": 6,
+      "latency_s": 11.889,
+      "input_tokens": 11916,
+      "output_tokens": 3030,
+      "cost_usd": null,
+      "wall_latency_s": 14.132
+    },
+    {
+      "event_id": "slac-002",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": true,
+      "beam_disturbance": {
+        "status": "corroborated",
+        "rationale": "Charge-valid beam evidence supports a sustained disturbance: all four BPM TMIT channels show valid charge (medians 614M-1.06B, no low-charge samples, no invalid positions), and four position channels (DMPH:502:Y, DMPH:693:Y, LTUH:250:X, LTUH:450:X) exhibit sustained excursions of 11-17 consecutive samples with peak robust z-scores 16.6-38.9, all onsets at 1604278210729114201. The position-channel sustained heuristic is met on charge-valid data, independent of the RF excursion.",
+        "tool_result_refs": [
+          "T-248ade7edd3b",
+          "T-dde7d73f7a73"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "Only KLYS:LI28:11:AMPL was flagged suspicious among evaluated RF columns, but 28 of 82 RF columns have unknown baselines and cannot be ruled out as concurrent RF causes. The beam disturbance onset precedes the recorded RF timestamp by ~0.71 s, and the RF reporting delay is approximate (0-5 s), so neither temporal ordering nor sector coupling (LI28 vs. DMPH/LTUH BPMs) is established. Coincidence of the LI28:11 amplitude drop with the beam disturbance and absence of other evaluated suspicious stations is insufficient to establish a unique cause.",
+        "tool_result_refs": [
+          "T-a6422d484cad",
+          "T-287eeacb1910",
+          "T-db3071bd8aec"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 2,
+      "tool_calls": 6,
+      "latency_s": 12.908,
+      "input_tokens": 11781,
+      "output_tokens": 3142,
+      "cost_usd": null,
+      "wall_latency_s": 15.643
+    },
+    {
+      "event_id": "slac-002",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": true,
+      "beam_disturbance": {
+        "status": "corroborated",
+        "rationale": "Charge-valid beam evidence corroborates a sustained beam disturbance. Two independent BPM clusters (LTU upstream X-position: BPMS:LTUH:250:X, BPMS:LTUH:450:X; Dump downstream Y-position: BPMS:DMPH:502:Y, BPMS:DMPH:693:Y) exhibit extreme, sustained simultaneous deviations with identical onset timestamp 1604278210729114201 (z\u224816.6\u201338.9, 11\u201317 consecutive samples at 120 Hz). Corresponding TMIT channels at all four BPMs show only modest non-sustained z-scores with zero low-charge samples, confirming the position data is charge-valid rather than sentinel-coded. The two nodes independently arrive at 'suspicious' assessments in high-quality data (100% 120 Hz, 0 nonfinite).",
+        "tool_result_refs": [
+          "T-1f2893b005d8",
+          "T-be1f8518af9d",
+          "T-288d4d566e6d",
+          "T-f5c978e80e19",
+          "T-1b456661d22b",
+          "T-24d46228cc39"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "The candidate RF station KLYS:LI28:11:AMPL cannot be established as the unique cause. The RF node itself returns insufficient_evidence: only 2 updates landed in the candidate window (96.9% no-update fraction), 65,800 of 813 reported RF values are nonfinite, and only 1 of 82 neighboring stations is flagged. A positive RF heuristic (\u224838.8% peak deviation) together with coincident timing is insufficient to establish unique causation; an RF excursion alone cannot make unique_cause established, and degraded data quality prevents independent verification of the excursion's validity or temporal precedence over the beam onset.",
+        "tool_result_refs": [
+          "T-2ac6ab5ca6d8",
+          "T-a56a33650565",
+          "T-817ba59ec659"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 1,
+      "tool_calls": 9,
+      "latency_s": 20.345,
+      "input_tokens": 4758,
+      "output_tokens": 3649,
+      "cost_usd": null,
+      "wall_latency_s": 23.209
+    },
+    {
+      "event_id": "slac-003",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": false,
+      "beam_disturbance": {
+        "status": "not_corroborated",
+        "rationale": "Across all charge-valid BPM channels at DMPH (502 TMIT/Y, 693 TMIT/Y) and LTUH (250 TMIT/X, 450 TMIT/X), no sustained anomaly is present (longest_consecutive_samples = 0 on every channel) and no onset can be identified. The isolated robust-z excursions (max ~4.43 on BPMS:DMPH:502:Y, ~4.04 on BPMS:LTUH:450:TMIT) are non-sustained single-sample spikes and do not establish a sustained beam disturbance. An RF amplitude excursion alone, especially one whose magnitude and reliability are themselves unclear, cannot corroborate a beam disturbance.",
+        "tool_result_refs": [
+          "T-5bfa8582e921",
+          "T-5286fd734b40",
+          "T-a2467200210c",
+          "T-d0cac39a24e4",
+          "T-45b9f3e6990e",
+          "T-7206337c2d43"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "The candidate RF station (KLYS:LI21:81:AMPL) cannot be established as the unique cause of any beam disturbance. The RF signal is too sparse and data-quality-flagged (98.7% no-update, 66,449 nonfinite over 821 samples, 28/82 neighbor baselines unknown) to characterize an excursion reliably; no RF phase data is available for temporal alignment; and the BPM-side evidence shows no sustained, onset-tagged disturbance to attribute. Coincidence of the candidate window, a modest (~2.9%) RF amplitude deviation, and a few isolated BPM z-spikes does not establish a unique causal link. This does not prove absence of causation, only that the available checks are insufficient.",
+        "tool_result_refs": [
+          "T-05791ca5497d",
+          "T-2410c964d357",
+          "T-adbdf7c22cf1",
+          "T-5bfa8582e921",
+          "T-d0cac39a24e4"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 1,
+      "tool_calls": 9,
+      "latency_s": 14.78,
+      "input_tokens": 4700,
+      "output_tokens": 2299,
+      "cost_usd": null,
+      "wall_latency_s": 17.164
+    },
+    {
+      "event_id": "slac-003",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": false,
+      "beam_disturbance": {
+        "status": "not_corroborated",
+        "rationale": "Charge-valid BPM evidence on all four TMIT channels and all four position channels shows no sustained disturbance (longest_consecutive_samples=0 across the board), no threshold-crossing peaks (all robust-z well below the 6\u03c3 exploratory heuristic; max 4.43 on BPMS:DMPH:502:Y), and disturbance_detected=false explicitly. The heuristic is limited evidence, but here it is uniformly negative across charge-valid channels.",
+        "tool_result_refs": [
+          "T-c8e1f3c21ae1",
+          "T-837e8c416bd4"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "Even granting the modest ~2.91% RF amplitude deviation on KLYS:LI21:81:AMPL, no beam disturbance was corroborated to attribute to it. An RF amplitude excursion, coincidence, or a positive beam heuristic alone cannot establish a unique cause, and the available checks (timing alignment, neighboring-station corroboration, charge validity) do not establish a unique cause. This does not prove absence of causation.",
+        "tool_result_refs": [
+          "T-2fff22895fd0",
+          "T-c6ba9e7c29f1",
+          "T-f00686ec37b0"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 2,
+      "tool_calls": 6,
+      "latency_s": 11.135,
+      "input_tokens": 11628,
+      "output_tokens": 2526,
+      "cost_usd": null,
+      "wall_latency_s": 14.125
+    },
+    {
+      "event_id": "slac-004",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": false,
+      "beam_disturbance": {
+        "status": "not_corroborated",
+        "rationale": "Across all four TMIT and four position BPM channels with charge-valid samples, peak robust z-scores are 2.50-4.29 (below the 6-sigma threshold), no TMIT drops below 1e8, and longest_consecutive_samples=0 for every channel (sustained criterion unmet). The beam heuristic reports disturbance_detected=false with quality_adequate=true and 636 in-window samples. The small RF amplitude dip alone does not constitute beam evidence, so a sustained beam disturbance is not corroborated by charge-valid beam data.",
+        "tool_result_refs": [
+          "T-ae63163bd754",
+          "T-7cbed08e052d",
+          "T-593cd4302f77"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "Because no sustained beam disturbance is corroborated, there is no disturbance to attribute. Independently, uniqueness cannot be established: 28 of 82 RF columns have unknown baselines (T-c536337e82e5), so other stations cannot be excluded as co-deviating. The only candidate update is a ~1.4% dip bracketed by baseline-matching values (T-593cd4302f77), and timing is asynchronous with an approximate 0-5 s reporting delay and no applied shift (T-359893eae550). Coincidence, an RF excursion, or a positive beam heuristic are individually insufficient for unique-cause establishment.",
+        "tool_result_refs": [
+          "T-c536337e82e5",
+          "T-593cd4302f77",
+          "T-359893eae550",
+          "T-ae63163bd754"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 2,
+      "tool_calls": 6,
+      "latency_s": 11.15,
+      "input_tokens": 11561,
+      "output_tokens": 2410,
+      "cost_usd": null,
+      "wall_latency_s": 14.134
+    },
+    {
+      "event_id": "slac-004",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "source_anomaly_label": false,
+      "beam_disturbance": {
+        "status": "not_corroborated",
+        "rationale": "Charge-valid BPM evidence (LTUH and DMPH) shows transient peak robust-z excursions (~3.7-4.3 and ~2.5-4.2) but no sustained anomalies, no consecutive anomalous samples, no onsets returned, and the instruments' own disturbance detectors did not trigger. No charge-valid beam evidence corroborates a sustained beam disturbance, and the sparse, ~1.42% RF candidate excursion cannot establish beam disturbance on its own.",
+        "tool_result_refs": [
+          "T-44bd2004af71",
+          "T-5093574440ae",
+          "T-1d9dd003ad1a",
+          "T-601748f39dc6",
+          "T-6e79532b76c0",
+          "T-db9ff5985d21"
+        ]
+      },
+      "unique_cause": {
+        "status": "not_established",
+        "rationale": "The candidate RF station KLYS:LI21:81:AMPL has too few finite updates to establish a real amplitude excursion (98.3% no-update, 1.42% peak deviation), and beam evidence does not corroborate a sustained disturbance. Without an established RF signature and without a corroborated beam disturbance, coincidence and a positive heuristic cannot establish KLYS:LI21:81 as the unique cause; this does not prove absence of causation.",
+        "tool_result_refs": [
+          "T-8e4b19c42743",
+          "T-46e523e24662",
+          "T-d424ff1d52f5",
+          "T-44bd2004af71",
+          "T-601748f39dc6"
+        ]
+      },
+      "benchmark_eligible": false,
+      "prediction": null,
+      "agreement": null,
+      "scoring_note": "No dimension-specific adjudicated labels; legacy mixed-scope assessments are not scores.",
+      "invalid_references": 0,
+      "unsupported_claims": null,
+      "unsupported_claims_status": "Pending human review; citation existence does not prove support",
+      "model_calls": 1,
+      "tool_calls": 9,
+      "latency_s": 16.1,
+      "input_tokens": 4711,
+      "output_tokens": 2286,
+      "cost_usd": null,
+      "wall_latency_s": 18.673
+    }
+  ],
+  "reports": [
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-001",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "lead",
+        "observation": "Three BPM stations show a correlated, sustained beam disturbance. LTUH:250:X exhibits a large position excursion (peak_robust_z 62.49, 42 consecutive samples) beginning at 1604277200689428941. Approximately 8.26 ms later, at 1604277200697686480, three co-located charge monitors (LTUH:450:TMIT z=78.69, DMPH:502:TMIT z=43.35, DMPH:693:TMIT z=5.11) all register sustained TMIT drops with 301 consecutive samples and ~300 low-charge flags, while their position channels (LTUH:450:X z=59.81, DMPH:502:Y z=20.21, DMPH:693:Y z=11.50) show large deviations with ~300-301 invalid position samples at the same onset. The candidate RF station KLYS:LI29:11 reports a 99.96% amplitude peak deviation, but with 97% no-update fraction, only 20 finite updates, and only 1 of 82 neighbors independently flagged. Data quality at the BPMs is adequate (full 120 Hz coverage, no nonfinite values).",
+        "source_channels": [
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:450:TMIT",
+          "BPMS:LTUH:450:X",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:693:TMIT",
+          "BPMS:DMPH:693:Y",
+          "KLYS:LI29:11:AMPL"
+        ],
+        "time_interval_ns": [
+          1604277200689428941,
+          1604277200697686480
+        ],
+        "tool_result_refs": [
+          "T-09c24a118b64",
+          "T-c219b18edba5",
+          "T-487ff2e30b45",
+          "T-1fe48759d321",
+          "T-b5fcbdd329e4",
+          "T-58a9a357f355",
+          "T-7780401fa8db",
+          "T-99d32a7e9a89",
+          "T-20306a3bb748"
+        ],
+        "supporting_evidence": [
+          "Three independent BPM stations (LTUH:450, DMPH:502, DMPH:693) show co-located sustained TMIT drops (301 consecutive samples each) at the same onset_ns 1604277200697686480, with ~300 low-charge samples indicating charge-valid beam loss (T-7780401fa8db, T-99d32a7e9a89, T-20306a3bb748; T-09c24a118b64, T-c219b18edba5, T-487ff2e30b45).",
+          "Position channels at LTUH:250:X (z=62.49, 42 sustained samples, onset 1604277200689428941) precede the charge-loss onsets by 8.26 ms, suggesting a propagating beam disturbance (T-09c24a118b64).",
+          "Corresponding position channels at LTUH:450:X, DMPH:502:Y, DMPH:693:Y all show large robust-z deviations with ~300 invalid position samples coincident with the TMIT drop, consistent with real beam disturbance rather than instrument malfunction (T-7780401fa8db, T-09c24a118b64).",
+          "BPM data quality is adequate: 2075 samples, 0 nonfinite values, 100% 120 Hz coverage, max gap 0.0084 s (T-487ff2e30b45, T-20306a3bb748)."
+        ],
+        "conflicting_evidence": [
+          "The RF amplitude channel KLYS:LI29:11 is too sparse to confirm a real fault: only 20 finite updates out of 725 samples (no_update_fraction 0.972), with only 1 of 82 neighbor stations independently flagged as suspicious (T-1fe48759d321, T-b5fcbdd329e4, T-58a9a357f355).",
+          "The 8.26 ms delay between the LTUH:250:X position onset and the LTUH:450/DMPH TMIT-loss onset is not consistent with a single-station RF cause emanating from KLYS:LI29:11 without phase/timing evidence (T-1fe48759d321)."
+        ],
+        "data_limitations": [
+          "No RF phase data available in this extract to corroborate amplitude excursion.",
+          "Sparse RF updates; leading missing values remain unknown (sparse NaNs mean no new update, not zero).",
+          "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded (100), which is treated as invalid here.",
+          "Neighboring RF station columns may be missing or inactive; 28 of 82 neighbors have unknown baselines.",
+          "RF diagnostics are asynchronous with documented approximate reporting delay up to 5 s; no calibrated per-event delay is established.",
+          "Candidate association is not proof of causation."
+        ],
+        "requested_next_check": "Acquire denser RF phase/amplitude data for KLYS:LI29:11 and adjacent stations within \u00b1100 ms of 1604277200697686480, and investigate the upstream cause of the LTUH:250:X position excursion that precedes the charge-loss event by ~8 ms.",
+        "beam_disturbance": {
+          "status": "corroborated",
+          "rationale": "Three charge-valid BPM stations (LTUH:450:TMIT z=78.69, DMPH:502:TMIT z=43.35, DMPH:693:TMIT z=5.11) register sustained TMIT drops with 301 consecutive samples at a common onset of 1604277200697686480, accompanied by ~300-301 low-charge flags and concurrent large position-channel deviations (LTUH:250:X z=62.49, LTUH:450:X z=59.81, DMPH:502:Y z=20.21, DMPH:693:Y z=11.50). Data quality is adequate across the BPMs. These co-located, sustained, charge-valid signals corroborate a sustained beam disturbance independent of any single RF station.",
+          "tool_result_refs": [
+            "T-7780401fa8db",
+            "T-99d32a7e9a89",
+            "T-20306a3bb748",
+            "T-09c24a118b64",
+            "T-c219b18edba5",
+            "T-487ff2e30b45"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "The candidate RF station KLYS:LI29:11 reports a 99.96% peak deviation but the RF evidence is too sparse to confirm a real fault: 97% no-update fraction, only 20 finite updates, no RF phase corroboration, and only 1 of 82 neighbors independently flagged as suspicious. Per policy, coincidence, an RF excursion, or a positive beam heuristic alone cannot establish a unique cause. The 8.26 ms offset between the LTUH:250:X position onset and the LTUH:450/DMPH charge-loss onset is not linked to this RF station by calibrated timing or phase data, so available checks do not establish KLYS:LI29:11 as the unique cause.",
+          "tool_result_refs": [
+            "T-1fe48759d321",
+            "T-b5fcbdd329e4",
+            "T-58a9a357f355"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "lead",
+          "observation": "Three BPM stations show a correlated, sustained beam disturbance. LTUH:250:X exhibits a large position excursion (peak_robust_z 62.49, 42 consecutive samples) beginning at 1604277200689428941. Approximately 8.26 ms later, at 1604277200697686480, three co-located charge monitors (LTUH:450:TMIT z=78.69, DMPH:502:TMIT z=43.35, DMPH:693:TMIT z=5.11) all register sustained TMIT drops with 301 consecutive samples and ~300 low-charge flags, while their position channels (LTUH:450:X z=59.81, DMPH:502:Y z=20.21, DMPH:693:Y z=11.50) show large deviations with ~300-301 invalid position samples at the same onset. The candidate RF station KLYS:LI29:11 reports a 99.96% amplitude peak deviation, but with 97% no-update fraction, only 20 finite updates, and only 1 of 82 neighbors independently flagged. Data quality at the BPMs is adequate (full 120 Hz coverage, no nonfinite values).",
+          "source_channels": [
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:450:TMIT",
+            "BPMS:LTUH:450:X",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:693:TMIT",
+            "BPMS:DMPH:693:Y",
+            "KLYS:LI29:11:AMPL"
+          ],
+          "time_interval_ns": [
+            1604277200689428941,
+            1604277200697686480
+          ],
+          "tool_result_refs": [
+            "T-09c24a118b64",
+            "T-c219b18edba5",
+            "T-487ff2e30b45",
+            "T-1fe48759d321",
+            "T-b5fcbdd329e4",
+            "T-58a9a357f355",
+            "T-7780401fa8db",
+            "T-99d32a7e9a89",
+            "T-20306a3bb748"
+          ],
+          "supporting_evidence": [
+            "Three independent BPM stations (LTUH:450, DMPH:502, DMPH:693) show co-located sustained TMIT drops (301 consecutive samples each) at the same onset_ns 1604277200697686480, with ~300 low-charge samples indicating charge-valid beam loss (T-7780401fa8db, T-99d32a7e9a89, T-20306a3bb748; T-09c24a118b64, T-c219b18edba5, T-487ff2e30b45).",
+            "Position channels at LTUH:250:X (z=62.49, 42 sustained samples, onset 1604277200689428941) precede the charge-loss onsets by 8.26 ms, suggesting a propagating beam disturbance (T-09c24a118b64).",
+            "Corresponding position channels at LTUH:450:X, DMPH:502:Y, DMPH:693:Y all show large robust-z deviations with ~300 invalid position samples coincident with the TMIT drop, consistent with real beam disturbance rather than instrument malfunction (T-7780401fa8db, T-09c24a118b64).",
+            "BPM data quality is adequate: 2075 samples, 0 nonfinite values, 100% 120 Hz coverage, max gap 0.0084 s (T-487ff2e30b45, T-20306a3bb748)."
+          ],
+          "conflicting_evidence": [
+            "The RF amplitude channel KLYS:LI29:11 is too sparse to confirm a real fault: only 20 finite updates out of 725 samples (no_update_fraction 0.972), with only 1 of 82 neighbor stations independently flagged as suspicious (T-1fe48759d321, T-b5fcbdd329e4, T-58a9a357f355).",
+            "The 8.26 ms delay between the LTUH:250:X position onset and the LTUH:450/DMPH TMIT-loss onset is not consistent with a single-station RF cause emanating from KLYS:LI29:11 without phase/timing evidence (T-1fe48759d321)."
+          ],
+          "data_limitations": [
+            "No RF phase data available in this extract to corroborate amplitude excursion.",
+            "Sparse RF updates; leading missing values remain unknown (sparse NaNs mean no new update, not zero).",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded (100), which is treated as invalid here.",
+            "Neighboring RF station columns may be missing or inactive; 28 of 82 neighbors have unknown baselines.",
+            "RF diagnostics are asynchronous with documented approximate reporting delay up to 5 s; no calibrated per-event delay is established.",
+            "Candidate association is not proof of causation."
+          ],
+          "requested_next_check": "Acquire denser RF phase/amplitude data for KLYS:LI29:11 and adjacent stations within \u00b1100 ms of 1604277200697686480, and investigate the upstream cause of the LTUH:250:X position excursion that precedes the charge-loss event by ~8 ms.",
+          "beam_disturbance": {
+            "status": "corroborated",
+            "rationale": "Three charge-valid BPM stations (LTUH:450:TMIT z=78.69, DMPH:502:TMIT z=43.35, DMPH:693:TMIT z=5.11) register sustained TMIT drops with 301 consecutive samples at a common onset of 1604277200697686480, accompanied by ~300-301 low-charge flags and concurrent large position-channel deviations (LTUH:250:X z=62.49, LTUH:450:X z=59.81, DMPH:502:Y z=20.21, DMPH:693:Y z=11.50). Data quality is adequate across the BPMs. These co-located, sustained, charge-valid signals corroborate a sustained beam disturbance independent of any single RF station.",
+            "tool_result_refs": [
+              "T-7780401fa8db",
+              "T-99d32a7e9a89",
+              "T-20306a3bb748",
+              "T-09c24a118b64",
+              "T-c219b18edba5",
+              "T-487ff2e30b45"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "The candidate RF station KLYS:LI29:11 reports a 99.96% peak deviation but the RF evidence is too sparse to confirm a real fault: 97% no-update fraction, only 20 finite updates, no RF phase corroboration, and only 1 of 82 neighbors independently flagged as suspicious. Per policy, coincidence, an RF excursion, or a positive beam heuristic alone cannot establish a unique cause. The 8.26 ms offset between the LTUH:250:X position onset and the LTUH:450/DMPH charge-loss onset is not linked to this RF station by calibrated timing or phase data, so available checks do not establish KLYS:LI29:11 as the unique cause.",
+            "tool_result_refs": [
+              "T-1fe48759d321",
+              "T-b5fcbdd329e4",
+              "T-58a9a357f355"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "ref": "T-09c24a118b64",
+          "analysis": "beam",
+          "event_id": "slac-001",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-c219b18edba5",
+          "analysis": "charge_validity",
+          "event_id": "slac-001",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-487ff2e30b45",
+          "analysis": "quality",
+          "event_id": "slac-001",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-1fe48759d321",
+          "analysis": "equipment",
+          "event_id": "slac-001",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-b5fcbdd329e4",
+          "analysis": "neighbors",
+          "event_id": "slac-001",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-58a9a357f355",
+          "analysis": "quality",
+          "event_id": "slac-001",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-7780401fa8db",
+          "analysis": "beam",
+          "event_id": "slac-001",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-99d32a7e9a89",
+          "analysis": "charge_validity",
+          "event_id": "slac-001",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-20306a3bb748",
+          "analysis": "quality",
+          "event_id": "slac-001",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        }
+      ],
+      "metrics": {
+        "model_calls": 1,
+        "tool_calls": 9,
+        "latency_s": 19.387,
+        "input_tokens": 4743,
+        "output_tokens": 3689,
+        "input_characters": 15401,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "grid": {
+        "nodes_seen": 3,
+        "assignment": {
+          "rf": "14202828285105434104",
+          "ltu": "6599806078966515447",
+          "dump": "5520163713853007715"
+        },
+        "fallback": null
+      },
+      "data_shared": {
+        "raw_bytes_held": 647400,
+        "payload_bytes": 5633,
+        "percent_shared": 0.87
+      },
+      "node_observation_source": {
+        "ltu": "model",
+        "rf": "model",
+        "dump": "model"
+      },
+      "flower_run_id": "429994078745196163",
+      "flower_series_id": "15950860417011419938",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 429994078745196163\n  value {\n    run_id: 429994078745196163\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:41:19.805594+00:00\"\n    starting_at: \"2026-09-29T23:41:20.240730+00:00\"\n    running_at: \"2026-09-29T23:41:20.741684+00:00\"\n    finished_at: \"2026-09-29T23:41:41.619039+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    bytes_sent: 3378\n    bytes_recv: 8130\n    clientapp_runtime: 14.829914093017578\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 2622959185763128679\n    series_id: 15950860417011419938\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:41:41.996517+00:00\"\n",
+      "wall_latency_s": 22.206
+    },
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-001",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "single",
+        "observation": "KLYS:LI29:11 amplitude dropped from baseline ~69.12 to ~0.024 (99.96% deviation) at recorded time 1604277203201922048 ns, recovering ~5 s later. Multiple downstream BPMs (BPMS:DMPH:502, BPMS:DMPH:693, BPMS:LTUH:450) show sustained low-charge episodes (300\u2013301 samples) beginning ~1604277200697686480 ns, with charge-valid TMIT excursions (peak_robust_z up to 78.69). However, BPMS:LTUH:250:X (upstream of LI29 in the linac) shows a sustained position excursion (peak_robust_z 62.49, 42 samples) without an associated low-charge TMIT excursion, indicating beam disturbance was present upstream of LI29:11. RF reporting is asynchronous with up to ~5 s delay and no RF phase data is available.",
+        "source_channels": [
+          "KLYS:LI29:11:AMPL",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:693:TMIT",
+          "BPMS:DMPH:693:Y",
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:450:TMIT",
+          "BPMS:LTUH:450:X"
+        ],
+        "time_interval_ns": [
+          1604277185909886726,
+          1604277208501922048
+        ],
+        "tool_result_refs": [
+          "T-99c3f5f383b3",
+          "T-37ec9e46fff8",
+          "T-f507fbefd015",
+          "T-2c31c73f97c7",
+          "T-095069d88481",
+          "T-adc89116ae80"
+        ],
+        "supporting_evidence": [
+          "KLYS:LI29:11:AMPL dropped to 0.0244140625 (99.96% deviation from baseline 69.12) at 1604277203201922048 ns (T-37ec9e46fff8)",
+          "BPMS:LTUH:450:TMIT sustained low-charge, peak_robust_z 78.69, first sustained at 1604277200697686480 (T-f507fbefd015, T-2c31c73f97c7)",
+          "BPMS:DMPH:502:TMIT sustained low-charge, peak_robust_z 43.35, first sustained at 1604277200697686480 (T-f507fbefd015, T-2c31c73f97c7)",
+          "BPMS:DMPH:693:TMIT sustained low-charge, peak_robust_z 5.11, first sustained at 1604277200697686480 (T-f507fbefd015, T-2c31c73f97c7)",
+          "Charge-valid TMIT channels corroborate beam disturbance with sustained low-charge episodes (T-2c31c73f97c7)"
+        ],
+        "conflicting_evidence": [
+          "BPMS:LTUH:250:X (upstream of LI29) shows sustained position excursion (peak_robust_z 62.49) at ~1604277200689428941 ns without an associated low-charge TMIT excursion, indicating the beam was already disturbed before reaching LI29:11 (T-f507fbefd015)",
+          "BPMS:LTUH:250:TMIT shows no low-charge samples and is not sustained (peak_robust_z 5.37), so the upstream disturbance is a position excursion only, not a charge-loss event (T-f507fbefd015, T-2c31c73f97c7)"
+        ],
+        "data_limitations": [
+          "No RF phase data in this extract",
+          "Sparse RF updates (no_update_fraction 0.972); leading missing RF values remain unknown",
+          "RF diagnostics are asynchronous with documented approximate reporting delay up to 5 s; no calibrated per-event delay",
+          "BPM position channels are preprocessed/scaled; low-charge positions may be sentinel 100",
+          "Neighboring station columns may be missing or inactive; column presence does not establish continuous operation",
+          "Candidate association is not proof of causation",
+          "No protein measurements"
+        ],
+        "requested_next_check": "Cross-check RF amplitudes at adjacent stations KLYS:LI28:81, KLYS:LI29:21, KLYS:LI29:31 within the same time window to assess whether the LI29:11 excursion is isolated or part of a broader RF event, and examine beam-energy/charge-loss timing at BPMs strictly upstream vs downstream of LI29 to localize the source of the disturbance.",
+        "beam_disturbance": {
+          "status": "corroborated",
+          "rationale": "Charge-valid TMIT channels at BPMS:LTUH:450, BPMS:DMPH:502, and BPMS:DMPH:693 each show sustained low-charge episodes (~300\u2013301 consecutive samples, peak_robust_z 78.69, 43.35, 5.11 respectively) beginning ~1604277200697686480 ns. These TMIT excursions are not low-charge sentinels and meet the sustained-charge-loss criterion, providing corroborating beam evidence of a sustained beam disturbance coincident with the candidate window.",
+          "tool_result_refs": [
+            "T-f507fbefd015",
+            "T-2c31c73f97c7",
+            "T-095069d88481"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "Although KLYS:LI29:11:AMPL shows a near-total excursion (99.96% deviation) at the recorded time, unique causation cannot be established: (1) BPMS:LTUH:250:X \u2014 upstream of LI29:11 \u2014 shows a sustained position excursion (peak_robust_z 62.49, 42 samples) beginning ~1604277200689428941 ns, indicating beam disturbance existed upstream of LI29:11; (2) RF diagnostics are asynchronous with up to ~5 s delay and only ~3% of timestamps carry updates, so the recorded RF drop time does not pin the actual fault onset; (3) no RF phase data is available to assess energy/phase impact; (4) neighboring station RF columns cannot be confirmed as continuously active. Coincidence and a positive RF excursion alone do not establish a unique cause.",
+          "tool_result_refs": [
+            "T-37ec9e46fff8",
+            "T-f507fbefd015",
+            "T-095069d88481",
+            "T-adc89116ae80"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "single",
+          "observation": "KLYS:LI29:11 amplitude dropped from baseline ~69.12 to ~0.024 (99.96% deviation) at recorded time 1604277203201922048 ns, recovering ~5 s later. Multiple downstream BPMs (BPMS:DMPH:502, BPMS:DMPH:693, BPMS:LTUH:450) show sustained low-charge episodes (300\u2013301 samples) beginning ~1604277200697686480 ns, with charge-valid TMIT excursions (peak_robust_z up to 78.69). However, BPMS:LTUH:250:X (upstream of LI29 in the linac) shows a sustained position excursion (peak_robust_z 62.49, 42 samples) without an associated low-charge TMIT excursion, indicating beam disturbance was present upstream of LI29:11. RF reporting is asynchronous with up to ~5 s delay and no RF phase data is available.",
+          "source_channels": [
+            "KLYS:LI29:11:AMPL",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:693:TMIT",
+            "BPMS:DMPH:693:Y",
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:450:TMIT",
+            "BPMS:LTUH:450:X"
+          ],
+          "time_interval_ns": [
+            1604277185909886726,
+            1604277208501922048
+          ],
+          "tool_result_refs": [
+            "T-99c3f5f383b3",
+            "T-37ec9e46fff8",
+            "T-f507fbefd015",
+            "T-2c31c73f97c7",
+            "T-095069d88481",
+            "T-adc89116ae80"
+          ],
+          "supporting_evidence": [
+            "KLYS:LI29:11:AMPL dropped to 0.0244140625 (99.96% deviation from baseline 69.12) at 1604277203201922048 ns (T-37ec9e46fff8)",
+            "BPMS:LTUH:450:TMIT sustained low-charge, peak_robust_z 78.69, first sustained at 1604277200697686480 (T-f507fbefd015, T-2c31c73f97c7)",
+            "BPMS:DMPH:502:TMIT sustained low-charge, peak_robust_z 43.35, first sustained at 1604277200697686480 (T-f507fbefd015, T-2c31c73f97c7)",
+            "BPMS:DMPH:693:TMIT sustained low-charge, peak_robust_z 5.11, first sustained at 1604277200697686480 (T-f507fbefd015, T-2c31c73f97c7)",
+            "Charge-valid TMIT channels corroborate beam disturbance with sustained low-charge episodes (T-2c31c73f97c7)"
+          ],
+          "conflicting_evidence": [
+            "BPMS:LTUH:250:X (upstream of LI29) shows sustained position excursion (peak_robust_z 62.49) at ~1604277200689428941 ns without an associated low-charge TMIT excursion, indicating the beam was already disturbed before reaching LI29:11 (T-f507fbefd015)",
+            "BPMS:LTUH:250:TMIT shows no low-charge samples and is not sustained (peak_robust_z 5.37), so the upstream disturbance is a position excursion only, not a charge-loss event (T-f507fbefd015, T-2c31c73f97c7)"
+          ],
+          "data_limitations": [
+            "No RF phase data in this extract",
+            "Sparse RF updates (no_update_fraction 0.972); leading missing RF values remain unknown",
+            "RF diagnostics are asynchronous with documented approximate reporting delay up to 5 s; no calibrated per-event delay",
+            "BPM position channels are preprocessed/scaled; low-charge positions may be sentinel 100",
+            "Neighboring station columns may be missing or inactive; column presence does not establish continuous operation",
+            "Candidate association is not proof of causation",
+            "No protein measurements"
+          ],
+          "requested_next_check": "Cross-check RF amplitudes at adjacent stations KLYS:LI28:81, KLYS:LI29:21, KLYS:LI29:31 within the same time window to assess whether the LI29:11 excursion is isolated or part of a broader RF event, and examine beam-energy/charge-loss timing at BPMs strictly upstream vs downstream of LI29 to localize the source of the disturbance.",
+          "beam_disturbance": {
+            "status": "corroborated",
+            "rationale": "Charge-valid TMIT channels at BPMS:LTUH:450, BPMS:DMPH:502, and BPMS:DMPH:693 each show sustained low-charge episodes (~300\u2013301 consecutive samples, peak_robust_z 78.69, 43.35, 5.11 respectively) beginning ~1604277200697686480 ns. These TMIT excursions are not low-charge sentinels and meet the sustained-charge-loss criterion, providing corroborating beam evidence of a sustained beam disturbance coincident with the candidate window.",
+            "tool_result_refs": [
+              "T-f507fbefd015",
+              "T-2c31c73f97c7",
+              "T-095069d88481"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "Although KLYS:LI29:11:AMPL shows a near-total excursion (99.96% deviation) at the recorded time, unique causation cannot be established: (1) BPMS:LTUH:250:X \u2014 upstream of LI29:11 \u2014 shows a sustained position excursion (peak_robust_z 62.49, 42 samples) beginning ~1604277200689428941 ns, indicating beam disturbance existed upstream of LI29:11; (2) RF diagnostics are asynchronous with up to ~5 s delay and only ~3% of timestamps carry updates, so the recorded RF drop time does not pin the actual fault onset; (3) no RF phase data is available to assess energy/phase impact; (4) neighboring station RF columns cannot be confirmed as continuously active. Coincidence and a positive RF excursion alone do not establish a unique cause.",
+            "tool_result_refs": [
+              "T-37ec9e46fff8",
+              "T-f507fbefd015",
+              "T-095069d88481",
+              "T-adc89116ae80"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "event_id": "slac-001",
+          "analysis": "quality",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604277203201922048",
+          "interval_ns": [
+            1604276993201922048,
+            1604277208501922048
+          ],
+          "result": {
+            "health": {
+              "samples": 725,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.00314112,
+              "max_gap_s": 2.074037504,
+              "fraction_120hz": 0.0,
+              "nonfinite_values": 58672,
+              "channels": 82
+            },
+            "bpm": {
+              "samples": 2075,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.008388611,
+              "max_gap_s": 0.008440323,
+              "fraction_120hz": 1.0,
+              "nonfinite_values": 0,
+              "channels": 8
+            },
+            "rf_missing_semantics": "NaN means no new update; hold only a known previous value; no backfill. RF row cadence is NOT per-station sampling rate."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-99c3f5f383b3"
+        },
+        {
+          "event_id": "slac-001",
+          "analysis": "equipment",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604277203201922048",
+          "interval_ns": [
+            1604276993201922048,
+            1604277208501922048
+          ],
+          "result": {
+            "channel": "KLYS:LI29:11:AMPL",
+            "finite_updates": 20,
+            "no_update_fraction": 0.9724137931034482,
+            "baseline_time_weighted_median": 69.1162109375,
+            "max_abs_deviation_pct": 99.96467679265277,
+            "suspicious": true,
+            "updates": [
+              {
+                "time_ns": 1604277203201922048,
+                "relative_s": 0.0,
+                "value": 0.0244140625
+              },
+              {
+                "time_ns": 1604277208198788864,
+                "relative_s": 4.996866816,
+                "value": 69.091796875
+              }
+            ],
+            "window_includes_postcandidate_rf_updates": true
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-37ec9e46fff8"
+        },
+        {
+          "event_id": "slac-001",
+          "analysis": "beam",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604277203201922048",
+          "interval_ns": [
+            1604277185909886726,
+            1604277203198171988
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1022946560.0,
+                "baseline_robust_sigma": 23506872.0768,
+                "score_available": true,
+                "peak_robust_z": 43.3504769018474,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 300,
+                "longest_consecutive_samples": 301,
+                "sustained": true,
+                "first_sustained_ns": 1604277200697686480
+              },
+              {
+                "channel": "BPMS:DMPH:502:Y",
+                "baseline_samples": 1439,
+                "baseline_median": 3.534819575266225,
+                "baseline_robust_sigma": 0.7087379014343647,
+                "score_available": true,
+                "peak_robust_z": 20.207844380644627,
+                "invalid_position_samples": 300,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 2,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 663369088.0,
+                "baseline_robust_sigma": 128863037.45279999,
+                "score_available": true,
+                "peak_robust_z": 5.112773837426601,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 301,
+                "longest_consecutive_samples": 301,
+                "sustained": true,
+                "first_sustained_ns": 1604277200697686480
+              },
+              {
+                "channel": "BPMS:DMPH:693:Y",
+                "baseline_samples": 1439,
+                "baseline_median": -0.478297154278135,
+                "baseline_robust_sigma": 0.35916821778710206,
+                "score_available": true,
+                "peak_robust_z": 11.50499660945214,
+                "invalid_position_samples": 301,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 1,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1069156544.0,
+                "baseline_robust_sigma": 13705676.2752,
+                "score_available": true,
+                "peak_robust_z": 5.372694825226744,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:X",
+                "baseline_samples": 1439,
+                "baseline_median": 0.004453808069229126,
+                "baseline_robust_sigma": 0.4764147436380386,
+                "score_available": true,
+                "peak_robust_z": 62.489665879713186,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 42,
+                "sustained": true,
+                "first_sustained_ns": 1604277200689428941
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 914030208.0,
+                "baseline_robust_sigma": 11570922.047999999,
+                "score_available": true,
+                "peak_robust_z": 78.69056819524432,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 300,
+                "longest_consecutive_samples": 301,
+                "sustained": true,
+                "first_sustained_ns": 1604277200697686480
+              },
+              {
+                "channel": "BPMS:LTUH:450:X",
+                "baseline_samples": 1439,
+                "baseline_median": 0.06770539283752441,
+                "baseline_robust_sigma": 0.5092561598539352,
+                "score_available": true,
+                "peak_robust_z": 59.811973515553476,
+                "invalid_position_samples": 300,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 2,
+                "sustained": false,
+                "first_sustained_ns": null
+              }
+            ],
+            "disturbance_detected": true,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-f507fbefd015"
+        },
+        {
+          "event_id": "slac-001",
+          "analysis": "charge_validity",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604277203201922048",
+          "interval_ns": [
+            1604277185909886726,
+            1604277203198171988
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1022946560.0,
+                "baseline_robust_sigma": 23506872.0768,
+                "score_available": true,
+                "peak_robust_z": 43.3504769018474,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 300,
+                "longest_consecutive_samples": 301,
+                "sustained": true,
+                "first_sustained_ns": 1604277200697686480
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 663369088.0,
+                "baseline_robust_sigma": 128863037.45279999,
+                "score_available": true,
+                "peak_robust_z": 5.112773837426601,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 301,
+                "longest_consecutive_samples": 301,
+                "sustained": true,
+                "first_sustained_ns": 1604277200697686480
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1069156544.0,
+                "baseline_robust_sigma": 13705676.2752,
+                "score_available": true,
+                "peak_robust_z": 5.372694825226744,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 914030208.0,
+                "baseline_robust_sigma": 11570922.047999999,
+                "score_available": true,
+                "peak_robust_z": 78.69056819524432,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 300,
+                "longest_consecutive_samples": 301,
+                "sustained": true,
+                "first_sustained_ns": 1604277200697686480
+              }
+            ],
+            "disturbance_detected": true,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-2c31c73f97c7"
+        },
+        {
+          "event_id": "slac-001",
+          "analysis": "timing",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604277203201922048",
+          "interval_ns": [
+            1604277185909886726,
+            1604277208501922048
+          ],
+          "result": {
+            "recorded_rf_updates": [
+              {
+                "time_ns": 1604277203201922048,
+                "relative_s": 0.0,
+                "value": 0.0244140625
+              },
+              {
+                "time_ns": 1604277208198788864,
+                "relative_s": 4.996866816,
+                "value": 69.091796875
+              }
+            ],
+            "beam_onsets_ns": [
+              1604277200697686480,
+              1604277200697686480,
+              1604277200689428941,
+              1604277200697686480
+            ],
+            "candidate_interval_ns": [
+              1604277197901922048,
+              1604277203201922048
+            ],
+            "documented_rf_reporting_delay_s": [
+              0,
+              5
+            ],
+            "delay_is_approximate": true,
+            "applied_shift_s": 0,
+            "causal_attribution": "Not established; asynchronous observations and candidate association alone cannot identify a unique cause."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-095069d88481"
+        },
+        {
+          "event_id": "slac-001",
+          "analysis": "neighbors",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604277203201922048",
+          "interval_ns": [
+            1604276993201922048,
+            1604277208501922048
+          ],
+          "result": {
+            "available_columns": 82,
+            "unknown_baselines": 28,
+            "suspicious": [
+              {
+                "channel": "KLYS:LI29:11:AMPL",
+                "finite_updates": 20,
+                "no_update_fraction": 0.9724137931034482,
+                "baseline_time_weighted_median": 69.1162109375,
+                "max_abs_deviation_pct": 99.96467679265277,
+                "suspicious": true,
+                "updates": [
+                  {
+                    "time_ns": 1604277203201922048,
+                    "relative_s": 0.0,
+                    "value": 0.0244140625
+                  },
+                  {
+                    "time_ns": 1604277208198788864,
+                    "relative_s": 4.996866816,
+                    "value": 69.091796875
+                  }
+                ],
+                "window_includes_postcandidate_rf_updates": true
+              }
+            ],
+            "caution": "Column presence does not establish continuous station operation or complete neighboring records."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-adc89116ae80"
+        }
+      ],
+      "metrics": {
+        "model_calls": 2,
+        "tool_calls": 6,
+        "latency_s": 11.889,
+        "input_tokens": 11916,
+        "output_tokens": 3030,
+        "input_characters": 37116,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "flower_run_id": "13077314307589399530",
+      "flower_series_id": "925375666993885358",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 13077314307589399530\n  value {\n    run_id: 13077314307589399530\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:41:43.409497+00:00\"\n    starting_at: \"2026-09-29T23:41:43.421502+00:00\"\n    running_at: \"2026-09-29T23:41:43.899641+00:00\"\n    finished_at: \"2026-09-29T23:41:57.269656+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 15709818233660329630\n    series_id: 925375666993885358\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:41:57.521809+00:00\"\n",
+      "wall_latency_s": 14.132
+    },
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-002",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "single",
+        "observation": "KLYS:LI28:11:AMPL showed a single finite excursion to 32.93 (~38.8% below baseline median 53.83) at 1604278211445212672, recovering ~4.99 s later to 53.81. Four BPM position channels (DMPH:502:Y, DMPH:693:Y, LTUH:250:X, LTUH:450:X) showed sustained excursions with robust z-scores 16.6-38.9 over 11-17 consecutive samples, all onsets at 1604278210729114201 (~0.71 s before the recorded RF timestamp). Charge-valid beam evidence corroborates a sustained position disturbance. Of 82 RF columns, only KLYS:LI28:11 was flagged suspicious; 28 neighboring columns had unknown baselines and could not be evaluated.",
+        "source_channels": [
+          "KLYS:LI28:11:AMPL",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:693:Y",
+          "BPMS:DMPH:693:TMIT",
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:450:X",
+          "BPMS:LTUH:450:TMIT"
+        ],
+        "time_interval_ns": [
+          1604278206145212672,
+          1604278211445212672
+        ],
+        "tool_result_refs": [
+          "T-d06ccad4971d",
+          "T-a6422d484cad",
+          "T-248ade7edd3b",
+          "T-287eeacb1910",
+          "T-db3071bd8aec",
+          "T-dde7d73f7a73"
+        ],
+        "supporting_evidence": [
+          "Quality ref T-d06ccad4971d: BPM cadence at 120 Hz with no nonfinite values; RF cadence sparse (NaN = no new update).",
+          "Equipment ref T-a6422d484cad: KLYS:LI28:11:AMPL excursion to 32.93 (~38.8% below baseline median 53.83) at candidate end timestamp.",
+          "Beam ref T-248ade7edd3b: DMPH:502:Y z=26.4 sustained 15 samples; DMPH:693:Y z=16.6 sustained 11 samples; LTUH:250:X z=38.9 sustained 17 samples; LTUH:450:X z=37.7 sustained 17 samples; all onsets at 1604278210729114201; quality_adequate=true.",
+          "Charge_validity ref T-dde7d73f7a73: All four TMIT channels have baseline medians 614M-1.06B, invalid_position_samples=0, low_charge_samples=0; positions are charge-valid.",
+          "Neighbors ref T-287eeacb1910: Only KLYS:LI28:11:AMPL flagged suspicious among evaluated columns."
+        ],
+        "conflicting_evidence": [
+          "Neighbors ref T-287eeacb1910: 28 of 82 RF columns have unknown_baselines, so neighboring stations cannot be fully ruled out.",
+          "Timing ref T-db3071bd8aec: Beam onset (1604278210729114201) precedes the recorded RF timestamp by ~0.71 s; RF reporting delay is only approximate (0-5 s), so ordering relative to the underlying RF event cannot be established.",
+          "Timing ref T-db3071bd8aec: causal_attribution explicitly 'Not established'."
+        ],
+        "data_limitations": [
+          "No RF phase data in this extract.",
+          "Sparse RF updates; leading missing values remain unknown.",
+          "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100 (none observed here).",
+          "Neighboring station columns may be missing or inactive; 28 of 82 RF columns have unknown baselines.",
+          "RF diagnostics are asynchronous; reported delay up to 5 s is approximate, not a calibrated per-event delay.",
+          "Candidate association is not proof of causation."
+        ],
+        "requested_next_check": "Acquire calibrated timing/phase data and/or RF amplitude histories for the 28 RF columns with unknown baselines (especially LI28 sector neighbors and any stations feeding DMPH/LTUH BPMs) to evaluate whether concurrent RF excursions occurred outside LI28:11.",
+        "beam_disturbance": {
+          "status": "corroborated",
+          "rationale": "Charge-valid beam evidence supports a sustained disturbance: all four BPM TMIT channels show valid charge (medians 614M-1.06B, no low-charge samples, no invalid positions), and four position channels (DMPH:502:Y, DMPH:693:Y, LTUH:250:X, LTUH:450:X) exhibit sustained excursions of 11-17 consecutive samples with peak robust z-scores 16.6-38.9, all onsets at 1604278210729114201. The position-channel sustained heuristic is met on charge-valid data, independent of the RF excursion.",
+          "tool_result_refs": [
+            "T-248ade7edd3b",
+            "T-dde7d73f7a73"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "Only KLYS:LI28:11:AMPL was flagged suspicious among evaluated RF columns, but 28 of 82 RF columns have unknown baselines and cannot be ruled out as concurrent RF causes. The beam disturbance onset precedes the recorded RF timestamp by ~0.71 s, and the RF reporting delay is approximate (0-5 s), so neither temporal ordering nor sector coupling (LI28 vs. DMPH/LTUH BPMs) is established. Coincidence of the LI28:11 amplitude drop with the beam disturbance and absence of other evaluated suspicious stations is insufficient to establish a unique cause.",
+          "tool_result_refs": [
+            "T-a6422d484cad",
+            "T-287eeacb1910",
+            "T-db3071bd8aec"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "single",
+          "observation": "KLYS:LI28:11:AMPL showed a single finite excursion to 32.93 (~38.8% below baseline median 53.83) at 1604278211445212672, recovering ~4.99 s later to 53.81. Four BPM position channels (DMPH:502:Y, DMPH:693:Y, LTUH:250:X, LTUH:450:X) showed sustained excursions with robust z-scores 16.6-38.9 over 11-17 consecutive samples, all onsets at 1604278210729114201 (~0.71 s before the recorded RF timestamp). Charge-valid beam evidence corroborates a sustained position disturbance. Of 82 RF columns, only KLYS:LI28:11 was flagged suspicious; 28 neighboring columns had unknown baselines and could not be evaluated.",
+          "source_channels": [
+            "KLYS:LI28:11:AMPL",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:693:Y",
+            "BPMS:DMPH:693:TMIT",
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:450:X",
+            "BPMS:LTUH:450:TMIT"
+          ],
+          "time_interval_ns": [
+            1604278206145212672,
+            1604278211445212672
+          ],
+          "tool_result_refs": [
+            "T-d06ccad4971d",
+            "T-a6422d484cad",
+            "T-248ade7edd3b",
+            "T-287eeacb1910",
+            "T-db3071bd8aec",
+            "T-dde7d73f7a73"
+          ],
+          "supporting_evidence": [
+            "Quality ref T-d06ccad4971d: BPM cadence at 120 Hz with no nonfinite values; RF cadence sparse (NaN = no new update).",
+            "Equipment ref T-a6422d484cad: KLYS:LI28:11:AMPL excursion to 32.93 (~38.8% below baseline median 53.83) at candidate end timestamp.",
+            "Beam ref T-248ade7edd3b: DMPH:502:Y z=26.4 sustained 15 samples; DMPH:693:Y z=16.6 sustained 11 samples; LTUH:250:X z=38.9 sustained 17 samples; LTUH:450:X z=37.7 sustained 17 samples; all onsets at 1604278210729114201; quality_adequate=true.",
+            "Charge_validity ref T-dde7d73f7a73: All four TMIT channels have baseline medians 614M-1.06B, invalid_position_samples=0, low_charge_samples=0; positions are charge-valid.",
+            "Neighbors ref T-287eeacb1910: Only KLYS:LI28:11:AMPL flagged suspicious among evaluated columns."
+          ],
+          "conflicting_evidence": [
+            "Neighbors ref T-287eeacb1910: 28 of 82 RF columns have unknown_baselines, so neighboring stations cannot be fully ruled out.",
+            "Timing ref T-db3071bd8aec: Beam onset (1604278210729114201) precedes the recorded RF timestamp by ~0.71 s; RF reporting delay is only approximate (0-5 s), so ordering relative to the underlying RF event cannot be established.",
+            "Timing ref T-db3071bd8aec: causal_attribution explicitly 'Not established'."
+          ],
+          "data_limitations": [
+            "No RF phase data in this extract.",
+            "Sparse RF updates; leading missing values remain unknown.",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100 (none observed here).",
+            "Neighboring station columns may be missing or inactive; 28 of 82 RF columns have unknown baselines.",
+            "RF diagnostics are asynchronous; reported delay up to 5 s is approximate, not a calibrated per-event delay.",
+            "Candidate association is not proof of causation."
+          ],
+          "requested_next_check": "Acquire calibrated timing/phase data and/or RF amplitude histories for the 28 RF columns with unknown baselines (especially LI28 sector neighbors and any stations feeding DMPH/LTUH BPMs) to evaluate whether concurrent RF excursions occurred outside LI28:11.",
+          "beam_disturbance": {
+            "status": "corroborated",
+            "rationale": "Charge-valid beam evidence supports a sustained disturbance: all four BPM TMIT channels show valid charge (medians 614M-1.06B, no low-charge samples, no invalid positions), and four position channels (DMPH:502:Y, DMPH:693:Y, LTUH:250:X, LTUH:450:X) exhibit sustained excursions of 11-17 consecutive samples with peak robust z-scores 16.6-38.9, all onsets at 1604278210729114201. The position-channel sustained heuristic is met on charge-valid data, independent of the RF excursion.",
+            "tool_result_refs": [
+              "T-248ade7edd3b",
+              "T-dde7d73f7a73"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "Only KLYS:LI28:11:AMPL was flagged suspicious among evaluated RF columns, but 28 of 82 RF columns have unknown baselines and cannot be ruled out as concurrent RF causes. The beam disturbance onset precedes the recorded RF timestamp by ~0.71 s, and the RF reporting delay is approximate (0-5 s), so neither temporal ordering nor sector coupling (LI28 vs. DMPH/LTUH BPMs) is established. Coincidence of the LI28:11 amplitude drop with the beam disturbance and absence of other evaluated suspicious stations is insufficient to establish a unique cause.",
+            "tool_result_refs": [
+              "T-a6422d484cad",
+              "T-287eeacb1910",
+              "T-db3071bd8aec"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "event_id": "slac-002",
+          "analysis": "quality",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604278211445212672",
+          "interval_ns": [
+            1604278001445212672,
+            1604278216745212672
+          ],
+          "result": {
+            "health": {
+              "samples": 813,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.002389632,
+              "max_gap_s": 2.313618176,
+              "fraction_120hz": 0.0012315270935960591,
+              "nonfinite_values": 65800,
+              "channels": 82
+            },
+            "bpm": {
+              "samples": 2075,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.008388611,
+              "max_gap_s": 0.008440323,
+              "fraction_120hz": 1.0,
+              "nonfinite_values": 0,
+              "channels": 8
+            },
+            "rf_missing_semantics": "NaN means no new update; hold only a known previous value; no backfill. RF row cadence is NOT per-station sampling rate."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-d06ccad4971d"
+        },
+        {
+          "event_id": "slac-002",
+          "analysis": "equipment",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604278211445212672",
+          "interval_ns": [
+            1604278001445212672,
+            1604278216745212672
+          ],
+          "result": {
+            "channel": "KLYS:LI28:11:AMPL",
+            "finite_updates": 25,
+            "no_update_fraction": 0.9692496924969249,
+            "baseline_time_weighted_median": 53.8330078125,
+            "max_abs_deviation_pct": 38.82086167800453,
+            "suspicious": true,
+            "updates": [
+              {
+                "time_ns": 1604278211445212672,
+                "relative_s": 0.0,
+                "value": 32.9345703125
+              },
+              {
+                "time_ns": 1604278216439033088,
+                "relative_s": 4.993820416,
+                "value": 53.80859375
+              }
+            ],
+            "window_includes_postcandidate_rf_updates": true
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-a6422d484cad"
+        },
+        {
+          "event_id": "slac-002",
+          "analysis": "beam",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604278211445212672",
+          "interval_ns": [
+            1604278194150687498,
+            1604278211437610328
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1010645120.0,
+                "baseline_robust_sigma": 35853964.8768,
+                "score_available": true,
+                "peak_robust_z": 5.639457970541925,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:502:Y",
+                "baseline_samples": 1166,
+                "baseline_median": 3.586351129523946,
+                "baseline_robust_sigma": 0.7165041808765457,
+                "score_available": true,
+                "peak_robust_z": 26.43931966114657,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 15,
+                "sustained": true,
+                "first_sustained_ns": 1604278210729114201
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 613947008.0,
+                "baseline_robust_sigma": 175353388.22399998,
+                "score_available": true,
+                "peak_robust_z": 1.6674621400898655,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:Y",
+                "baseline_samples": 1166,
+                "baseline_median": -0.45209551162557055,
+                "baseline_robust_sigma": 0.3790474763557093,
+                "score_available": true,
+                "peak_robust_z": 16.586013223456494,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 11,
+                "sustained": true,
+                "first_sustained_ns": 1604278210729114201
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1061000512.0,
+                "baseline_robust_sigma": 22321266.5088,
+                "score_available": true,
+                "peak_robust_z": 2.173006445708515,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:X",
+                "baseline_samples": 1166,
+                "baseline_median": -0.003476649522781372,
+                "baseline_robust_sigma": 0.4587967566668987,
+                "score_available": true,
+                "peak_robust_z": 38.892773281630824,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 17,
+                "sustained": true,
+                "first_sustained_ns": 1604278210729114201
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 906483136.0,
+                "baseline_robust_sigma": 19068086.2848,
+                "score_available": true,
+                "peak_robust_z": 2.1772823648849697,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:X",
+                "baseline_samples": 1166,
+                "baseline_median": 0.04890799522399902,
+                "baseline_robust_sigma": 0.47664141229391094,
+                "score_available": true,
+                "peak_robust_z": 37.69254862761764,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 17,
+                "sustained": true,
+                "first_sustained_ns": 1604278210729114201
+              }
+            ],
+            "disturbance_detected": true,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-248ade7edd3b"
+        },
+        {
+          "event_id": "slac-002",
+          "analysis": "neighbors",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604278211445212672",
+          "interval_ns": [
+            1604278001445212672,
+            1604278216745212672
+          ],
+          "result": {
+            "available_columns": 82,
+            "unknown_baselines": 28,
+            "suspicious": [
+              {
+                "channel": "KLYS:LI28:11:AMPL",
+                "finite_updates": 25,
+                "no_update_fraction": 0.9692496924969249,
+                "baseline_time_weighted_median": 53.8330078125,
+                "max_abs_deviation_pct": 38.82086167800453,
+                "suspicious": true,
+                "updates": [
+                  {
+                    "time_ns": 1604278211445212672,
+                    "relative_s": 0.0,
+                    "value": 32.9345703125
+                  },
+                  {
+                    "time_ns": 1604278216439033088,
+                    "relative_s": 4.993820416,
+                    "value": 53.80859375
+                  }
+                ],
+                "window_includes_postcandidate_rf_updates": true
+              }
+            ],
+            "caution": "Column presence does not establish continuous station operation or complete neighboring records."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-287eeacb1910"
+        },
+        {
+          "event_id": "slac-002",
+          "analysis": "timing",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604278211445212672",
+          "interval_ns": [
+            1604278194150687498,
+            1604278216745212672
+          ],
+          "result": {
+            "recorded_rf_updates": [
+              {
+                "time_ns": 1604278211445212672,
+                "relative_s": 0.0,
+                "value": 32.9345703125
+              },
+              {
+                "time_ns": 1604278216439033088,
+                "relative_s": 4.993820416,
+                "value": 53.80859375
+              }
+            ],
+            "beam_onsets_ns": [
+              1604278210729114201,
+              1604278210729114201,
+              1604278210729114201,
+              1604278210729114201
+            ],
+            "candidate_interval_ns": [
+              1604278206145212672,
+              1604278211445212672
+            ],
+            "documented_rf_reporting_delay_s": [
+              0,
+              5
+            ],
+            "delay_is_approximate": true,
+            "applied_shift_s": 0,
+            "causal_attribution": "Not established; asynchronous observations and candidate association alone cannot identify a unique cause."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-db3071bd8aec"
+        },
+        {
+          "event_id": "slac-002",
+          "analysis": "charge_validity",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604278211445212672",
+          "interval_ns": [
+            1604278194150687498,
+            1604278211437610328
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1010645120.0,
+                "baseline_robust_sigma": 35853964.8768,
+                "score_available": true,
+                "peak_robust_z": 5.639457970541925,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 613947008.0,
+                "baseline_robust_sigma": 175353388.22399998,
+                "score_available": true,
+                "peak_robust_z": 1.6674621400898655,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 1061000512.0,
+                "baseline_robust_sigma": 22321266.5088,
+                "score_available": true,
+                "peak_robust_z": 2.173006445708515,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1439,
+                "baseline_median": 906483136.0,
+                "baseline_robust_sigma": 19068086.2848,
+                "score_available": true,
+                "peak_robust_z": 2.1772823648849697,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              }
+            ],
+            "disturbance_detected": false,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-dde7d73f7a73"
+        }
+      ],
+      "metrics": {
+        "model_calls": 2,
+        "tool_calls": 6,
+        "latency_s": 12.908,
+        "input_tokens": 11781,
+        "output_tokens": 3142,
+        "input_characters": 36648,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "flower_run_id": "17922958353347156756",
+      "flower_series_id": "14583437835973737533",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 17922958353347156756\n  value {\n    run_id: 17922958353347156756\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:41:58.937873+00:00\"\n    starting_at: \"2026-09-29T23:41:59.555878+00:00\"\n    running_at: \"2026-09-29T23:42:00.027838+00:00\"\n    finished_at: \"2026-09-29T23:42:14.426366+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 3898478401942195574\n    series_id: 14583437835973737533\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:42:14.566676+00:00\"\n",
+      "wall_latency_s": 15.643
+    },
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-002",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "lead",
+        "observation": "Beam position disturbance corroborated at onset 1604278210729114201 by simultaneous sustained deviations in LTU X-position channels (BPMS:LTUH:250:X z\u224838.9, BPMS:LTUH:450:X z\u224837.7; 17 consecutive samples each) and Dump Y-position channels (BPMS:DMPH:502:Y z\u224826.4 over 15 samples, BPMS:DMPH:693:Y z\u224816.6 over 11 samples). All four position channels share the identical onset timestamp. TMIT channels at all four BPMs show only modest non-sustained z-scores (1.7\u20135.6) with no charge loss, indicating charge-valid beam position evidence. Candidate RF station KLYS:LI28:11:AMPL shows ~38.8% peak deviation but with severely degraded data (96.9% no-update fraction, 65,800 nonfinite values against 813 samples, only 1 of 82 neighbors flagged), which is insufficient to establish it as the unique cause of the observed beam disturbance.",
+        "source_channels": [
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:450:X",
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:450:TMIT",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:693:Y",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:693:TMIT",
+          "KLYS:LI28:11:AMPL"
+        ],
+        "time_interval_ns": [
+          1604278206145212672,
+          1604278211445212672
+        ],
+        "tool_result_refs": [
+          "T-1f2893b005d8",
+          "T-be1f8518af9d",
+          "T-288d4d566e6d",
+          "T-f5c978e80e19",
+          "T-1b456661d22b",
+          "T-24d46228cc39",
+          "T-2ac6ab5ca6d8",
+          "T-a56a33650565",
+          "T-817ba59ec659"
+        ],
+        "supporting_evidence": [
+          "LTU node (suspicious): BPMS:LTUH:250:X and BPMS:LTUH:450:X show sustained deviations (z\u224838.9 and z\u224837.7, 17 consecutive samples each) at identical onset 1604278210729114201; TMIT channels show only modest non-sustained z\u22482.17 with zero low-charge samples (T-1f2893b005d8, T-be1f8518af9d, T-288d4d566e6d)",
+          "Dump node (suspicious): BPMS:DMPH:502:Y and BPMS:DMPH:693:Y show sustained Y-position deviations (z\u224826.4 over 15 samples, z\u224816.6 over 11 samples) at the same identical onset 1604278210729114201; TMIT channels show only modest non-sustained z (5.6 and 1.7) with zero low-charge samples (T-f5c978e80e19, T-1b456661d22b, T-24d46228cc39)",
+          "BPM data quality is adequate across both nodes: 2075 samples, 0 nonfinite values, 100% at 120 Hz, max gap 0.0084 s (T-288d4d566e6d, T-24d46228cc39)",
+          "Cross-node temporal coherence: both LTU and Dump position disturbances share the same onset timestamp, supporting a coherent beam disturbance observed at independent upstream and downstream locations"
+        ],
+        "conflicting_evidence": [
+          "RF node (insufficient_evidence): KLYS:LI28:11:AMPL data is severely degraded with 65,800 nonfinite values against 813 samples and 96.9% no-update fraction, so the ~38.8% peak deviation cannot be reliably characterized (T-2ac6ab5ca6d8, T-817ba59ec659)",
+          "Only 1 of 82 neighboring RF stations is flagged, providing minimal corroboration of the candidate excursion (T-a56a33650565)"
+        ],
+        "data_limitations": [
+          "No RF phase data in this extract",
+          "Sparse RF updates; leading missing values remain unknown",
+          "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100 (no low-charge samples detected in this event)",
+          "Neighboring station columns may be missing or inactive (28 of 82 neighbor baselines unknown)",
+          "RF diagnostic timing is asynchronous with documented approximate reporting delay up to 5 s; no calibrated per-event delay",
+          "Candidate association is not proof of causation"
+        ],
+        "requested_next_check": "Retrieve higher-fidelity RF amplitude samples (and any available phase data) for KLYS:LI28:11 and its near neighbors during the candidate window to determine whether the RF excursion is genuine and whether it temporally precedes the beam disturbance onset; also confirm that all 82 neighbor baselines are present (currently 28 unknown).",
+        "beam_disturbance": {
+          "status": "corroborated",
+          "rationale": "Charge-valid beam evidence corroborates a sustained beam disturbance. Two independent BPM clusters (LTU upstream X-position: BPMS:LTUH:250:X, BPMS:LTUH:450:X; Dump downstream Y-position: BPMS:DMPH:502:Y, BPMS:DMPH:693:Y) exhibit extreme, sustained simultaneous deviations with identical onset timestamp 1604278210729114201 (z\u224816.6\u201338.9, 11\u201317 consecutive samples at 120 Hz). Corresponding TMIT channels at all four BPMs show only modest non-sustained z-scores with zero low-charge samples, confirming the position data is charge-valid rather than sentinel-coded. The two nodes independently arrive at 'suspicious' assessments in high-quality data (100% 120 Hz, 0 nonfinite).",
+          "tool_result_refs": [
+            "T-1f2893b005d8",
+            "T-be1f8518af9d",
+            "T-288d4d566e6d",
+            "T-f5c978e80e19",
+            "T-1b456661d22b",
+            "T-24d46228cc39"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "The candidate RF station KLYS:LI28:11:AMPL cannot be established as the unique cause. The RF node itself returns insufficient_evidence: only 2 updates landed in the candidate window (96.9% no-update fraction), 65,800 of 813 reported RF values are nonfinite, and only 1 of 82 neighboring stations is flagged. A positive RF heuristic (\u224838.8% peak deviation) together with coincident timing is insufficient to establish unique causation; an RF excursion alone cannot make unique_cause established, and degraded data quality prevents independent verification of the excursion's validity or temporal precedence over the beam onset.",
+          "tool_result_refs": [
+            "T-2ac6ab5ca6d8",
+            "T-a56a33650565",
+            "T-817ba59ec659"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "lead",
+          "observation": "Beam position disturbance corroborated at onset 1604278210729114201 by simultaneous sustained deviations in LTU X-position channels (BPMS:LTUH:250:X z\u224838.9, BPMS:LTUH:450:X z\u224837.7; 17 consecutive samples each) and Dump Y-position channels (BPMS:DMPH:502:Y z\u224826.4 over 15 samples, BPMS:DMPH:693:Y z\u224816.6 over 11 samples). All four position channels share the identical onset timestamp. TMIT channels at all four BPMs show only modest non-sustained z-scores (1.7\u20135.6) with no charge loss, indicating charge-valid beam position evidence. Candidate RF station KLYS:LI28:11:AMPL shows ~38.8% peak deviation but with severely degraded data (96.9% no-update fraction, 65,800 nonfinite values against 813 samples, only 1 of 82 neighbors flagged), which is insufficient to establish it as the unique cause of the observed beam disturbance.",
+          "source_channels": [
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:450:X",
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:450:TMIT",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:693:Y",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:693:TMIT",
+            "KLYS:LI28:11:AMPL"
+          ],
+          "time_interval_ns": [
+            1604278206145212672,
+            1604278211445212672
+          ],
+          "tool_result_refs": [
+            "T-1f2893b005d8",
+            "T-be1f8518af9d",
+            "T-288d4d566e6d",
+            "T-f5c978e80e19",
+            "T-1b456661d22b",
+            "T-24d46228cc39",
+            "T-2ac6ab5ca6d8",
+            "T-a56a33650565",
+            "T-817ba59ec659"
+          ],
+          "supporting_evidence": [
+            "LTU node (suspicious): BPMS:LTUH:250:X and BPMS:LTUH:450:X show sustained deviations (z\u224838.9 and z\u224837.7, 17 consecutive samples each) at identical onset 1604278210729114201; TMIT channels show only modest non-sustained z\u22482.17 with zero low-charge samples (T-1f2893b005d8, T-be1f8518af9d, T-288d4d566e6d)",
+            "Dump node (suspicious): BPMS:DMPH:502:Y and BPMS:DMPH:693:Y show sustained Y-position deviations (z\u224826.4 over 15 samples, z\u224816.6 over 11 samples) at the same identical onset 1604278210729114201; TMIT channels show only modest non-sustained z (5.6 and 1.7) with zero low-charge samples (T-f5c978e80e19, T-1b456661d22b, T-24d46228cc39)",
+            "BPM data quality is adequate across both nodes: 2075 samples, 0 nonfinite values, 100% at 120 Hz, max gap 0.0084 s (T-288d4d566e6d, T-24d46228cc39)",
+            "Cross-node temporal coherence: both LTU and Dump position disturbances share the same onset timestamp, supporting a coherent beam disturbance observed at independent upstream and downstream locations"
+          ],
+          "conflicting_evidence": [
+            "RF node (insufficient_evidence): KLYS:LI28:11:AMPL data is severely degraded with 65,800 nonfinite values against 813 samples and 96.9% no-update fraction, so the ~38.8% peak deviation cannot be reliably characterized (T-2ac6ab5ca6d8, T-817ba59ec659)",
+            "Only 1 of 82 neighboring RF stations is flagged, providing minimal corroboration of the candidate excursion (T-a56a33650565)"
+          ],
+          "data_limitations": [
+            "No RF phase data in this extract",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100 (no low-charge samples detected in this event)",
+            "Neighboring station columns may be missing or inactive (28 of 82 neighbor baselines unknown)",
+            "RF diagnostic timing is asynchronous with documented approximate reporting delay up to 5 s; no calibrated per-event delay",
+            "Candidate association is not proof of causation"
+          ],
+          "requested_next_check": "Retrieve higher-fidelity RF amplitude samples (and any available phase data) for KLYS:LI28:11 and its near neighbors during the candidate window to determine whether the RF excursion is genuine and whether it temporally precedes the beam disturbance onset; also confirm that all 82 neighbor baselines are present (currently 28 unknown).",
+          "beam_disturbance": {
+            "status": "corroborated",
+            "rationale": "Charge-valid beam evidence corroborates a sustained beam disturbance. Two independent BPM clusters (LTU upstream X-position: BPMS:LTUH:250:X, BPMS:LTUH:450:X; Dump downstream Y-position: BPMS:DMPH:502:Y, BPMS:DMPH:693:Y) exhibit extreme, sustained simultaneous deviations with identical onset timestamp 1604278210729114201 (z\u224816.6\u201338.9, 11\u201317 consecutive samples at 120 Hz). Corresponding TMIT channels at all four BPMs show only modest non-sustained z-scores with zero low-charge samples, confirming the position data is charge-valid rather than sentinel-coded. The two nodes independently arrive at 'suspicious' assessments in high-quality data (100% 120 Hz, 0 nonfinite).",
+            "tool_result_refs": [
+              "T-1f2893b005d8",
+              "T-be1f8518af9d",
+              "T-288d4d566e6d",
+              "T-f5c978e80e19",
+              "T-1b456661d22b",
+              "T-24d46228cc39"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "The candidate RF station KLYS:LI28:11:AMPL cannot be established as the unique cause. The RF node itself returns insufficient_evidence: only 2 updates landed in the candidate window (96.9% no-update fraction), 65,800 of 813 reported RF values are nonfinite, and only 1 of 82 neighboring stations is flagged. A positive RF heuristic (\u224838.8% peak deviation) together with coincident timing is insufficient to establish unique causation; an RF excursion alone cannot make unique_cause established, and degraded data quality prevents independent verification of the excursion's validity or temporal precedence over the beam onset.",
+            "tool_result_refs": [
+              "T-2ac6ab5ca6d8",
+              "T-a56a33650565",
+              "T-817ba59ec659"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "ref": "T-1f2893b005d8",
+          "analysis": "beam",
+          "event_id": "slac-002",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-be1f8518af9d",
+          "analysis": "charge_validity",
+          "event_id": "slac-002",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-288d4d566e6d",
+          "analysis": "quality",
+          "event_id": "slac-002",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-2ac6ab5ca6d8",
+          "analysis": "equipment",
+          "event_id": "slac-002",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-a56a33650565",
+          "analysis": "neighbors",
+          "event_id": "slac-002",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-817ba59ec659",
+          "analysis": "quality",
+          "event_id": "slac-002",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-f5c978e80e19",
+          "analysis": "beam",
+          "event_id": "slac-002",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-1b456661d22b",
+          "analysis": "charge_validity",
+          "event_id": "slac-002",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-24d46228cc39",
+          "analysis": "quality",
+          "event_id": "slac-002",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        }
+      ],
+      "metrics": {
+        "model_calls": 1,
+        "tool_calls": 9,
+        "latency_s": 20.345,
+        "input_tokens": 4758,
+        "output_tokens": 3649,
+        "input_characters": 15473,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "grid": {
+        "nodes_seen": 3,
+        "assignment": {
+          "rf": "14202828285105434104",
+          "ltu": "6599806078966515447",
+          "dump": "5520163713853007715"
+        },
+        "fallback": null
+      },
+      "data_shared": {
+        "raw_bytes_held": 705832,
+        "payload_bytes": 5696,
+        "percent_shared": 0.807
+      },
+      "node_observation_source": {
+        "ltu": "model",
+        "rf": "model",
+        "dump": "model"
+      },
+      "flower_run_id": "4093637418889338693",
+      "flower_series_id": "10275631389778601489",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 4093637418889338693\n  value {\n    run_id: 4093637418889338693\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:42:15.994265+00:00\"\n    starting_at: \"2026-09-29T23:42:16.705596+00:00\"\n    running_at: \"2026-09-29T23:42:17.206791+00:00\"\n    finished_at: \"2026-09-29T23:42:39.030505+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    bytes_sent: 3378\n    bytes_recv: 8193\n    clientapp_runtime: 10.641953945159912\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 4985957160855163635\n    series_id: 10275631389778601489\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:42:39.188376+00:00\"\n",
+      "wall_latency_s": 23.209
+    },
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-003",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "lead",
+        "observation": "Reconciliation across rf, dump (DMPH 502/693), and ltu (LTUH 250/450) nodes for candidate window on station KLYS:LI21:81. RF channel shows a modest ~2.9% peak deviation but is dominated by sparse updates (~98.7% no-update fraction, only 11 finite samples) and anomalous data-quality flags (66,449 nonfinite values over 821 samples, with 28/82 neighboring baselines unknown), preventing a reliable RF-side characterization. Both BPM groups report adequate data quality (no nonfinite values, full 120 Hz fraction) with no sustained anomalies (longest_consecutive_samples = 0 on every channel) and no identifiable onset; the dump and LTU robust-z excursions are isolated (BPMS:DMPH:502:Y peak 4.43, BPMS:DMPH:502:TMIT peak 3.29, BPMS:LTUH:450:TMIT peak 4.04, BPMS:LTUH:450:X peak 4.01, BPMS:LTUH:250:TMIT peak 3.93, BPMS:LTUH:250:X peak 3.61, BPMS:DMPH:693:Y peak 3.48, BPMS:DMPH:693:TMIT peak 2.24). No temporal alignment between an RF excursion onset and any BPM onset can be made; no RF phase data is available.",
+        "source_channels": [
+          "KLYS:LI21:81:AMPL",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:693:TMIT",
+          "BPMS:DMPH:693:Y",
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:450:TMIT",
+          "BPMS:LTUH:450:X"
+        ],
+        "time_interval_ns": [
+          1604275932139720192,
+          1604275937439720192
+        ],
+        "tool_result_refs": [
+          "T-05791ca5497d",
+          "T-2410c964d357",
+          "T-adbdf7c22cf1",
+          "T-5bfa8582e921",
+          "T-5286fd734b40",
+          "T-a2467200210c",
+          "T-d0cac39a24e4",
+          "T-45b9f3e6990e",
+          "T-7206337c2d43"
+        ],
+        "supporting_evidence": [
+          "Charge-valid BPM channels at DMPH and LTUH show no sustained disturbance: longest_consecutive_samples = 0 across all eight channels (T-5bfa8582e921, T-d0cac39a24e4).",
+          "No onset identified on any BPM channel (onset_ns null on all eight channels) (T-5bfa8582e921, T-d0cac39a24e4).",
+          "BPM data quality is high: no nonfinite values, full 120 Hz fraction, max gap ~0.0084 s on both groups (T-a2467200210c, T-7206337c2d43).",
+          "RF station KLYS:LI21:81:AMPL peak deviation is only ~2.9% and the trace is dominated by no-update samples (T-05791ca5497d).",
+          "Anomalous RF data-quality flags (66,449 nonfinite over 821 samples; 28/82 neighboring baselines unknown) preclude reliable RF-side characterization (T-adbdf7c22cf1, T-2410c964d357)."
+        ],
+        "conflicting_evidence": [],
+        "data_limitations": [
+          "No RF phase data in this extract; cannot align phase with BPM activity.",
+          "RF channel is extremely sparse (~98.7% no-update fraction, only 11 finite samples) with anomalous nonfinite-value counts; leading missing values remain unknown.",
+          "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded.",
+          "No protein measurements and not applicable here.",
+          "Candidate window association is not proof of causation.",
+          "Neighboring station columns may be missing or inactive (28/82 baselines unknown).",
+          "Documented RF diagnostic reporting delay is approximate and not a calibrated per-event delay; cannot be used to derive a fixed timing offset."
+        ],
+        "requested_next_check": "Acquire a higher-fidelity RF extract (full finite samples with timestamps) and RF phase for KLYS:LI21:81 plus its neighboring stations, and re-evaluate beam-onset alignment using BPMs with charge-valid sustained signals.",
+        "beam_disturbance": {
+          "status": "not_corroborated",
+          "rationale": "Across all charge-valid BPM channels at DMPH (502 TMIT/Y, 693 TMIT/Y) and LTUH (250 TMIT/X, 450 TMIT/X), no sustained anomaly is present (longest_consecutive_samples = 0 on every channel) and no onset can be identified. The isolated robust-z excursions (max ~4.43 on BPMS:DMPH:502:Y, ~4.04 on BPMS:LTUH:450:TMIT) are non-sustained single-sample spikes and do not establish a sustained beam disturbance. An RF amplitude excursion alone, especially one whose magnitude and reliability are themselves unclear, cannot corroborate a beam disturbance.",
+          "tool_result_refs": [
+            "T-5bfa8582e921",
+            "T-5286fd734b40",
+            "T-a2467200210c",
+            "T-d0cac39a24e4",
+            "T-45b9f3e6990e",
+            "T-7206337c2d43"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "The candidate RF station (KLYS:LI21:81:AMPL) cannot be established as the unique cause of any beam disturbance. The RF signal is too sparse and data-quality-flagged (98.7% no-update, 66,449 nonfinite over 821 samples, 28/82 neighbor baselines unknown) to characterize an excursion reliably; no RF phase data is available for temporal alignment; and the BPM-side evidence shows no sustained, onset-tagged disturbance to attribute. Coincidence of the candidate window, a modest (~2.9%) RF amplitude deviation, and a few isolated BPM z-spikes does not establish a unique causal link. This does not prove absence of causation, only that the available checks are insufficient.",
+          "tool_result_refs": [
+            "T-05791ca5497d",
+            "T-2410c964d357",
+            "T-adbdf7c22cf1",
+            "T-5bfa8582e921",
+            "T-d0cac39a24e4"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "lead",
+          "observation": "Reconciliation across rf, dump (DMPH 502/693), and ltu (LTUH 250/450) nodes for candidate window on station KLYS:LI21:81. RF channel shows a modest ~2.9% peak deviation but is dominated by sparse updates (~98.7% no-update fraction, only 11 finite samples) and anomalous data-quality flags (66,449 nonfinite values over 821 samples, with 28/82 neighboring baselines unknown), preventing a reliable RF-side characterization. Both BPM groups report adequate data quality (no nonfinite values, full 120 Hz fraction) with no sustained anomalies (longest_consecutive_samples = 0 on every channel) and no identifiable onset; the dump and LTU robust-z excursions are isolated (BPMS:DMPH:502:Y peak 4.43, BPMS:DMPH:502:TMIT peak 3.29, BPMS:LTUH:450:TMIT peak 4.04, BPMS:LTUH:450:X peak 4.01, BPMS:LTUH:250:TMIT peak 3.93, BPMS:LTUH:250:X peak 3.61, BPMS:DMPH:693:Y peak 3.48, BPMS:DMPH:693:TMIT peak 2.24). No temporal alignment between an RF excursion onset and any BPM onset can be made; no RF phase data is available.",
+          "source_channels": [
+            "KLYS:LI21:81:AMPL",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:693:TMIT",
+            "BPMS:DMPH:693:Y",
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:450:TMIT",
+            "BPMS:LTUH:450:X"
+          ],
+          "time_interval_ns": [
+            1604275932139720192,
+            1604275937439720192
+          ],
+          "tool_result_refs": [
+            "T-05791ca5497d",
+            "T-2410c964d357",
+            "T-adbdf7c22cf1",
+            "T-5bfa8582e921",
+            "T-5286fd734b40",
+            "T-a2467200210c",
+            "T-d0cac39a24e4",
+            "T-45b9f3e6990e",
+            "T-7206337c2d43"
+          ],
+          "supporting_evidence": [
+            "Charge-valid BPM channels at DMPH and LTUH show no sustained disturbance: longest_consecutive_samples = 0 across all eight channels (T-5bfa8582e921, T-d0cac39a24e4).",
+            "No onset identified on any BPM channel (onset_ns null on all eight channels) (T-5bfa8582e921, T-d0cac39a24e4).",
+            "BPM data quality is high: no nonfinite values, full 120 Hz fraction, max gap ~0.0084 s on both groups (T-a2467200210c, T-7206337c2d43).",
+            "RF station KLYS:LI21:81:AMPL peak deviation is only ~2.9% and the trace is dominated by no-update samples (T-05791ca5497d).",
+            "Anomalous RF data-quality flags (66,449 nonfinite over 821 samples; 28/82 neighboring baselines unknown) preclude reliable RF-side characterization (T-adbdf7c22cf1, T-2410c964d357)."
+          ],
+          "conflicting_evidence": [],
+          "data_limitations": [
+            "No RF phase data in this extract; cannot align phase with BPM activity.",
+            "RF channel is extremely sparse (~98.7% no-update fraction, only 11 finite samples) with anomalous nonfinite-value counts; leading missing values remain unknown.",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded.",
+            "No protein measurements and not applicable here.",
+            "Candidate window association is not proof of causation.",
+            "Neighboring station columns may be missing or inactive (28/82 baselines unknown).",
+            "Documented RF diagnostic reporting delay is approximate and not a calibrated per-event delay; cannot be used to derive a fixed timing offset."
+          ],
+          "requested_next_check": "Acquire a higher-fidelity RF extract (full finite samples with timestamps) and RF phase for KLYS:LI21:81 plus its neighboring stations, and re-evaluate beam-onset alignment using BPMs with charge-valid sustained signals.",
+          "beam_disturbance": {
+            "status": "not_corroborated",
+            "rationale": "Across all charge-valid BPM channels at DMPH (502 TMIT/Y, 693 TMIT/Y) and LTUH (250 TMIT/X, 450 TMIT/X), no sustained anomaly is present (longest_consecutive_samples = 0 on every channel) and no onset can be identified. The isolated robust-z excursions (max ~4.43 on BPMS:DMPH:502:Y, ~4.04 on BPMS:LTUH:450:TMIT) are non-sustained single-sample spikes and do not establish a sustained beam disturbance. An RF amplitude excursion alone, especially one whose magnitude and reliability are themselves unclear, cannot corroborate a beam disturbance.",
+            "tool_result_refs": [
+              "T-5bfa8582e921",
+              "T-5286fd734b40",
+              "T-a2467200210c",
+              "T-d0cac39a24e4",
+              "T-45b9f3e6990e",
+              "T-7206337c2d43"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "The candidate RF station (KLYS:LI21:81:AMPL) cannot be established as the unique cause of any beam disturbance. The RF signal is too sparse and data-quality-flagged (98.7% no-update, 66,449 nonfinite over 821 samples, 28/82 neighbor baselines unknown) to characterize an excursion reliably; no RF phase data is available for temporal alignment; and the BPM-side evidence shows no sustained, onset-tagged disturbance to attribute. Coincidence of the candidate window, a modest (~2.9%) RF amplitude deviation, and a few isolated BPM z-spikes does not establish a unique causal link. This does not prove absence of causation, only that the available checks are insufficient.",
+            "tool_result_refs": [
+              "T-05791ca5497d",
+              "T-2410c964d357",
+              "T-adbdf7c22cf1",
+              "T-5bfa8582e921",
+              "T-d0cac39a24e4"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "ref": "T-05791ca5497d",
+          "analysis": "equipment",
+          "event_id": "slac-003",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-2410c964d357",
+          "analysis": "neighbors",
+          "event_id": "slac-003",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-adbdf7c22cf1",
+          "analysis": "quality",
+          "event_id": "slac-003",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-5bfa8582e921",
+          "analysis": "beam",
+          "event_id": "slac-003",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-5286fd734b40",
+          "analysis": "charge_validity",
+          "event_id": "slac-003",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-a2467200210c",
+          "analysis": "quality",
+          "event_id": "slac-003",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-d0cac39a24e4",
+          "analysis": "beam",
+          "event_id": "slac-003",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-45b9f3e6990e",
+          "analysis": "charge_validity",
+          "event_id": "slac-003",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-7206337c2d43",
+          "analysis": "quality",
+          "event_id": "slac-003",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        }
+      ],
+      "metrics": {
+        "model_calls": 1,
+        "tool_calls": 9,
+        "latency_s": 14.78,
+        "input_tokens": 4700,
+        "output_tokens": 2299,
+        "input_characters": 15301,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "grid": {
+        "nodes_seen": 3,
+        "assignment": {
+          "rf": "14202828285105434104",
+          "ltu": "6599806078966515447",
+          "dump": "5520163713853007715"
+        },
+        "fallback": null
+      },
+      "data_shared": {
+        "raw_bytes_held": 711224,
+        "payload_bytes": 5530,
+        "percent_shared": 0.778
+      },
+      "node_observation_source": {
+        "rf": "model",
+        "dump": "model",
+        "ltu": "model"
+      },
+      "flower_run_id": "8670911992538207155",
+      "flower_series_id": "8705156187550859928",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 8670911992538207155\n  value {\n    run_id: 8670911992538207155\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:42:40.585872+00:00\"\n    starting_at: \"2026-09-29T23:42:40.903925+00:00\"\n    running_at: \"2026-09-29T23:42:41.387953+00:00\"\n    finished_at: \"2026-09-29T23:42:57.651583+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    bytes_sent: 3378\n    bytes_recv: 8023\n    clientapp_runtime: 9.6113390922546387\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 6073245729542783506\n    series_id: 8705156187550859928\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:42:57.735510+00:00\"\n",
+      "wall_latency_s": 17.164
+    },
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-003",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "single",
+        "observation": "Candidate KLYS:LI21:81 shows a modest amplitude excursion at the candidate endpoint (73.24 vs baseline 75.44, ~2.91% deviation), with only 2 RF updates in the ~60s window. No sustained or threshold-crossing beam disturbance was detected on any of the 4 TMIT channels or 4 position channels in the BPM evidence; all peak robust-z scores remained well below the 6\u03c3 heuristic threshold and longest consecutive excursions were 0. No neighboring klystron station in the available 82 columns was flagged suspicious. Charge is healthy on all BPMs (no low-charge or invalid-position samples). Only the candidate-end RF update is anomalous; the next update ~5s later returns to baseline.",
+        "source_channels": [
+          "KLYS:LI21:81:AMPL",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:693:TMIT",
+          "BPMS:DMPH:693:Y",
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:450:TMIT",
+          "BPMS:LTUH:450:X"
+        ],
+        "time_interval_ns": [
+          1604275727439720192,
+          1604275942739720192
+        ],
+        "tool_result_refs": [
+          "T-ef437fff2bd1",
+          "T-2fff22895fd0",
+          "T-c8e1f3c21ae1",
+          "T-c6ba9e7c29f1",
+          "T-837e8c416bd4",
+          "T-f00686ec37b0"
+        ],
+        "supporting_evidence": [
+          "Quality analysis (T-ef437fff2bd1): BPM channels at consistent 120Hz cadence with 0 missing values; charge-valid BPM data present.",
+          "Equipment analysis (T-2fff22895fd0): KLYS:LI21:81:AMPL had only 11 finite updates (98.66% no-update); endpoint value 73.24 (~2.91% below time-weighted baseline median 75.44).",
+          "Beam analysis (T-c8e1f3c21ae1): disturbance_detected=false on all 8 BPM channels; longest_consecutive_samples=0; peak robust-z values all below 6\u03c3 threshold (max 4.43 on BPMS:DMPH:502:Y).",
+          "Charge validity (T-837e8c416bd4): 0 low_charge_samples, 0 invalid_position_samples on all TMIT channels; quality_adequate=true.",
+          "Timing analysis (T-c6ba9e7c29f1): 2 RF updates in window (t=0 and t\u22485.0s with value back at 75.44); beam_onsets_ns empty; causal_attribution='Not established'.",
+          "Neighbor analysis (T-f00686ec37b0): of 82 available columns, only KLYS:LI21:81:AMPL flagged suspicious; no corroborating anomalous neighbor."
+        ],
+        "conflicting_evidence": [],
+        "data_limitations": [
+          "Sparse RF updates (98.66% no-update fraction for the candidate channel) \u2014 leading missing values remain unknown",
+          "Documented RF reporting delay up to ~5s is approximate and not a calibrated per-event delay; no fixed timing shift can be applied",
+          "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded (none observed here)",
+          "28 of 82 neighboring station columns have unknown baselines; absence of a flagged neighbor does not prove normal operation",
+          "No RF phase data in this extract",
+          "Candidate association is not proof of causation"
+        ],
+        "requested_next_check": "None required from current evidence; any further inference would require phase data, calibrated timing offsets, or operator-confirmed beam-loss diagnostics not present in this extract.",
+        "beam_disturbance": {
+          "status": "not_corroborated",
+          "rationale": "Charge-valid BPM evidence on all four TMIT channels and all four position channels shows no sustained disturbance (longest_consecutive_samples=0 across the board), no threshold-crossing peaks (all robust-z well below the 6\u03c3 exploratory heuristic; max 4.43 on BPMS:DMPH:502:Y), and disturbance_detected=false explicitly. The heuristic is limited evidence, but here it is uniformly negative across charge-valid channels.",
+          "tool_result_refs": [
+            "T-c8e1f3c21ae1",
+            "T-837e8c416bd4"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "Even granting the modest ~2.91% RF amplitude deviation on KLYS:LI21:81:AMPL, no beam disturbance was corroborated to attribute to it. An RF amplitude excursion, coincidence, or a positive beam heuristic alone cannot establish a unique cause, and the available checks (timing alignment, neighboring-station corroboration, charge validity) do not establish a unique cause. This does not prove absence of causation.",
+          "tool_result_refs": [
+            "T-2fff22895fd0",
+            "T-c6ba9e7c29f1",
+            "T-f00686ec37b0"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "single",
+          "observation": "Candidate KLYS:LI21:81 shows a modest amplitude excursion at the candidate endpoint (73.24 vs baseline 75.44, ~2.91% deviation), with only 2 RF updates in the ~60s window. No sustained or threshold-crossing beam disturbance was detected on any of the 4 TMIT channels or 4 position channels in the BPM evidence; all peak robust-z scores remained well below the 6\u03c3 heuristic threshold and longest consecutive excursions were 0. No neighboring klystron station in the available 82 columns was flagged suspicious. Charge is healthy on all BPMs (no low-charge or invalid-position samples). Only the candidate-end RF update is anomalous; the next update ~5s later returns to baseline.",
+          "source_channels": [
+            "KLYS:LI21:81:AMPL",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:693:TMIT",
+            "BPMS:DMPH:693:Y",
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:450:TMIT",
+            "BPMS:LTUH:450:X"
+          ],
+          "time_interval_ns": [
+            1604275727439720192,
+            1604275942739720192
+          ],
+          "tool_result_refs": [
+            "T-ef437fff2bd1",
+            "T-2fff22895fd0",
+            "T-c8e1f3c21ae1",
+            "T-c6ba9e7c29f1",
+            "T-837e8c416bd4",
+            "T-f00686ec37b0"
+          ],
+          "supporting_evidence": [
+            "Quality analysis (T-ef437fff2bd1): BPM channels at consistent 120Hz cadence with 0 missing values; charge-valid BPM data present.",
+            "Equipment analysis (T-2fff22895fd0): KLYS:LI21:81:AMPL had only 11 finite updates (98.66% no-update); endpoint value 73.24 (~2.91% below time-weighted baseline median 75.44).",
+            "Beam analysis (T-c8e1f3c21ae1): disturbance_detected=false on all 8 BPM channels; longest_consecutive_samples=0; peak robust-z values all below 6\u03c3 threshold (max 4.43 on BPMS:DMPH:502:Y).",
+            "Charge validity (T-837e8c416bd4): 0 low_charge_samples, 0 invalid_position_samples on all TMIT channels; quality_adequate=true.",
+            "Timing analysis (T-c6ba9e7c29f1): 2 RF updates in window (t=0 and t\u22485.0s with value back at 75.44); beam_onsets_ns empty; causal_attribution='Not established'.",
+            "Neighbor analysis (T-f00686ec37b0): of 82 available columns, only KLYS:LI21:81:AMPL flagged suspicious; no corroborating anomalous neighbor."
+          ],
+          "conflicting_evidence": [],
+          "data_limitations": [
+            "Sparse RF updates (98.66% no-update fraction for the candidate channel) \u2014 leading missing values remain unknown",
+            "Documented RF reporting delay up to ~5s is approximate and not a calibrated per-event delay; no fixed timing shift can be applied",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded (none observed here)",
+            "28 of 82 neighboring station columns have unknown baselines; absence of a flagged neighbor does not prove normal operation",
+            "No RF phase data in this extract",
+            "Candidate association is not proof of causation"
+          ],
+          "requested_next_check": "None required from current evidence; any further inference would require phase data, calibrated timing offsets, or operator-confirmed beam-loss diagnostics not present in this extract.",
+          "beam_disturbance": {
+            "status": "not_corroborated",
+            "rationale": "Charge-valid BPM evidence on all four TMIT channels and all four position channels shows no sustained disturbance (longest_consecutive_samples=0 across the board), no threshold-crossing peaks (all robust-z well below the 6\u03c3 exploratory heuristic; max 4.43 on BPMS:DMPH:502:Y), and disturbance_detected=false explicitly. The heuristic is limited evidence, but here it is uniformly negative across charge-valid channels.",
+            "tool_result_refs": [
+              "T-c8e1f3c21ae1",
+              "T-837e8c416bd4"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "Even granting the modest ~2.91% RF amplitude deviation on KLYS:LI21:81:AMPL, no beam disturbance was corroborated to attribute to it. An RF amplitude excursion, coincidence, or a positive beam heuristic alone cannot establish a unique cause, and the available checks (timing alignment, neighboring-station corroboration, charge validity) do not establish a unique cause. This does not prove absence of causation.",
+            "tool_result_refs": [
+              "T-2fff22895fd0",
+              "T-c6ba9e7c29f1",
+              "T-f00686ec37b0"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "event_id": "slac-003",
+          "analysis": "quality",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275937439720192",
+          "interval_ns": [
+            1604275727439720192,
+            1604275942739720192
+          ],
+          "result": {
+            "health": {
+              "samples": 821,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.0022364159999999998,
+              "max_gap_s": 2.025230592,
+              "fraction_120hz": 0.0,
+              "nonfinite_values": 66449,
+              "channels": 82
+            },
+            "bpm": {
+              "samples": 2076,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.008388611,
+              "max_gap_s": 0.008440323,
+              "fraction_120hz": 1.0,
+              "nonfinite_values": 0,
+              "channels": 8
+            },
+            "rf_missing_semantics": "NaN means no new update; hold only a known previous value; no backfill. RF row cadence is NOT per-station sampling rate."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-ef437fff2bd1"
+        },
+        {
+          "event_id": "slac-003",
+          "analysis": "equipment",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275937439720192",
+          "interval_ns": [
+            1604275727439720192,
+            1604275942739720192
+          ],
+          "result": {
+            "channel": "KLYS:LI21:81:AMPL",
+            "finite_updates": 11,
+            "no_update_fraction": 0.9866017052375152,
+            "baseline_time_weighted_median": 75.439453125,
+            "max_abs_deviation_pct": 2.912621359223301,
+            "suspicious": true,
+            "updates": [
+              {
+                "time_ns": 1604275937439720192,
+                "relative_s": 0.0,
+                "value": 73.2421875
+              },
+              {
+                "time_ns": 1604275942438743296,
+                "relative_s": 4.999023104,
+                "value": 75.439453125
+              }
+            ],
+            "window_includes_postcandidate_rf_updates": true
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-2fff22895fd0"
+        },
+        {
+          "event_id": "slac-003",
+          "analysis": "beam",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275937439720192",
+          "interval_ns": [
+            1604275920142790868,
+            1604275937438233381
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1021680160.0,
+                "baseline_robust_sigma": 24549626.1696,
+                "score_available": true,
+                "peak_robust_z": 3.2857200937701405,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:502:Y",
+                "baseline_samples": 1440,
+                "baseline_median": 3.5325273933252364,
+                "baseline_robust_sigma": 0.7609278126376303,
+                "score_available": true,
+                "peak_robust_z": 4.433537016981695,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 652698240.0,
+                "baseline_robust_sigma": 128203719.3024,
+                "score_available": true,
+                "peak_robust_z": 2.2436877928752508,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:Y",
+                "baseline_samples": 1440,
+                "baseline_median": -0.44748371343877014,
+                "baseline_robust_sigma": 0.3645721563652381,
+                "score_available": true,
+                "peak_robust_z": 3.477283915959192,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1067380608.0,
+                "baseline_robust_sigma": 14052296.2944,
+                "score_available": true,
+                "peak_robust_z": 3.926607783098696,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:X",
+                "baseline_samples": 1440,
+                "baseline_median": -0.050727635622024536,
+                "baseline_robust_sigma": 0.48407192454636094,
+                "score_available": true,
+                "peak_robust_z": 3.6123622160130835,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 912134336.0,
+                "baseline_robust_sigma": 11928596.332799999,
+                "score_available": true,
+                "peak_robust_z": 4.042813307999679,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:X",
+                "baseline_samples": 1440,
+                "baseline_median": 0.1131632924079895,
+                "baseline_robust_sigma": 0.5187346212029457,
+                "score_available": true,
+                "peak_robust_z": 4.005461366803482,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              }
+            ],
+            "disturbance_detected": false,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-c8e1f3c21ae1"
+        },
+        {
+          "event_id": "slac-003",
+          "analysis": "timing",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275937439720192",
+          "interval_ns": [
+            1604275920142790868,
+            1604275942739720192
+          ],
+          "result": {
+            "recorded_rf_updates": [
+              {
+                "time_ns": 1604275937439720192,
+                "relative_s": 0.0,
+                "value": 73.2421875
+              },
+              {
+                "time_ns": 1604275942438743296,
+                "relative_s": 4.999023104,
+                "value": 75.439453125
+              }
+            ],
+            "beam_onsets_ns": [],
+            "candidate_interval_ns": [
+              1604275932139720192,
+              1604275937439720192
+            ],
+            "documented_rf_reporting_delay_s": [
+              0,
+              5
+            ],
+            "delay_is_approximate": true,
+            "applied_shift_s": 0,
+            "causal_attribution": "Not established; asynchronous observations and candidate association alone cannot identify a unique cause."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-c6ba9e7c29f1"
+        },
+        {
+          "event_id": "slac-003",
+          "analysis": "charge_validity",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275937439720192",
+          "interval_ns": [
+            1604275920142790868,
+            1604275937438233381
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1021680160.0,
+                "baseline_robust_sigma": 24549626.1696,
+                "score_available": true,
+                "peak_robust_z": 3.2857200937701405,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 652698240.0,
+                "baseline_robust_sigma": 128203719.3024,
+                "score_available": true,
+                "peak_robust_z": 2.2436877928752508,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1067380608.0,
+                "baseline_robust_sigma": 14052296.2944,
+                "score_available": true,
+                "peak_robust_z": 3.926607783098696,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 912134336.0,
+                "baseline_robust_sigma": 11928596.332799999,
+                "score_available": true,
+                "peak_robust_z": 4.042813307999679,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              }
+            ],
+            "disturbance_detected": false,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-837e8c416bd4"
+        },
+        {
+          "event_id": "slac-003",
+          "analysis": "neighbors",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275937439720192",
+          "interval_ns": [
+            1604275727439720192,
+            1604275942739720192
+          ],
+          "result": {
+            "available_columns": 82,
+            "unknown_baselines": 28,
+            "suspicious": [
+              {
+                "channel": "KLYS:LI21:81:AMPL",
+                "finite_updates": 11,
+                "no_update_fraction": 0.9866017052375152,
+                "baseline_time_weighted_median": 75.439453125,
+                "max_abs_deviation_pct": 2.912621359223301,
+                "suspicious": true,
+                "updates": [
+                  {
+                    "time_ns": 1604275937439720192,
+                    "relative_s": 0.0,
+                    "value": 73.2421875
+                  },
+                  {
+                    "time_ns": 1604275942438743296,
+                    "relative_s": 4.999023104,
+                    "value": 75.439453125
+                  }
+                ],
+                "window_includes_postcandidate_rf_updates": true
+              }
+            ],
+            "caution": "Column presence does not establish continuous station operation or complete neighboring records."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-f00686ec37b0"
+        }
+      ],
+      "metrics": {
+        "model_calls": 2,
+        "tool_calls": 6,
+        "latency_s": 11.135,
+        "input_tokens": 11628,
+        "output_tokens": 2526,
+        "input_characters": 36226,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "flower_run_id": "3213963670005573096",
+      "flower_series_id": "9222484322995378339",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 3213963670005573096\n  value {\n    run_id: 3213963670005573096\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:42:59.151245+00:00\"\n    starting_at: \"2026-09-29T23:43:00.048157+00:00\"\n    running_at: \"2026-09-29T23:43:00.541711+00:00\"\n    finished_at: \"2026-09-29T23:43:13.157759+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 16505283289592522399\n    series_id: 9222484322995378339\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:43:13.263045+00:00\"\n",
+      "wall_latency_s": 14.125
+    },
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-004",
+      "mode": "baseline",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "single",
+        "observation": "KLYS:LI21:81:AMPL shows a single small excursion of ~1.4% (75.439 -> 74.365) at the candidate timestamp, with recovery to 75.415 ~5s later. RF updates are extremely sparse (13/769 finite samples, ~98.3% no-update fraction). Across all 8 BPM channels (4 TMIT + 4 position), no sustained beam disturbance is detected: peak robust z-scores range 2.50-4.29 (all below the 6-sigma threshold), no TMIT drops below 1e8, no low-charge or invalid-position samples, and longest_consecutive_samples=0 for every channel. 28 of 82 RF columns have unknown baselines, so neighboring-station uniqueness cannot be established. Documented RF reporting delay is approximate (0-5 s); no fixed timing is inferred.",
+        "source_channels": [
+          "KLYS:LI21:81:AMPL",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:693:TMIT",
+          "BPMS:DMPH:693:Y",
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:450:TMIT",
+          "BPMS:LTUH:450:X"
+        ],
+        "time_interval_ns": [
+          1604275767433064192,
+          1604275982733064192
+        ],
+        "tool_result_refs": [
+          "T-74a33b68e376",
+          "T-593cd4302f77",
+          "T-ae63163bd754",
+          "T-c536337e82e5",
+          "T-7cbed08e052d",
+          "T-359893eae550"
+        ],
+        "supporting_evidence": [
+          "Equipment analysis (T-593cd4302f77): single ~1.4% dip on KLYS:LI21:81:AMPL at relative t=0 with recovery at +5s; flagged suspicious only by deviation criterion.",
+          "Beam analysis (T-ae63163bd754): all 8 BPM channels show peak robust z in [2.50, 4.29], below 6-sigma threshold; longest_consecutive_samples=0 for every channel; disturbance_detected=false; quality_adequate=true; 636 samples in candidate window.",
+          "Charge validity (T-7cbed08e052d): zero invalid_position_samples and zero low_charge_samples across the four TMIT channels; sustained criterion unmet.",
+          "Timing (T-359893eae550): no beam onsets identified; documented RF reporting delay 0-5 s is approximate; no causal attribution established."
+        ],
+        "conflicting_evidence": [
+          "Equipment result labels the channel suspicious solely because of the deviation magnitude; the absolute change is only ~1.07 MW units (1.42%) and is bracketed by baseline-matching updates at -4.7s and +5.0s.",
+          "28 of 82 RF columns have unknown baselines (T-c536337e82e5), so absence of other suspicious channels does not establish that only KLYS:LI21:81 deviated."
+        ],
+        "data_limitations": [
+          "RF updates are sparse (~98.3% no-update fraction); only 3 finite values within the 30-minute equipment window bracket the candidate.",
+          "No RF phase data in this extract; cannot cross-check amplitude vs. phase behavior.",
+          "28/82 neighboring station columns have unknown baselines; uniqueness across stations cannot be evaluated.",
+          "Documented RF reporting delay is approximate (0-5 s); no per-event calibrated delay available.",
+          "BPM position channels are preprocessed/scaled; low-charge sentinel behavior not triggered here but remains a caveat.",
+          "Candidate association is not proof of causation."
+        ],
+        "requested_next_check": "Re-evaluate only after neighboring RF columns with currently unknown baselines acquire sufficient finite updates to baseline; revisit if a beam disturbance becomes corroborated in a wider time window.",
+        "beam_disturbance": {
+          "status": "not_corroborated",
+          "rationale": "Across all four TMIT and four position BPM channels with charge-valid samples, peak robust z-scores are 2.50-4.29 (below the 6-sigma threshold), no TMIT drops below 1e8, and longest_consecutive_samples=0 for every channel (sustained criterion unmet). The beam heuristic reports disturbance_detected=false with quality_adequate=true and 636 in-window samples. The small RF amplitude dip alone does not constitute beam evidence, so a sustained beam disturbance is not corroborated by charge-valid beam data.",
+          "tool_result_refs": [
+            "T-ae63163bd754",
+            "T-7cbed08e052d",
+            "T-593cd4302f77"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "Because no sustained beam disturbance is corroborated, there is no disturbance to attribute. Independently, uniqueness cannot be established: 28 of 82 RF columns have unknown baselines (T-c536337e82e5), so other stations cannot be excluded as co-deviating. The only candidate update is a ~1.4% dip bracketed by baseline-matching values (T-593cd4302f77), and timing is asynchronous with an approximate 0-5 s reporting delay and no applied shift (T-359893eae550). Coincidence, an RF excursion, or a positive beam heuristic are individually insufficient for unique-cause establishment.",
+          "tool_result_refs": [
+            "T-c536337e82e5",
+            "T-593cd4302f77",
+            "T-359893eae550",
+            "T-ae63163bd754"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "single",
+          "observation": "KLYS:LI21:81:AMPL shows a single small excursion of ~1.4% (75.439 -> 74.365) at the candidate timestamp, with recovery to 75.415 ~5s later. RF updates are extremely sparse (13/769 finite samples, ~98.3% no-update fraction). Across all 8 BPM channels (4 TMIT + 4 position), no sustained beam disturbance is detected: peak robust z-scores range 2.50-4.29 (all below the 6-sigma threshold), no TMIT drops below 1e8, no low-charge or invalid-position samples, and longest_consecutive_samples=0 for every channel. 28 of 82 RF columns have unknown baselines, so neighboring-station uniqueness cannot be established. Documented RF reporting delay is approximate (0-5 s); no fixed timing is inferred.",
+          "source_channels": [
+            "KLYS:LI21:81:AMPL",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:693:TMIT",
+            "BPMS:DMPH:693:Y",
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:450:TMIT",
+            "BPMS:LTUH:450:X"
+          ],
+          "time_interval_ns": [
+            1604275767433064192,
+            1604275982733064192
+          ],
+          "tool_result_refs": [
+            "T-74a33b68e376",
+            "T-593cd4302f77",
+            "T-ae63163bd754",
+            "T-c536337e82e5",
+            "T-7cbed08e052d",
+            "T-359893eae550"
+          ],
+          "supporting_evidence": [
+            "Equipment analysis (T-593cd4302f77): single ~1.4% dip on KLYS:LI21:81:AMPL at relative t=0 with recovery at +5s; flagged suspicious only by deviation criterion.",
+            "Beam analysis (T-ae63163bd754): all 8 BPM channels show peak robust z in [2.50, 4.29], below 6-sigma threshold; longest_consecutive_samples=0 for every channel; disturbance_detected=false; quality_adequate=true; 636 samples in candidate window.",
+            "Charge validity (T-7cbed08e052d): zero invalid_position_samples and zero low_charge_samples across the four TMIT channels; sustained criterion unmet.",
+            "Timing (T-359893eae550): no beam onsets identified; documented RF reporting delay 0-5 s is approximate; no causal attribution established."
+          ],
+          "conflicting_evidence": [
+            "Equipment result labels the channel suspicious solely because of the deviation magnitude; the absolute change is only ~1.07 MW units (1.42%) and is bracketed by baseline-matching updates at -4.7s and +5.0s.",
+            "28 of 82 RF columns have unknown baselines (T-c536337e82e5), so absence of other suspicious channels does not establish that only KLYS:LI21:81 deviated."
+          ],
+          "data_limitations": [
+            "RF updates are sparse (~98.3% no-update fraction); only 3 finite values within the 30-minute equipment window bracket the candidate.",
+            "No RF phase data in this extract; cannot cross-check amplitude vs. phase behavior.",
+            "28/82 neighboring station columns have unknown baselines; uniqueness across stations cannot be evaluated.",
+            "Documented RF reporting delay is approximate (0-5 s); no per-event calibrated delay available.",
+            "BPM position channels are preprocessed/scaled; low-charge sentinel behavior not triggered here but remains a caveat.",
+            "Candidate association is not proof of causation."
+          ],
+          "requested_next_check": "Re-evaluate only after neighboring RF columns with currently unknown baselines acquire sufficient finite updates to baseline; revisit if a beam disturbance becomes corroborated in a wider time window.",
+          "beam_disturbance": {
+            "status": "not_corroborated",
+            "rationale": "Across all four TMIT and four position BPM channels with charge-valid samples, peak robust z-scores are 2.50-4.29 (below the 6-sigma threshold), no TMIT drops below 1e8, and longest_consecutive_samples=0 for every channel (sustained criterion unmet). The beam heuristic reports disturbance_detected=false with quality_adequate=true and 636 in-window samples. The small RF amplitude dip alone does not constitute beam evidence, so a sustained beam disturbance is not corroborated by charge-valid beam data.",
+            "tool_result_refs": [
+              "T-ae63163bd754",
+              "T-7cbed08e052d",
+              "T-593cd4302f77"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "Because no sustained beam disturbance is corroborated, there is no disturbance to attribute. Independently, uniqueness cannot be established: 28 of 82 RF columns have unknown baselines (T-c536337e82e5), so other stations cannot be excluded as co-deviating. The only candidate update is a ~1.4% dip bracketed by baseline-matching values (T-593cd4302f77), and timing is asynchronous with an approximate 0-5 s reporting delay and no applied shift (T-359893eae550). Coincidence, an RF excursion, or a positive beam heuristic are individually insufficient for unique-cause establishment.",
+            "tool_result_refs": [
+              "T-c536337e82e5",
+              "T-593cd4302f77",
+              "T-359893eae550",
+              "T-ae63163bd754"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "event_id": "slac-004",
+          "analysis": "quality",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275977433064192",
+          "interval_ns": [
+            1604275767433064192,
+            1604275982733064192
+          ],
+          "result": {
+            "health": {
+              "samples": 769,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.002471808,
+              "max_gap_s": 2.025230592,
+              "fraction_120hz": 0.0,
+              "nonfinite_values": 62237,
+              "channels": 82
+            },
+            "bpm": {
+              "samples": 2076,
+              "nonmonotonic": 0,
+              "duplicates": 0,
+              "median_dt_s": 0.008388611,
+              "max_gap_s": 0.008440323,
+              "fraction_120hz": 1.0,
+              "nonfinite_values": 0,
+              "channels": 8
+            },
+            "rf_missing_semantics": "NaN means no new update; hold only a known previous value; no backfill. RF row cadence is NOT per-station sampling rate."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-74a33b68e376"
+        },
+        {
+          "event_id": "slac-004",
+          "analysis": "equipment",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275977433064192",
+          "interval_ns": [
+            1604275767433064192,
+            1604275982733064192
+          ],
+          "result": {
+            "channel": "KLYS:LI21:81:AMPL",
+            "finite_updates": 13,
+            "no_update_fraction": 0.9830949284785435,
+            "baseline_time_weighted_median": 75.439453125,
+            "max_abs_deviation_pct": 1.423948220064725,
+            "suspicious": true,
+            "updates": [
+              {
+                "time_ns": 1604275972727399168,
+                "relative_s": -4.705665024,
+                "value": 75.439453125
+              },
+              {
+                "time_ns": 1604275977433064192,
+                "relative_s": 0.0,
+                "value": 74.365234375
+              },
+              {
+                "time_ns": 1604275982430983168,
+                "relative_s": 4.997918976,
+                "value": 75.4150390625
+              }
+            ],
+            "window_includes_postcandidate_rf_updates": true
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-593cd4302f77"
+        },
+        {
+          "event_id": "slac-004",
+          "analysis": "beam",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275977433064192",
+          "interval_ns": [
+            1604275960135465230,
+            1604275977428679519
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1018952480.0,
+                "baseline_robust_sigma": 21863724.288,
+                "score_available": true,
+                "peak_robust_z": 3.444646438454027,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:502:Y",
+                "baseline_samples": 1440,
+                "baseline_median": 3.5596091717605276,
+                "baseline_robust_sigma": 0.7682306087363312,
+                "score_available": true,
+                "peak_robust_z": 3.4505348887059415,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 670683328.0,
+                "baseline_robust_sigma": 123056891.1936,
+                "score_available": true,
+                "peak_robust_z": 2.504916457828015,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:Y",
+                "baseline_samples": 1440,
+                "baseline_median": -0.37956136121932893,
+                "baseline_robust_sigma": 0.37257631643494565,
+                "score_available": true,
+                "peak_robust_z": 4.180219580030266,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1063115328.0,
+                "baseline_robust_sigma": 15735343.814399999,
+                "score_available": true,
+                "peak_robust_z": 3.7226849753605853,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:X",
+                "baseline_samples": 1440,
+                "baseline_median": -0.07532808184623718,
+                "baseline_robust_sigma": 0.5045106770128012,
+                "score_available": true,
+                "peak_robust_z": 4.2919932641508085,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 908132736.0,
+                "baseline_robust_sigma": 13278118.1568,
+                "score_available": true,
+                "peak_robust_z": 3.7496831563064648,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:X",
+                "baseline_samples": 1440,
+                "baseline_median": 0.1273958683013916,
+                "baseline_robust_sigma": 0.5289226924180984,
+                "score_available": true,
+                "peak_robust_z": 4.1478432619276235,
+                "invalid_position_samples": 0,
+                "low_charge_samples": null,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              }
+            ],
+            "disturbance_detected": false,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-ae63163bd754"
+        },
+        {
+          "event_id": "slac-004",
+          "analysis": "neighbors",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275977433064192",
+          "interval_ns": [
+            1604275767433064192,
+            1604275982733064192
+          ],
+          "result": {
+            "available_columns": 82,
+            "unknown_baselines": 28,
+            "suspicious": [
+              {
+                "channel": "KLYS:LI21:81:AMPL",
+                "finite_updates": 13,
+                "no_update_fraction": 0.9830949284785435,
+                "baseline_time_weighted_median": 75.439453125,
+                "max_abs_deviation_pct": 1.423948220064725,
+                "suspicious": true,
+                "updates": [
+                  {
+                    "time_ns": 1604275972727399168,
+                    "relative_s": -4.705665024,
+                    "value": 75.439453125
+                  },
+                  {
+                    "time_ns": 1604275977433064192,
+                    "relative_s": 0.0,
+                    "value": 74.365234375
+                  },
+                  {
+                    "time_ns": 1604275982430983168,
+                    "relative_s": 4.997918976,
+                    "value": 75.4150390625
+                  }
+                ],
+                "window_includes_postcandidate_rf_updates": true
+              }
+            ],
+            "caution": "Column presence does not establish continuous station operation or complete neighboring records."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-c536337e82e5"
+        },
+        {
+          "event_id": "slac-004",
+          "analysis": "charge_validity",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275977433064192",
+          "interval_ns": [
+            1604275960135465230,
+            1604275977428679519
+          ],
+          "result": {
+            "channels": [
+              {
+                "channel": "BPMS:DMPH:502:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1018952480.0,
+                "baseline_robust_sigma": 21863724.288,
+                "score_available": true,
+                "peak_robust_z": 3.444646438454027,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:DMPH:693:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 670683328.0,
+                "baseline_robust_sigma": 123056891.1936,
+                "score_available": true,
+                "peak_robust_z": 2.504916457828015,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:250:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 1063115328.0,
+                "baseline_robust_sigma": 15735343.814399999,
+                "score_available": true,
+                "peak_robust_z": 3.7226849753605853,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              },
+              {
+                "channel": "BPMS:LTUH:450:TMIT",
+                "baseline_samples": 1440,
+                "baseline_median": 908132736.0,
+                "baseline_robust_sigma": 13278118.1568,
+                "score_available": true,
+                "peak_robust_z": 3.7496831563064648,
+                "invalid_position_samples": 0,
+                "low_charge_samples": 0,
+                "longest_consecutive_samples": 0,
+                "sustained": false,
+                "first_sustained_ns": null
+              }
+            ],
+            "disturbance_detected": false,
+            "quality_adequate": true,
+            "threshold": "6 robust sigmas or TMIT <1e8, sustained >=10 consecutive samples; exploratory heuristic, not a reproduction of the published detector",
+            "samples_in_candidate": 636
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-7cbed08e052d"
+        },
+        {
+          "event_id": "slac-004",
+          "analysis": "timing",
+          "source": "https://www.slac.stanford.edu/grp/ad/ard/rfanom/klys_anom_dset_AMPL.h5",
+          "hdf5_group": "candidates/1604275977433064192",
+          "interval_ns": [
+            1604275960135465230,
+            1604275982733064192
+          ],
+          "result": {
+            "recorded_rf_updates": [
+              {
+                "time_ns": 1604275972727399168,
+                "relative_s": -4.705665024,
+                "value": 75.439453125
+              },
+              {
+                "time_ns": 1604275977433064192,
+                "relative_s": 0.0,
+                "value": 74.365234375
+              },
+              {
+                "time_ns": 1604275982430983168,
+                "relative_s": 4.997918976,
+                "value": 75.4150390625
+              }
+            ],
+            "beam_onsets_ns": [],
+            "candidate_interval_ns": [
+              1604275972133064192,
+              1604275977433064192
+            ],
+            "documented_rf_reporting_delay_s": [
+              0,
+              5
+            ],
+            "delay_is_approximate": true,
+            "applied_shift_s": 0,
+            "causal_attribution": "Not established; asynchronous observations and candidate association alone cannot identify a unique cause."
+          },
+          "limitations": [
+            "No RF phase data in this extract",
+            "No protein measurements",
+            "Sparse RF updates; leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+            "Candidate association is not proof of causation",
+            "Neighboring station columns may be missing or inactive"
+          ],
+          "ref": "T-359893eae550"
+        }
+      ],
+      "metrics": {
+        "model_calls": 2,
+        "tool_calls": 6,
+        "latency_s": 11.15,
+        "input_tokens": 11561,
+        "output_tokens": 2410,
+        "input_characters": 35720,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "flower_run_id": "7978814085613416624",
+      "flower_series_id": "9709416229089621996",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 7978814085613416624\n  value {\n    run_id: 7978814085613416624\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:43:14.671021+00:00\"\n    starting_at: \"2026-09-29T23:43:15.221761+00:00\"\n    running_at: \"2026-09-29T23:43:15.704046+00:00\"\n    finished_at: \"2026-09-29T23:43:28.340676+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 11264979629265783288\n    series_id: 9709416229089621996\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:43:28.790104+00:00\"\n",
+      "wall_latency_s": 14.134
+    },
+    {
+      "result_schema_version": 2,
+      "benchmark_eligible": false,
+      "event_id": "slac-004",
+      "mode": "grid",
+      "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
+      "final": {
+        "finding_id": "F-001",
+        "agent": "lead",
+        "observation": "RF station KLYS:LI21:81:AMPL is starved of data within the candidate window (~98.3% no-update fraction; only 3 finite updates, 62237 non-finite values) with a modest 1.42% peak deviation and only 1/82 neighbor columns flagged suspicious, so no clear RF amplitude excursion is established. Both BPM instruments report good data quality (full 120 Hz, zero non-finite values, zero low-charge or invalid-position samples) but transient peak robust-z excursions (LTUH ~3.7-4.3; DMPH ~2.5-4.2, notably BPMS:DMPH:693:Y ~4.18) without persistence, no consecutive anomalous samples, and no onsets returned by the disturbance detectors; the LTU node therefore reports 'normal' while the dump node reports 'insufficient_evidence' for sustained disturbance.",
+        "source_channels": [
+          "KLYS:LI21:81:AMPL",
+          "BPMS:LTUH:250:TMIT",
+          "BPMS:LTUH:250:X",
+          "BPMS:LTUH:450:TMIT",
+          "BPMS:LTUH:450:X",
+          "BPMS:DMPH:502:TMIT",
+          "BPMS:DMPH:502:Y",
+          "BPMS:DMPH:693:TMIT",
+          "BPMS:DMPH:693:Y"
+        ],
+        "time_interval_ns": [
+          1604275972133064192,
+          1604275977433064192
+        ],
+        "tool_result_refs": [
+          "T-8e4b19c42743",
+          "T-46e523e24662",
+          "T-d424ff1d52f5",
+          "T-44bd2004af71",
+          "T-5093574440ae",
+          "T-1d9dd003ad1a",
+          "T-601748f39dc6",
+          "T-6e79532b76c0",
+          "T-db9ff5985d21"
+        ],
+        "supporting_evidence": [
+          "RF KLYS:LI21:81:AMPL: 98.3% no-update fraction, 62237 non-finite vs 769 samples, 1.42% peak deviation, 1/82 neighbors suspicious [T-8e4b19c42743, T-46e523e24662, T-d424ff1d52f5]",
+          "LTUH BPMs: full 120 Hz, zero non-finite values, zero low-charge samples, peak robust-z ~3.7-4.3 not sustained, no onsets, disturbance_detected=false [T-44bd2004af71, T-5093574440ae, T-1d9dd003ad1a]",
+          "DMPH BPMs: full 120 Hz, zero non-finite values, zero low-charge samples, peak robust-z ~2.5-4.2 not sustained, no onsets, disturbance_detected=false [T-601748f39dc6, T-6e79532b76c0, T-db9ff5985d21]"
+        ],
+        "conflicting_evidence": [
+          "Transient peak robust-z values in all eight BPM channels (~3.7-4.3 LTUH; ~2.5-4.2 DMPH) marginally above typical fluctuation bands but without persistence or consecutive anomalous samples [T-44bd2004af71, T-601748f39dc6]",
+          "RF candidate station lacks any meaningful excursion evidence (1.42% peak deviation, near-total sparsity) to motivate a unique-cause claim [T-8e4b19c42743]"
+        ],
+        "data_limitations": [
+          "No RF phase data in this extract",
+          "Sparse RF updates (98.3% no-update); leading missing values remain unknown",
+          "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded",
+          "Neighboring station columns may be missing or inactive",
+          "RF diagnostic timing is asynchronous with documented ~5 s reporting delay; not a calibrated per-event delay",
+          "No protein measurements",
+          "Candidate-window association is not proof of causation"
+        ],
+        "requested_next_check": "Pull a higher-resolution or freshly-fetched extract of KLYS:LI21:81:AMPL (and a few neighbors) to recover finite updates and check for an actual amplitude excursion; cross-check against the next/previous pulse for a real RF anomaly before revisiting beam correlation.",
+        "beam_disturbance": {
+          "status": "not_corroborated",
+          "rationale": "Charge-valid BPM evidence (LTUH and DMPH) shows transient peak robust-z excursions (~3.7-4.3 and ~2.5-4.2) but no sustained anomalies, no consecutive anomalous samples, no onsets returned, and the instruments' own disturbance detectors did not trigger. No charge-valid beam evidence corroborates a sustained beam disturbance, and the sparse, ~1.42% RF candidate excursion cannot establish beam disturbance on its own.",
+          "tool_result_refs": [
+            "T-44bd2004af71",
+            "T-5093574440ae",
+            "T-1d9dd003ad1a",
+            "T-601748f39dc6",
+            "T-6e79532b76c0",
+            "T-db9ff5985d21"
+          ]
+        },
+        "unique_cause": {
+          "status": "not_established",
+          "rationale": "The candidate RF station KLYS:LI21:81:AMPL has too few finite updates to establish a real amplitude excursion (98.3% no-update, 1.42% peak deviation), and beam evidence does not corroborate a sustained disturbance. Without an established RF signature and without a corroborated beam disturbance, coincidence and a positive heuristic cannot establish KLYS:LI21:81 as the unique cause; this does not prove absence of causation.",
+          "tool_result_refs": [
+            "T-8e4b19c42743",
+            "T-46e523e24662",
+            "T-d424ff1d52f5",
+            "T-44bd2004af71",
+            "T-601748f39dc6"
+          ]
+        }
+      },
+      "findings": [
+        {
+          "finding_id": "F-001",
+          "agent": "lead",
+          "observation": "RF station KLYS:LI21:81:AMPL is starved of data within the candidate window (~98.3% no-update fraction; only 3 finite updates, 62237 non-finite values) with a modest 1.42% peak deviation and only 1/82 neighbor columns flagged suspicious, so no clear RF amplitude excursion is established. Both BPM instruments report good data quality (full 120 Hz, zero non-finite values, zero low-charge or invalid-position samples) but transient peak robust-z excursions (LTUH ~3.7-4.3; DMPH ~2.5-4.2, notably BPMS:DMPH:693:Y ~4.18) without persistence, no consecutive anomalous samples, and no onsets returned by the disturbance detectors; the LTU node therefore reports 'normal' while the dump node reports 'insufficient_evidence' for sustained disturbance.",
+          "source_channels": [
+            "KLYS:LI21:81:AMPL",
+            "BPMS:LTUH:250:TMIT",
+            "BPMS:LTUH:250:X",
+            "BPMS:LTUH:450:TMIT",
+            "BPMS:LTUH:450:X",
+            "BPMS:DMPH:502:TMIT",
+            "BPMS:DMPH:502:Y",
+            "BPMS:DMPH:693:TMIT",
+            "BPMS:DMPH:693:Y"
+          ],
+          "time_interval_ns": [
+            1604275972133064192,
+            1604275977433064192
+          ],
+          "tool_result_refs": [
+            "T-8e4b19c42743",
+            "T-46e523e24662",
+            "T-d424ff1d52f5",
+            "T-44bd2004af71",
+            "T-5093574440ae",
+            "T-1d9dd003ad1a",
+            "T-601748f39dc6",
+            "T-6e79532b76c0",
+            "T-db9ff5985d21"
+          ],
+          "supporting_evidence": [
+            "RF KLYS:LI21:81:AMPL: 98.3% no-update fraction, 62237 non-finite vs 769 samples, 1.42% peak deviation, 1/82 neighbors suspicious [T-8e4b19c42743, T-46e523e24662, T-d424ff1d52f5]",
+            "LTUH BPMs: full 120 Hz, zero non-finite values, zero low-charge samples, peak robust-z ~3.7-4.3 not sustained, no onsets, disturbance_detected=false [T-44bd2004af71, T-5093574440ae, T-1d9dd003ad1a]",
+            "DMPH BPMs: full 120 Hz, zero non-finite values, zero low-charge samples, peak robust-z ~2.5-4.2 not sustained, no onsets, disturbance_detected=false [T-601748f39dc6, T-6e79532b76c0, T-db9ff5985d21]"
+          ],
+          "conflicting_evidence": [
+            "Transient peak robust-z values in all eight BPM channels (~3.7-4.3 LTUH; ~2.5-4.2 DMPH) marginally above typical fluctuation bands but without persistence or consecutive anomalous samples [T-44bd2004af71, T-601748f39dc6]",
+            "RF candidate station lacks any meaningful excursion evidence (1.42% peak deviation, near-total sparsity) to motivate a unique-cause claim [T-8e4b19c42743]"
+          ],
+          "data_limitations": [
+            "No RF phase data in this extract",
+            "Sparse RF updates (98.3% no-update); leading missing values remain unknown",
+            "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel-coded",
+            "Neighboring station columns may be missing or inactive",
+            "RF diagnostic timing is asynchronous with documented ~5 s reporting delay; not a calibrated per-event delay",
+            "No protein measurements",
+            "Candidate-window association is not proof of causation"
+          ],
+          "requested_next_check": "Pull a higher-resolution or freshly-fetched extract of KLYS:LI21:81:AMPL (and a few neighbors) to recover finite updates and check for an actual amplitude excursion; cross-check against the next/previous pulse for a real RF anomaly before revisiting beam correlation.",
+          "beam_disturbance": {
+            "status": "not_corroborated",
+            "rationale": "Charge-valid BPM evidence (LTUH and DMPH) shows transient peak robust-z excursions (~3.7-4.3 and ~2.5-4.2) but no sustained anomalies, no consecutive anomalous samples, no onsets returned, and the instruments' own disturbance detectors did not trigger. No charge-valid beam evidence corroborates a sustained beam disturbance, and the sparse, ~1.42% RF candidate excursion cannot establish beam disturbance on its own.",
+            "tool_result_refs": [
+              "T-44bd2004af71",
+              "T-5093574440ae",
+              "T-1d9dd003ad1a",
+              "T-601748f39dc6",
+              "T-6e79532b76c0",
+              "T-db9ff5985d21"
+            ]
+          },
+          "unique_cause": {
+            "status": "not_established",
+            "rationale": "The candidate RF station KLYS:LI21:81:AMPL has too few finite updates to establish a real amplitude excursion (98.3% no-update, 1.42% peak deviation), and beam evidence does not corroborate a sustained disturbance. Without an established RF signature and without a corroborated beam disturbance, coincidence and a positive heuristic cannot establish KLYS:LI21:81 as the unique cause; this does not prove absence of causation.",
+            "tool_result_refs": [
+              "T-8e4b19c42743",
+              "T-46e523e24662",
+              "T-d424ff1d52f5",
+              "T-44bd2004af71",
+              "T-601748f39dc6"
+            ]
+          }
+        }
+      ],
+      "evidence": [
+        {
+          "ref": "T-8e4b19c42743",
+          "analysis": "equipment",
+          "event_id": "slac-004",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-46e523e24662",
+          "analysis": "neighbors",
+          "event_id": "slac-004",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-d424ff1d52f5",
+          "analysis": "quality",
+          "event_id": "slac-004",
+          "instrument": "rf",
+          "node_id": "14202828285105434104"
+        },
+        {
+          "ref": "T-44bd2004af71",
+          "analysis": "beam",
+          "event_id": "slac-004",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-5093574440ae",
+          "analysis": "charge_validity",
+          "event_id": "slac-004",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-1d9dd003ad1a",
+          "analysis": "quality",
+          "event_id": "slac-004",
+          "instrument": "ltu",
+          "node_id": "6599806078966515447"
+        },
+        {
+          "ref": "T-601748f39dc6",
+          "analysis": "beam",
+          "event_id": "slac-004",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-6e79532b76c0",
+          "analysis": "charge_validity",
+          "event_id": "slac-004",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        },
+        {
+          "ref": "T-db9ff5985d21",
+          "analysis": "quality",
+          "event_id": "slac-004",
+          "instrument": "dump",
+          "node_id": "5520163713853007715"
+        }
+      ],
+      "metrics": {
+        "model_calls": 1,
+        "tool_calls": 9,
+        "latency_s": 16.1,
+        "input_tokens": 4711,
+        "output_tokens": 2286,
+        "input_characters": 15402,
+        "cost_usd": null,
+        "cost_note": "Provider pricing/cost not returned; no estimate assumed.",
+        "unsupported_claims": null,
+        "unsupported_claims_note": "Requires human claim-by-claim review; reference validation is not semantic verification."
+      },
+      "model_execution_path": "Flower runtime Responses endpoint and model tasks",
+      "grid": {
+        "nodes_seen": 3,
+        "assignment": {
+          "rf": "14202828285105434104",
+          "ltu": "6599806078966515447",
+          "dump": "5520163713853007715"
+        },
+        "fallback": null
+      },
+      "data_shared": {
+        "raw_bytes_held": 676696,
+        "payload_bytes": 5625,
+        "percent_shared": 0.831
+      },
+      "node_observation_source": {
+        "rf": "model",
+        "ltu": "model",
+        "dump": "model"
+      },
+      "flower_run_id": "6602968320857543824",
+      "flower_series_id": "18075224437060214628",
+      "runtime": "Flower 1.39.0 local SuperLink",
+      "runtime_status": "run_dict {\n  key: 6602968320857543824\n  value {\n    run_id: 6602968320857543824\n    fab_id: \"iamsorenl/slac-investigator\"\n    fab_version: \"0.1.1\"\n    fab_hash: \"26b44000bae0ce938b6c6db009e0e33cf8dc818afe099d235d433781d1d6559f\"\n    pending_at: \"2026-09-29T23:43:30.201460+00:00\"\n    starting_at: \"2026-09-29T23:43:30.347253+00:00\"\n    running_at: \"2026-09-29T23:43:30.834239+00:00\"\n    finished_at: \"2026-09-29T23:43:48.421282+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    bytes_sent: 3386\n    bytes_recv: 8120\n    clientapp_runtime: 9.6576871871948242\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 17324664642659409572\n    series_id: 18075224437060214628\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T23:43:48.863789+00:00\"\n",
+      "wall_latency_s": 18.673
+    }
+  ]
+}

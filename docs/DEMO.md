@@ -17,9 +17,9 @@ In `flwr chat` you can type the sentence directly; mention the event id (`slac-0
 | Case | Events | RF node | LTU node | Dump node | What it means |
 |---|---|---|---|---|---|
 | Beam really disturbed | slac-001, slac-002 | suspicious | suspicious | suspicious | All three instruments see it at the same time. Live Nebius run on slac-001: beam disturbance **corroborated**, unique cause **not established**, 0.9% of raw data shared. |
-| RF glitch, beam fine | slac-003, slac-004 | suspicious | normal | normal | The klystron looks off but neither beam instrument saw anything. Expect beam disturbance **not corroborated**. |
+| RF glitch, beam fine | slac-003, slac-004 | suspicious | normal | normal | The klystron looks off but neither beam instrument saw anything. Live Nebius runs: beam disturbance **not corroborated**, unique cause **not established**, under 1% of raw data shared. |
 
-The node columns come from the deterministic per-instrument checks. The final verdict on slac-003/004 has not been run live with a model yet; run it once before showing it.
+The node columns come from the deterministic per-instrument checks; live model runs can word them differently. All four events have been run live on the grid and on the single agent; see the README comparison table.
 
 Each node sends about 1-2 KB of summary numbers and holds 83-545 KB of raw samples, so the orchestrator sees under 1% of the raw data. A single agent would need all of it.
 
