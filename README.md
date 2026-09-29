@@ -102,3 +102,13 @@ Each finding includes its ID/agent, observation, channels and interval, tool ref
 The signal detector is a transparent demonstration heuristic, not a reproduction or improvement of SLAC's published detector. It uses a time-weighted RF baseline and robust beam deviations sustained for ten valid consecutive samples, with charge checks. Four label-selected cases are not a benchmark. There is no training, distributed deployment, federated learning, live control or protein analysis.
 
 See [data provenance](docs/DATA_PROVENANCE.md) for exact source files, channels, transformations, timestamps and unresolved dataset licensing. `scripts/fetch_cases.py` documents the small extraction. Raw downloads and all labels stay outside the AgentApp bundle.
+
+## Switching models
+
+Copy `.env.example` to `.env` and fill in a key (`.env` stays gitignored; never commit a key). `.env.example` lists all four provider blocks — Nebius, Endeavor, Groq and Ollama — with the Nebius Token Factory default active and the rest commented out. After editing `.env`, verify the provider responds with:
+
+```sh
+.venv/bin/python scripts/check_model.py
+```
+
+It sends one Responses API request with a trivial tool and prints PASS/FAIL, a reason and latency; it never prints the key.
