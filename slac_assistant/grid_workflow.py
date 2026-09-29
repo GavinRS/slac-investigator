@@ -72,6 +72,7 @@ def model_final(inv,reports,problems,question,prior):
     task=('Reconcile the instrument node reports into one final finding. Node assessments are per-instrument signals, not verdicts. '
         'Align the ltu/dump beam onsets with the RF excursion; cite only the node tool refs. Node reports: '+json.dumps(rep)+
         ' Transport problems: '+json.dumps(problems)+' Human question: '+question+' Prior operator-visible assessment: '+json.dumps(prior))
+    inv.max_output_tokens=4000  # reasoning models spend ~1-1.5k tokens before a ~1.5k-token Finding; 1600 came back incomplete live
     return inv.loop('lead',task,[inv.results[x] for r,_ in reports.values() for x in r['tool_refs']],1)
 
 def run_grid(agent,event_id,emit,mode='smoke',question='',timeout=120,model=None,client=None,prior=None):
@@ -95,7 +96,7 @@ def run_grid(agent,event_id,emit,mode='smoke',question='',timeout=120,model=None
     final=None
     if inv.client is not None:
         try:final=model_final(inv,reports,problems,question,prior)
-        except Exception as exc:problems=problems+[f'Model final not accepted ({type(exc).__name__}'+(f': {str(exc)[:200]}' if isinstance(exc,ValueError) else '')+').']
+        except Exception as exc:problems=problems+[f'Model final not accepted ({type(exc).__name__}'+(f': {str(exc)[:200]}' if isinstance(exc,(ValueError,RuntimeError)) else '')+').']
     if final is None:final=smoke_final(inv,reports,problems)
     return inv.finish(final,grid=dict(nodes_seen=len(nodes),assignment=assignment,fallback=fallback),data_shared=data,
         node_observation_source={i:r.get('observation_source','deterministic') for i,(r,_) in reports.items()})

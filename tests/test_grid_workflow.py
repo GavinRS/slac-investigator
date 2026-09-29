@@ -117,7 +117,7 @@ def run_collab(fm,n=3,monkeypatch=None):
 
 def test_collaborative_models_on_nodes_and_orchestrator(monkeypatch):
     fm=FixtureModel(finals=[finding]);report,events=run_collab(fm,monkeypatch=monkeypatch)
-    assert len(fm.node_calls)==3 and len(fm.lead_calls)==1 and report['metrics']['model_calls']==1
+    assert len(fm.node_calls)==3 and len(fm.lead_calls)==1 and report['metrics']['model_calls']==1 and fm.lead_calls[0]['max_output_tokens']==4000
     assert all('arrays' not in c['input'] and json.loads(c['input'])['summary'] for c in fm.node_calls)
     assert report['node_observation_source']=={'rf':'model','ltu':'model','dump':'model'}
     assert {e['observation'] for e in events if e['kind']=='node_report'}=={'Model note.'}
