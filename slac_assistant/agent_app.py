@@ -8,7 +8,7 @@ app=AgentApp()
 def main(agent:AgentSession,context:Context)->None:
     request=json.loads(agent.prompt)
     mode=request.get('mode','collaborative')
-    if mode not in ('collaborative','baseline','smoke'):raise ValueError('Unknown mode')
+    if mode not in ('collaborative','baseline','smoke','grid'):raise ValueError('Unknown mode')
     def emit(payload):
         # Only concise application events. No private model/reasoning events are forwarded.
         agent.events.emit({'type':'response.output_text.delta','delta':json.dumps(payload)+'\n'})

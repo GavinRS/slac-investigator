@@ -148,6 +148,50 @@ def test_smoke_followup_rejected_and_public_redaction(tmp_path, monkeypatch):
         assert client.post(job['links']['followup'], json={'question':'Why?'}).status_code == 409
 
 
+def test_grid_mode_accepted_and_node_events_pass_through_intact(tmp_path):
+    def grid_runner(event_id, **kwargs):
+        kwargs['on_started']('500', 999)
+        node_report = {'kind': 'node_report', 'instrument': 'rf', 'role_source': 'local_data',
+                       'event_id': event_id, 'assessment': 'suspicious', 'observation': 'RF deviation noted.',
+                       'summary': {'baseline': 1.0, 'peak_deviation': 2.5}, 'tool_refs': ['T-rf-1'],
+                       'raw_bytes_held': 123456, 'payload_bytes': 512, 'limitations': []}
+        data_shared = {'kind': 'data_shared', 'raw_bytes_held': 123456, 'payload_bytes': 512, 'percent_shared': 0.41}
+        kwargs['on_event'](node_report)
+        kwargs['on_event'](data_shared)
+        report = Investigation(event_id, kwargs['on_event']).smoke()
+        report.update(mode='grid', flower_run_id='500', flower_series_id='999', runtime_status='internal',
+                      grid={'nodes_seen': 3, 'assignment': {'rf':'node-1','ltu':'node-2','dump':'node-3'}, 'fallback': None},
+                      data_shared=data_shared)
+        return report, 999
+
+    with TestClient(create_app(tmp_path/'api.db', grid_runner)) as client:
+        response = client.post('/api/v1/investigations', json={'event_id':'slac-001', 'mode':'grid'})
+        assert response.status_code == 202
+        job = response.json()
+        assert job['mode'] == 'grid'
+        assert terminal(client, job)['status'] == 'completed'
+        events = client.get(job['links']['activity']).json()['events']
+        by_kind = {e['event']['kind']: e['event'] for e in events}
+        assert by_kind['node_report'] == {'kind': 'node_report', 'instrument': 'rf', 'role_source': 'local_data',
+                       'event_id': 'slac-001', 'assessment': 'suspicious', 'observation': 'RF deviation noted.',
+                       'summary': {'baseline': 1.0, 'peak_deviation': 2.5}, 'tool_refs': ['T-rf-1'],
+                       'raw_bytes_held': 123456, 'payload_bytes': 512, 'limitations': []}
+        assert by_kind['data_shared'] == {'kind': 'data_shared', 'raw_bytes_held': 123456, 'payload_bytes': 512, 'percent_shared': 0.41}
+        report = client.get(job['links']['result']).json()['report']
+        assert report['mode'] == 'grid'
+        assert report['grid'] == {'nodes_seen': 3, 'assignment': {'rf':'node-1','ltu':'node-2','dump':'node-3'}, 'fallback': None}
+        assert report['data_shared'] == {'kind': 'data_shared', 'raw_bytes_held': 123456, 'payload_bytes': 512, 'percent_shared': 0.41}
+
+
+def test_cors_and_trusted_host_stay_localhost_only(tmp_path):
+    with TestClient(create_app(tmp_path/'api.db', Runner())) as client:
+        assert client.get('/api/v1/events', headers={'host': 'evil.example.com'}).status_code == 400
+        blocked = client.get('/api/v1/events', headers={'Origin': 'https://evil.example.com'})
+        assert blocked.status_code == 200 and 'access-control-allow-origin' not in blocked.headers
+        allowed = client.get('/api/v1/events', headers={'Origin': 'http://localhost:5173'})
+        assert allowed.headers['access-control-allow-origin'] == 'http://localhost:5173'
+
+
 def test_plot_preserves_exact_timestamps_and_masks_invalid_positions(tmp_path):
     with TestClient(create_app(tmp_path/'api.db', Runner())) as client:
         meta = client.get('/api/v1/events/slac-001').json()
