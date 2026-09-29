@@ -21,6 +21,20 @@
       "file": "./data/slac-001-grid.json",
       "run_count": 1,
       "note": "Grid run on Nebius MiniMax-M3"
+    },
+    {
+      "id": "slac-003-grid",
+      "station": "KLYS:LI21:81",
+      "file": "./data/slac-003-grid.json",
+      "run_count": 1,
+      "note": "Grid run on Nebius MiniMax-M3 (RF glitch, beam fine)"
+    },
+    {
+      "id": "slac-001-endeavor",
+      "station": "KLYS:LI29:11",
+      "file": "./data/slac-001-endeavor.json",
+      "run_count": 1,
+      "note": "Grid run on Flower Endeavor (flwrlabs/endeavor-1.0)"
     }
   ]
 }
