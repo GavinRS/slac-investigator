@@ -22,12 +22,13 @@ def main():
         parser.error('Use five distinct, unprivileged ports.')
     for port in ports:
         with socket.socket() as sock:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
                 sock.bind(('127.0.0.1', port))
             except OSError:
                 raise SystemExit(f'Port {port} is occupied. Existing services are unchanged.') from None
     try:
-        env = flower_environment(os.environ, ROOT / '.env.flower.json')
+        env = flower_environment(os.environ, ROOT / '.env')
     except (OSError, ValueError):
         raise SystemExit('Run .venv/bin/python scripts/configure_flower.py in your terminal first.') from None
     os.chdir(ROOT)

@@ -5,28 +5,29 @@ import re
 import time
 from .data import ROOT, event_ids
 from .instruments import INSTRUMENTS
-from .node_agent import ModelBudget, grid_call, run_node, validate_node_report
+from .node_agent import ModelBudget, grid_call, run_node, validate_node_report, normalize_json_response
 from .tools import serialize_node_report
 from .workflow import Finding, RULES, MAX_OUTPUT_TOKENS
 
 class GridInvestigation:
-    def __init__(self,event_id,emit,grid,client=None,model='flwrlabs/endeavor-1.0',mode='collaborative',timeout=120):
+    def __init__(self,event_id,emit,grid,client=None,model='flwrlabs/endeavor-1.0',mode='grid',timeout=120):
         if event_id not in event_ids(): raise ValueError('Unknown event')
-        if mode not in ('collaborative','smoke'): raise ValueError('Invalid Grid mode')
+        if mode not in ('grid','collaborative','smoke'): raise ValueError('Invalid Grid mode')
         if not 0<=float(timeout)<=300: raise ValueError('Node timeout must be between 0 and 300 seconds')
-        self.event_id=event_id; self.emit=emit; self.grid=grid; self.client=client; self.model=model; self.mode=mode; self.timeout=float(timeout)
+        self.event_id=event_id; self.emit=emit; self.grid=grid; self.client=client; self.model=model; self.mode='smoke' if mode=='smoke' else 'grid'; self.timeout=float(timeout)
         # Metadata only: the orchestrator never loads raw event arrays.
         self.meta=json.loads((ROOT/'data/events'/f'{event_id}.json').read_text())
         self.reports=[]; self.findings=[]; self.limitations=[]; self.assignments={}; self.failed=False
-        self.budget=ModelBudget(max_calls=4,max_input_chars=100000)
+        self.budget=ModelBudget(max_calls=2,max_input_chars=100000)
         self.started=time.perf_counter()
 
     def publish(self,kind,**data): self.emit(dict(kind=kind,**data))
 
-    def collect(self,instruments,question):
-        tasks=[dict(kind='node_task',event_id=self.event_id,instrument=i,mode=self.mode,question=question,model=self.model,provider=getattr(self.client,'provider','flower')) for i in instruments]
+    def collect(self,instruments,question,deterministic=False):
+        tasks=[dict(kind='node_task',event_id=self.event_id,instrument=i,mode='smoke' if deterministic else self.mode,question=question,model=self.model) for i in instruments]
         for task in tasks:
-            self.publish('delegation',agent='lead',to=task['instrument'],question=question,analysis='node_summary')
+            self.publish('delegation',agent='lead',to=task['instrument'],node_id=self.assignments.get(task['instrument']),instrument=task['instrument'],question=question,analysis='node_summary')
+            self.publish('tool_request',agent=task['instrument'],instrument=task['instrument'],analysis='node_summary')
         if not self.assignments:
             results=[]
             for task in tasks:
@@ -49,7 +50,9 @@ class GridInvestigation:
                     mid=message.get('reply_to_message_id')
                     if mid not in expected or mid in seen: raise ValueError('Uncorrelated or duplicate node reply')
                     seen.add(mid); instrument=expected[mid]
-                    if str(message.get('src_node_id'))!=self.assignments[instrument]: raise ValueError('Unexpected node reply source')
+                    source=str(message.get('src_node_id'))
+                    allowed_sources={self.assignments[instrument],'1'} if message.get('error') else {self.assignments[instrument]}
+                    if source not in allowed_sources: raise ValueError('Unexpected node reply source')
                     if message.get('error') or not message.get('payload'):
                         self.limitations.append(f'{instrument}: node execution failed'); self.failed=True; continue
                     payload=message['payload']
@@ -57,18 +60,20 @@ class GridInvestigation:
                     report=validate_node_report(json.loads(payload),self.event_id,instrument)
                     if report['payload_bytes'] != len(payload.encode()): raise ValueError('Node payload byte count mismatch')
                     metrics=report.get('metrics')
-                    if self.mode!='smoke' and (not metrics or not 1<=metrics.get('model_calls',0)<=2 or not 0<=metrics.get('input_characters',-1)<=50000):
+                    if self.mode!='smoke' and not deterministic and (not metrics or metrics.get('model_calls')!=1 or not 0<=metrics.get('input_characters',-1)<=50000):
                         raise ValueError('Invalid node model accounting')
                     results.append(report)
                 for mid in expected.keys()-seen:
                     self.limitations.append(f'{expected[mid]}: node reply timed out'); self.failed=True
         for report in results:
             self.reports.append(report)
+            for ref in report['tool_refs']:
+                self.publish('tool_result',agent=report['instrument'],instrument=report['instrument'],evidence=dict(ref=ref,kind='node_summary',result=report['summary']))
             self.publish('node_report',report=report)
         return results
 
     def validate_finding(self,text):
-        finding=Finding.model_validate_json(text)
+        finding=Finding.model_validate_json(normalize_json_response(text))
         allowed={ref for report in self.reports for ref in report['tool_refs']}
         if not finding.tool_result_refs or not set(finding.tool_result_refs)<=allowed: raise ValueError('Unavailable final references')
         for assessment in (finding.beam_disturbance,finding.unique_cause):
@@ -118,21 +123,22 @@ class GridInvestigation:
                 beam_disturbance=dict(status=status,rationale='Deterministic charge-valid beam heuristic.',tool_result_refs=beam_refs),
                 unique_cause=dict(status='not_established',rationale='Aggregate coincidence cannot establish unique RF causation.',tool_result_refs=refs)).model_dump()
         else:
-            instructions=RULES+'\nYou are the lead. Only aggregate node reports are available. Unique RF cause cannot be established from these summaries. Set requested_next_check only for one useful instrument follow-up; name rf, ltu, or dump. Valid channel catalog: '+json.dumps(self.meta['channels'])
+            instructions=RULES+'\nSubmit the Finding with the submit_assessment function. You are the lead. Only aggregate node reports are available. Unique RF cause cannot be established from these summaries. Set requested_next_check only for one useful instrument follow-up; name rf, ltu, or dump. Valid channel catalog: '+json.dumps(self.meta['channels'])
             payload=dict(node_reports=self.reports,question=question,prior_operator_assessment=prior,limitations=self.limitations,
                 onset_alignment=alignment,candidate_interval_ns=[self.meta['candidate_start_ns'],self.meta['candidate_end_ns']])
             for attempt in range(2):
                 try:
-                    final=self.validate_finding(self.budget.request(self.client,self.model,instructions,payload)); break
+                    final=self.validate_finding(self.budget.request(self.client,self.model,instructions,payload,schema=Finding.model_json_schema())); break
                 except (ValueError,TypeError,KeyError) as exc:
-                    if attempt: raise ValueError('Lead finding invalid after one retry') from exc
+                    self.publish('finding_rejected',agent='lead',error='Finding schema or evidence validation failed')
+                    if attempt or self.budget.calls>=self.budget.max_calls: raise ValueError('Lead finding invalid; two-call budget exhausted') from exc
                     payload['correction']='Return the required Finding schema with exact available references and separate assessments.'
         self.findings.append(final); self.publish('finding',finding=final)
         return final
 
     def run(self,question='',prior=None):
         if self.mode!='smoke' and self.client is None: raise RuntimeError('Model client required')
-        self.publish('started',event_id=self.event_id,mode=self.mode,model=self.model,budget=dict(model_calls=12,total_input_characters=300000,max_output_tokens_per_call=MAX_OUTPUT_TOKENS))
+        self.publish('started',event_id=self.event_id,mode='grid',execution_mode='smoke' if self.mode=='smoke' else 'model',model=self.model,budget=dict(model_calls=5,total_input_characters=250000,max_output_tokens_per_call=MAX_OUTPUT_TOKENS))
         nodes=grid_call(self.grid,'get_nodes',{'sample_size':None})['nodes']
         unique={str(n['id']):n for n in nodes}
         nodes=list(unique.values())
@@ -150,9 +156,14 @@ class GridInvestigation:
                 discovery=grid_call(self.grid,'pull_messages',dict(message_ids=list(expected),timeout=self.timeout))
                 for reply in discovery['messages']:
                     mid=reply.get('reply_to_message_id')
-                    if mid not in expected or mid in seen or str(reply.get('src_node_id'))!=expected[mid]: raise ValueError('Invalid discovery reply correlation')
+                    if mid not in expected or mid in seen: raise ValueError('Invalid discovery reply correlation')
                     seen.add(mid)
-                    if reply.get('error'): continue
+                    source=str(reply.get('src_node_id'))
+                    allowed_sources={expected[mid],'1'} if reply.get('error') else {expected[mid]}
+                    if source not in allowed_sources: raise ValueError('Invalid discovery reply source')
+                    if reply.get('error'):
+                        self.limitations.append(f'Grid node {expected[mid]} unavailable during discovery; no instrument assigned.')
+                        continue
                     result=json.loads(reply['payload'])
                     if result.get('kind')!='node_capabilities' or not isinstance(result.get('instruments'),list) or not set(result['instruments'])<=set(INSTRUMENTS): raise ValueError('Invalid node capabilities')
                     capabilities[expected[mid]]=result['instruments']
@@ -164,15 +175,17 @@ class GridInvestigation:
         else: self.limitations.append('grid: none (local fallback); all instruments execute in this process.')
         self.collect(INSTRUMENTS,question)
         final=self.reconcile(question,prior)
-        if self.mode!='smoke' and final.get('requested_next_check'):
+        if self.mode!='smoke' and final.get('requested_next_check') and self.budget.calls<self.budget.max_calls:
             follow=final['requested_next_check']
             target=next((i for i in INSTRUMENTS if re.search(r'\b'+i+r'\b',follow.lower())),None)
             if target is not None:
-                self.collect([target],follow)
+                self.collect([target],follow,deterministic=True)
                 final=self.reconcile(question,prior)
             else:
                 final['data_limitations'].append('Follow-up did not name an instrument; no additional node task dispatched.')
             if final.get('requested_next_check'): final['data_limitations'].append('One follow-up budget exhausted; further checks require a human turn.')
+        if final.get('requested_next_check') and self.budget.calls>=self.budget.max_calls:
+            final['data_limitations'].append('Two-call lead budget exhausted; additional checks require a new human turn.')
         raw_by_instrument={r['instrument']:r['raw_bytes_held'] for r in self.reports}
         raw=sum(raw_by_instrument.values()); payload=sum(r['payload_bytes'] for r in self.reports)
         shared=dict(raw_bytes_held=raw,payload_bytes=payload,percent_shared=100*payload/raw if raw else None,raw_samples_shared=0,
@@ -188,10 +201,9 @@ class GridInvestigation:
             metrics['input_tokens']=metrics['output_tokens']=None
         metrics.update(latency_s=round(time.perf_counter()-self.started,3),tool_calls=3*len(self.reports),cost_usd=None,
             cost_note='Provider cost not returned; no estimate assumed.',unsupported_claims=None,unsupported_claims_note='Requires human claim review.',accounting_complete=not self.failed)
-        report=dict(result_schema_version=2,benchmark_eligible=False,event_id=self.event_id,mode=self.mode,model=self.model,
+        report=dict(result_schema_version=2,benchmark_eligible=False,event_id=self.event_id,mode='grid',execution_mode='smoke' if self.mode=='smoke' else 'model',model=self.model,
             final=final,findings=self.findings,evidence=[dict(ref=ref,kind='node_summary',event_id=self.event_id,instrument=r['instrument'],result=r['summary']) for r in self.reports for ref in r['tool_refs']],node_reports=self.reports,data_shared=shared,metrics=metrics,onset_alignment=self.onset_alignment(),
-            grid='connected' if nodes else 'none (local fallback)',node_assignments=self.assignments,
-            provider='none' if self.mode=='smoke' else getattr(self.client,'provider','flower'),
+            grid=dict(nodes_seen=len(nodes),assignment=self.assignments,fallback=not bool(nodes)),
             model_execution_path='No model called' if self.mode=='smoke' else 'Instrument-local and lead Responses calls',limitations=self.limitations)
         self.publish('report',report=report)
         return report

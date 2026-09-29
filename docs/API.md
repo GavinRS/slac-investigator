@@ -28,10 +28,10 @@ POST requests must use `Content-Type: application/json`. There is no SSE or WebS
 ### Start investigation
 
 ```json
-{"event_id":"slac-001","mode":"collaborative"}
+{"event_id":"slac-001","mode":"grid"}
 ```
 
-`mode` is `collaborative` (default), `baseline`, or `smoke`. Smoke performs deterministic software checks and no inference. The event must exist in `/events`. No human question or series ID is accepted here; use the follow-up route to continue.
+`mode` accepts `grid` (default), `collaborative` (legacy alias), `baseline`, or `smoke`. Grid executes instrument-local agents and a summary-only lead. Smoke exercises the Grid routing deterministically without inference. Grid-path reports use `mode: "grid"` and distinguish `execution_mode: "model"` from `"smoke"`; baseline preserves the single-process Finding v2 workflow. The event must exist in `/events`. No human question or series ID is accepted here; use the follow-up route to continue.
 
 The 202 response and subsequent status responses use the same shape (the job may already be running when 202 arrives):
 
@@ -40,8 +40,8 @@ The 202 response and subsequent status responses use the same shape (the job may
   "id": "api-investigation-uuid",
   "series_id": "api-series-uuid",
   "event_id": "slac-001",
-  "mode": "collaborative",
-  "model": "gpt-5.6-sol",
+  "mode": "grid",
+  "model": "flwrlabs/endeavor-1.0",
   "status": "queued",
   "created_at": "2026-09-29T22:00:00+00:00",
   "updated_at": "2026-09-29T22:00:00+00:00",
@@ -68,7 +68,7 @@ States: `queued` → `running` → `completed` or `failed`; `interrupted` marks 
   "investigation_id": "api-investigation-uuid",
   "status": "running",
   "events": [
-    {"seq":1,"created_at":"2026-09-29T22:00:01+00:00","event":{"kind":"started","event_id":"slac-001","mode":"collaborative","model":"gpt-5.6-sol"}},
+    {"seq":1,"created_at":"2026-09-29T22:00:01+00:00","event":{"kind":"started","event_id":"slac-001","mode":"grid","model":"flwrlabs/endeavor-1.0"}},
     {"seq":2,"created_at":"2026-09-29T22:00:02+00:00","event":{"kind":"tool_request","agent":"equipment","analysis":"equipment"}}
   ],
   "next_cursor": 2,
@@ -80,12 +80,14 @@ States: `queued` → `running` → `completed` or `failed`; `interrupted` marks 
 
 Activity `event.kind` values:
 
-- `started`: `event_id`, `mode`, `model`, optional `budget`.
-- `delegation`: `agent`, `to`, `question`, `analysis`.
+- `started`: `event_id`, `mode`, `model`, optional `budget`; Grid also supplies `execution_mode`.
+- `delegation`: `agent`, `to`, `question`, `analysis`; Grid adds `node_id` (null for local fallback) and `instrument` (`rf`, `ltu`, or `dump`).
 - `tool_request`: `agent`, `analysis`.
-- `tool_result`: `agent`, `evidence` (ref, analysis, event_id, source, hdf5_group, interval_ns, result, limitations).
+- `tool_result`: `agent`, `evidence`. Baseline evidence includes ref, analysis, event_id, source, hdf5_group, interval_ns, result, and limitations. Grid evidence contains `ref`, `kind: "node_summary"`, and compact numeric `result`; the event adds `instrument`.
 - `finding`: `finding` with schema-v2 fields described below.
-- `finding_rejected`: `agent`, `error`, `draft`; validation feedback, not an accepted finding.
+- `finding_rejected`: `agent`, `error`, optional `draft`; validation feedback, not an accepted finding.
+- `node_report`: `report` with the instrument-local contract below.
+- `data_shared`: `data_shared` with raw array byte count, serialized report byte count, and their percentage.
 - `report`: `report`, provisional until completed status; runtime IDs/metrics may only be final in `/result`.
 - `failed`: sanitized `error` with `code` and `message`.
 
@@ -95,7 +97,7 @@ Ignore unfamiliar event kinds gracefully. These are application activity and con
 
 `GET .../result` returns `{ "investigation_id": "...", "series_id": "...", "report": {...} }`.
 
-The report contains `result_schema_version: 2`, `benchmark_eligible: false`, `event_id`, `mode`, `model`, `provider`, `model_execution_path`, `final`, `findings`, `evidence`, `metrics`, `flower_run_id`, `flower_series_id`, `runtime`, and `wall_latency_s`. Metrics include actual model/tool calls, token usage (nullable), latency, and cost (nullable); null cost does not mean free.
+The report contains `result_schema_version: 2`, `benchmark_eligible: false`, `event_id`, `mode`, `model`, `model_execution_path`, `final`, `findings`, `evidence`, `metrics`, `flower_run_id`, `flower_series_id`, `runtime`, and `wall_latency_s`. Metrics include actual model/tool calls, token usage (nullable), latency, and cost (nullable); null cost does not mean free.
 
 Every finding, including `final`, has independent dimensions:
 
@@ -123,7 +125,33 @@ Display headings **“Beam disturbance corroborated?”** and **“Unique cause 
 - Each dimension has its own rationale and evidence refs; assessed dimensions require refs validated against the finding's available evidence. Structural citation validation does not establish semantic accuracy.
 - There is **no combined `assessment` field in v2**. The external evaluator emits no prediction/agreement scores; the source anomaly labels do not provide separately adjudicated truth for these questions.
 
-The three successful historical runs remain unchanged under `artifacts/preserved-successful-runs/`, with `manifest.json` SHA-256 checksums. They use the old mixed-scope enum. Show their original narratives and review caveats as **saved-run replay**; do not automatically convert their enums to either dimension or score them. If a frontend requires a dimension for a legacy run, show `not_assessed` with “Legacy mixed-scope output; requires review.” These archival IDs are not API series UUIDs and cannot be submitted to this API's follow-up route.
+Grid reports additionally contain `node_reports`, `grid`, `data_shared`, and `onset_alignment`. The frozen Grid shape is:
+
+```json
+{
+  "mode": "grid",
+  "execution_mode": "model",
+  "result_schema_version": 2,
+  "grid": {
+    "nodes_seen": 3,
+    "assignment": {"rf": "14", "ltu": "7", "dump": "23"},
+    "fallback": false
+  },
+  "data_shared": {
+    "raw_bytes_held": 1000000,
+    "payload_bytes": 9000,
+    "percent_shared": 0.9,
+    "raw_samples_shared": 0,
+    "complete": true
+  }
+}
+```
+
+These numbers illustrate the schema, not a measured run. `fallback: true` means no Grid nodes were available and the instrument checks ran in the orchestrator process; label this explicitly in the UI. A smaller node count can assign several instrument roles to one capable node. Node IDs are strings. `data_shared.percent_shared` is serialized UTF-8 node-report bytes divided by instrument array bytes, multiplied by 100; it excludes transport overhead and is not an inference token or network billing measurement. Repeated follow-up reports count toward the numerator; raw arrays are counted once per instrument. `complete: false` marks incomplete reply accounting.
+
+Each node report has `kind: "node_report"`, `instrument`, `role_source` (`local_data` or `assigned`), `event_id`, `assessment` (`suspicious`, `normal`, or `insufficient_evidence`), `observation`, compact numeric `summary`, `tool_refs`, `raw_bytes_held`, `payload_bytes`, `limitations`, and model-call `metrics`. This local `assessment` is a heuristic instrument result, never a replacement for either final Finding v2 dimension. No raw sample arrays are included; numeric lists are bounded to 10 entries. `payload_bytes` includes the byte-count field itself. `onset_alignment` compares recorded integer nanoseconds without timestamp shifts or a fixed RF delay assumption; coincidence does not establish a unique cause.
+
+Historical prototype artifacts were removed from this working tree and remain available in Git history and `backup/pre-grid-prototype`. Any existing exported legacy replay must retain its original narrative and caveats; display missing v2 dimensions as `not_assessed`, never infer a v2 verdict from a historical mixed-scope label. Replay IDs cannot be used as API series UUIDs.
 
 ### Follow-up in the same series
 
@@ -154,10 +182,10 @@ Request errors: 404 for unknown event/run/series, 422 for invalid bodies/query p
 
 Asynchronous failure is returned via status `failed`, its `error`, and a final activity event. Error codes are `missing_environment`, `credential_rejected`, `billing_quota`, `model_unavailable`, `rate_limited`, or `workflow_failed`; unrecognized failures remain unclassified. Provider exception bodies and credentials are not returned. `server_restarted` accompanies `interrupted` records. No automatic retry or replay fallback occurs.
 
-API records/activity/results live in Git-ignored `artifacts/api/state.sqlite3` (user-only permissions), independently of the preserved historical traces. Reloading the browser loses no recorded activity. Restarting the API marks its queued/running records interrupted; it does not cancel or resubmit Flower work, which may still finish independently. Completed API records remain available. Follow-up continuity across a **Flower** restart additionally depends on Flower's own persistent series store; the API does not reconstruct missing Context. If that series is unavailable, continuation fails explicitly.
+API records/activity/results live in Git-ignored `artifacts/api/state.sqlite3` (user-only permissions). Reloading the browser loses no recorded activity. Restarting the API marks its queued/running records interrupted; it does not cancel or resubmit Flower work, which may still finish independently. Completed API records remain available. Follow-up continuity across a **Flower** restart additionally depends on Flower's own persistent series store; the API does not reconstruct missing Context. If that series is unavailable, continuation fails explicitly.
 
 ## Verification scope
 
-Contract tests cover asynchronous start/poll/results, pagination, same-series continuation, concurrent follow-up rejection, input validation, error classification/redaction, interrupted-run recovery, smoke follow-up rejection, nanosecond strings, and preserved trace hashes. These tests use protocol fixtures and do not establish model accuracy. A separate local smoke check exercises real Flower through the HTTP API without new model inference.
+Contract tests cover asynchronous start/poll/results, pagination, same-series continuation, concurrent follow-up rejection, input validation, error classification/redaction, interrupted-run recovery, smoke follow-up rejection, nanosecond strings, and Grid event forwarding. These tests use protocol fixtures and do not establish model accuracy. A separate local smoke check exercises real Flower through the HTTP API without new model inference.
 
-Verified on 2026-09-29: 44 tests passed. The real HTTP smoke run `11974507849853747006` completed with 0 investigation-model calls, beam `not_corroborated`, and unique cause `not_established`; see `artifacts/frontend-api-smoke.json`. Flower's separate automatic series-title request logged its existing nonblocking HTTP 404. No new paid investigation was used to validate model adherence to the v2 schema; that remains a live-validation limitation. All six preserved source/copy files were compared byte-for-byte after the check.
+Live runtime verification is reported separately from fixture contract tests; historical prototype checks do not establish the current Grid path or model accuracy.

@@ -2,6 +2,7 @@
 __pycache__/
 .pytest_cache/
 .env*
+!.env.example
 .flower/
 .flower-*/
 *.fab
@@ -20,6 +21,8 @@ data/raw/*.h5
 .coverage
 htmlcov/
 .ruff_cache/
+.playwright-cli/
+output/playwright/
 dist/
 build/
 *.egg-info/

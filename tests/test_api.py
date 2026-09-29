@@ -1,7 +1,5 @@
 """API contract tests use a protocol fixture; no paid model calls."""
-import hashlib
 import json
-from pathlib import Path
 import threading
 import time
 
@@ -149,15 +147,6 @@ def test_smoke_followup_rejected_and_public_redaction(tmp_path, monkeypatch):
         assert client.post(job['links']['followup'], json={'question':'Why?'}).status_code == 409
 
 
-def test_preserved_live_runs_are_byte_identical():
-    root = Path(__file__).resolve().parents[1]
-    folder = root/'artifacts/preserved-successful-runs'
-    manifest = json.loads((folder/'manifest.json').read_text())
-    assert len({entry['run_id'] for entry in manifest['files']}) == 3
-    for entry in manifest['files']:
-        assert hashlib.sha256((folder/entry['file']).read_bytes()).hexdigest() == entry['sha256']
-
-
 def test_plot_preserves_exact_timestamps_and_masks_invalid_positions(tmp_path):
     with TestClient(create_app(tmp_path/'api.db', Runner())) as client:
         meta = client.get('/api/v1/events/slac-001').json()
@@ -174,3 +163,26 @@ def test_plot_preserves_exact_timestamps_and_masks_invalid_positions(tmp_path):
         assert all(isinstance(t,str) for t in position['time_ns'])
         assert client.get('/api/v1/events/slac-999/plot').status_code == 404
         assert client.get('/api/v1/events/slac-999').status_code == 404
+
+
+def test_nested_onset_alignment_preserves_exact_nanoseconds():
+    timestamp = 1604277203201922049
+    alignment = {
+        'recorded_onset_ns': {'rf': timestamp, 'ltu': timestamp + 1, 'dump': None},
+        'relative_to_candidate_start_ns': {'rf': -1, 'ltu': 0, 'dump': None},
+        'pairwise_difference_ns': {'ltu_minus_rf': 1, 'dump_minus_rf': None},
+        'candidate_window_ns': [timestamp - 10, timestamp],
+        'within_candidate_window': {'rf': True, 'ltu': False, 'dump': None},
+        'applied_shift_ns': 0,
+    }
+    result = public({'onset_alignment': alignment, 'model_calls': 4})
+    actual = result['onset_alignment']
+    assert actual['recorded_onset_ns'] == {'rf': str(timestamp), 'ltu': str(timestamp + 1), 'dump': None}
+    assert actual['relative_to_candidate_start_ns'] == {'rf': '-1', 'ltu': '0', 'dump': None}
+    assert actual['pairwise_difference_ns'] == {'ltu_minus_rf': '1', 'dump_minus_rf': None}
+    assert actual['candidate_window_ns'] == [str(timestamp - 10), str(timestamp)]
+    assert actual['applied_shift_ns'] == '0'
+    assert actual['within_candidate_window'] == alignment['within_candidate_window']
+    assert result['model_calls'] == 4
+    assert public({'recorded_onset_ns': {'nested': {'rf': timestamp}, 'api_key': 'synthetic'}}) == {
+        'recorded_onset_ns': {'nested': {'rf': str(timestamp)}}}

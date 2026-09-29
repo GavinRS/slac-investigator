@@ -1,4 +1,4 @@
-// Browser client for docs/FRONTEND_API.md v1. No provider configuration or credentials.
+// Browser client for docs/API.md v1. No provider configuration or credentials.
 export const LOCAL_ORIGINS=new Set(['http://localhost:3000','http://127.0.0.1:3000','http://localhost:5173','http://127.0.0.1:5173']);
 export class SubmissionUncertainError extends Error {}
 export class InvestigationAPI {
@@ -29,7 +29,7 @@ export class InvestigationAPI {
     if(this.submitting)throw new Error('A submission is already pending.');
     this.submitting=true;try{return await this.request(path,{method:'POST',body});}finally{this.submitting=false;}
   }
-  start(eventId){return this.submit('/api/v1/investigations',{event_id:eventId,mode:'collaborative'});}
+  start(eventId){return this.submit('/api/v1/investigations',{event_id:eventId,mode:'grid'});}
   followup(seriesId,question){
     const q=question.trim();if(!q||q.length>4000)throw new Error('Enter a question of 1–4,000 characters.');
     return this.submit(`/api/v1/series/${encodeURIComponent(seriesId)}/follow-ups`,{question:q});

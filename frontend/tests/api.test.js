@@ -13,7 +13,7 @@ test('a lost POST is never retried and no credential/provider/model enters the b
  let calls=[];const api=new InvestigationAPI({pageOrigin:'http://127.0.0.1:5173',fetchImpl:async(url,options)=>{calls.push({url,options});throw new Error('connection lost');}});
  await assert.rejects(api.start('slac-001'),SubmissionUncertainError);
  assert.equal(calls.length,1);
- assert.deepEqual(JSON.parse(calls[0].options.body),{event_id:'slac-001',mode:'collaborative'});
+ assert.deepEqual(JSON.parse(calls[0].options.body),{event_id:'slac-001',mode:'grid'});
  assert.equal(calls[0].options.credentials,'omit');
  await assert.rejects(api.request('https://another.example/api/v1/result'),/unexpected API link/);
 });

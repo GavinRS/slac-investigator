@@ -29,7 +29,7 @@ def now():
 def public(value, key=''):
     """Redact credentials and represent nanoseconds losslessly for JavaScript."""
     if isinstance(value, dict):
-        return {k: public(v, k) for k, v in value.items()
+        return {k: public(v, key if key.endswith('_ns') else k) for k, v in value.items()
                 if k.lower() not in {'api_key', 'authorization', 'headers', 'token', 'secret',
                                      'flwr_model_api_key', 'flwr_runtime_api_key'}}
     if isinstance(value, list):
@@ -63,7 +63,7 @@ def failure(exc):
 class StartRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
     event_id: str = Field(pattern=r'^slac-\d{3}$')
-    mode: Literal['collaborative', 'baseline', 'smoke'] = 'collaborative'
+    mode: Literal['grid', 'collaborative', 'baseline', 'smoke'] = 'grid'
 
 
 class FollowupRequest(BaseModel):

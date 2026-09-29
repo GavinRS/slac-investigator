@@ -38,7 +38,24 @@ def test_baseline_uses_same_budget_and_initial_evidence():
     model=FixtureModel();inv=Investigation('slac-001',lambda e:None,client=model,mode='baseline')
     report=inv.run();assert inv.max_calls==12
     assert {r['analysis'] for r in report['evidence']}=={'equipment','beam','quality'}
-    assert [x['name'] for x in model.requests[0]['tools']]==['analyze']
+    assert [x['name'] for x in model.requests[0]['tools']]==['analyze','finish_assessment']
+
+
+def test_native_final_function_repairs_invalid_reference_with_tool_reply():
+    class NativeModel(FixtureModel):
+        def create(self,**kwargs):
+            response=super().create(**kwargs)
+            payload=json.loads(response.output_text)
+            if len(self.requests)==1:
+                payload['tool_result_refs']=['T-unavailable']
+            response.output=[Item('function_call',name='finish_assessment',arguments=json.dumps(payload),call_id='final-'+str(len(self.requests)))]
+            response.output_text=''
+            return response
+    model=NativeModel()
+    report=Investigation('slac-001',lambda e:None,client=model,mode='baseline',max_calls=2).run()
+    assert report['metrics']['model_calls']==2
+    assert any(item.get('type')=='function_call_output' and item['call_id']=='final-1' for item in model.requests[1]['input'])
+    assert 'T-unavailable' not in report['final']['tool_result_refs']
 
 def test_unknown_evidence_ref_rejected():
     inv=Investigation('slac-001',lambda e:None)
@@ -60,7 +77,7 @@ def test_final_channel_error_gets_bounded_correction():
     evidence=inv.tool('equipment','equipment')
     result=inv.loop('equipment','Inspect RF.',[evidence],cap=1)
     assert len(model.requests)==2 and inv.calls==2
-    assert all(request['tools']==[] for request in model.requests)
+    assert all([tool['name'] for tool in request['tools']]==['finish_assessment'] for request in model.requests)
     assert result['source_channels']==['KLYS:LI29:11:AMPL']
     assert len(inv.findings)==1
     assert any(e['kind']=='finding_rejected' and 'BPMS:nonexistent' in e['error'] for e in events)
@@ -84,10 +101,9 @@ def test_rf_excursion_does_not_make_beam_corroboration_positive():
 
 def test_evaluator_never_scores_legacy_mixed_scope_labels():
     from scripts.evaluate import summarize
-    from pathlib import Path
-    root=Path(__file__).resolve().parents[1]
-    report=json.loads((root/'artifacts/preserved-successful-runs/flower-retry-slac-003.json').read_text())['report']
-    assert report['final']['assessment']=='corroborated'
+    # A legacy combined label must never be treated as adjudicated truth for v2.
+    report=dict(event_id='slac-003',mode='collaborative',model='fixture',
+                final=dict(assessment='corroborated'),findings=[],evidence=[],metrics={})
     row=summarize([report],{'slac-003':{'is_anom':False}})[0]
     assert row['prediction'] is None and row['agreement'] is None
     assert row['beam_disturbance']['status']=='not_assessed'
@@ -100,3 +116,47 @@ def test_unavailable_dimension_evidence_rejected():
     inv=Investigation('slac-001',lambda e:None)
     with pytest.raises(ValueError,match='Assessment references'):
         inv.validate(json.dumps(finding),'lead',finding['tool_result_refs'])
+
+
+@pytest.mark.parametrize('native',[True,False])
+def test_early_invalid_final_has_only_one_correction(native):
+    class AlwaysInvalid(FixtureModel):
+        def create(self,**kwargs):
+            response=super().create(**kwargs)
+            payload=json.loads(response.output_text)
+            payload['tool_result_refs']=['T-unavailable']
+            if native:
+                response.output=[Item('function_call',name='finish_assessment',arguments=json.dumps(payload),call_id='bad-'+str(len(self.requests)))]
+                response.output_text=''
+            else:
+                response.output_text=json.dumps(payload)
+            return response
+    model=AlwaysInvalid()
+    inv=Investigation('slac-001',lambda e:None,client=model,mode='baseline',max_calls=12)
+    with pytest.raises(ValueError,match='unavailable evidence'):
+        inv.run()
+    assert len(model.requests)==2
+    assert [tool['name'] for tool in model.requests[1]['tools']]==['finish_assessment']
+    assert model.requests[1]['tool_choice']=={'type':'function','name':'finish_assessment'}
+    assert inv.tool_calls==3
+    assert not inv.findings
+
+
+def test_correction_turn_cannot_execute_unadvertised_analysis():
+    class AnalysisAfterInvalid(FixtureModel):
+        def create(self,**kwargs):
+            response=super().create(**kwargs)
+            if len(self.requests)==1:
+                payload=json.loads(response.output_text)
+                payload['tool_result_refs']=['T-unavailable']
+                response.output=[Item('function_call',name='finish_assessment',arguments=json.dumps(payload),call_id='invalid-final')]
+            else:
+                response.output=[Item('function_call',name='analyze',arguments=json.dumps({'kind':'timing'}),call_id='forbidden-analysis')]
+            response.output_text=''
+            return response
+    model=AnalysisAfterInvalid()
+    inv=Investigation('slac-001',lambda e:None,client=model,mode='baseline',max_calls=12)
+    with pytest.raises(ValueError,match='Correction turn may only'):
+        inv.run()
+    assert len(model.requests)==2
+    assert inv.tool_calls==3

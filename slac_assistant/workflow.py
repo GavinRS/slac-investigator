@@ -1,5 +1,5 @@
 """Application-managed specialist collaboration inside one Flower AgentApp."""
-import json,time
+import json,time,os
 from typing import Literal
 from pydantic import BaseModel,Field
 from .data import load_event
@@ -8,6 +8,7 @@ from .tools import analyze,KINDS
 # Shared per-call ceiling for the centralized and Grid comparison paths.
 # 1,600 tokens truncated a real structured response before a valid finding.
 MAX_OUTPUT_TOKENS=4096
+DEFAULT_MODEL='flwrlabs/endeavor-1.0'
 
 class BeamAssessment(BaseModel):
     status:Literal['corroborated','not_corroborated','insufficient_evidence','not_assessed']
@@ -54,11 +55,12 @@ Return your final response as ONLY one JSON object matching this schema:
 '''+json.dumps(Finding.model_json_schema())
 
 TOOL={"type":"function","name":"analyze","description":"Run a deterministic read-only analysis on the selected event. No labels, arbitrary code, or writes.","parameters":{"type":"object","properties":{"kind":{"type":"string","enum":list(KINDS)}},"required":["kind"],"additionalProperties":False}}
+FINAL_TOOL={'type':'function','name':'finish_assessment','description':'Submit the final evidence-backed Finding; does not operate equipment.','parameters':Finding.model_json_schema(),'strict':False}
 DELEGATE={"type":"function","name":"delegate","description":"Ask an equipment or beam specialist for a focused follow-up. Use a specific check supported by the available analyses.","parameters":{"type":"object","properties":{"agent":{"type":"string","enum":["equipment","beam"]},"kind":{"type":"string","enum":list(KINDS)},"question":{"type":"string"}},"required":["agent","kind","question"],"additionalProperties":False}}
 
 class Investigation:
-    def __init__(self,event_id,emit,client=None,model='openai/gpt-5.6-sol',mode='collaborative',max_calls=12):
-        self.event_id=event_id;self.meta,_=load_event(event_id);self.emit=emit;self.client=client;self.model=model;self.mode=mode
+    def __init__(self,event_id,emit,client=None,model=None,mode='collaborative',max_calls=12):
+        self.event_id=event_id;self.meta,_=load_event(event_id);self.emit=emit;self.client=client;self.model=model or os.environ.get('INVESTIGATOR_MODEL') or DEFAULT_MODEL;self.mode=mode
         self.max_calls=max_calls;self.calls=0;self.tool_calls=0;self.input_chars=0;self.input_tokens=0;self.output_tokens=0;self.usage_known=True
         self.results={};self.findings=[];self.started=time.perf_counter();self.delegations=0
     def publish(self,kind,data): self.emit(dict(kind=kind,**data))
@@ -91,28 +93,46 @@ class Investigation:
             history[0]['content']+='\nShared tool evidence: '+json.dumps(shared)
         # One correction-only turn can repair a rejected final finding. It still
         # consumes the shared model/input budget and cannot request more tools.
+        correction_pending=False
         for turn in range(cap+1):
             if self.calls>=self.max_calls:break
             catalog=self.meta['channels']['health']+self.meta['channels']['bpm']
-            instructions=RULES+f'\nYour role is {role}. On your final turn return a finding. If evidence is insufficient say so.\nValid channel identifiers: '+json.dumps(catalog)
-            size=len(json.dumps(history))+len(instructions)
+            instructions=RULES+f'\nYour role is {role}. Submit your final Finding through finish_assessment. If evidence is insufficient say so.\nValid channel identifiers: '+json.dumps(catalog)
+            size=len(json.dumps(history))+len(instructions)+len(json.dumps(FINAL_TOOL))
             if self.input_chars+size>300_000:raise RuntimeError('Total input-character budget exhausted')
             self.input_chars+=size;self.calls+=1
-            last=turn>=cap-1 or self.calls==self.max_calls
-            tools=[] if last else [TOOL]+([DELEGATE] if allow_delegate and self.delegations<2 and self.calls<self.max_calls-2 else [])
-            response=self.client.responses.create(model=self.model,input=history,instructions=instructions,tools=tools,max_output_tokens=MAX_OUTPUT_TOKENS)
+            last=correction_pending or turn>=cap-1 or self.calls==self.max_calls
+            tools=[FINAL_TOOL] if last else [TOOL,FINAL_TOOL]+([DELEGATE] if allow_delegate and self.delegations<2 and self.calls<self.max_calls-2 else [])
+            response=self.client.responses.create(model=self.model,input=history,instructions=instructions,tools=tools,tool_choice={'type':'function','name':'finish_assessment'} if last else 'auto',max_output_tokens=MAX_OUTPUT_TOKENS)
             if getattr(response,'status',None) not in (None,'completed'):raise RuntimeError('Model response incomplete; no assessment accepted')
             usage=getattr(response,'usage',None)
             if usage:self.input_tokens+=usage.input_tokens;self.output_tokens+=usage.output_tokens
             else:self.usage_known=False
             outputs=response.output;history.extend(x.model_dump(exclude_none=True) for x in outputs)
             calls=[x for x in outputs if x.type=='function_call']
+            if correction_pending and any(call.name!='finish_assessment' for call in calls):
+                self.publish('finding_rejected',dict(agent=role,error='Correction turn may only submit a final finding'))
+                raise ValueError('Correction turn may only submit a final finding')
+            finals=[call for call in calls if call.name=='finish_assessment']
+            if finals:
+                try:
+                    if len(calls)!=1:raise ValueError('Final finding must be the only function call')
+                    return self.validate(finals[0].arguments,role,available)
+                except ValueError as exc:
+                    self.publish('finding_rejected',dict(agent=role,error=str(exc)))
+                    if correction_pending or turn>=cap or self.calls>=self.max_calls:raise
+                    correction_pending=True
+                    for call in calls:
+                        history.append(dict(type='function_call_output',call_id=call.call_id,output=json.dumps({'error':str(exc)})))
+                    history.append(dict(role='user',content='Submit one corrected finish_assessment with valid available references.'))
+                    continue
             if not calls:
                 try:
                     return self.validate(response.output_text,role,available)
                 except ValueError as exc:
                     self.publish('finding_rejected',dict(agent=role,error=str(exc),draft=response.output_text))
-                    if turn>=cap or self.calls>=self.max_calls:raise
+                    if correction_pending or turn>=cap or self.calls>=self.max_calls:raise
+                    correction_pending=True
                     history.append(dict(role='user',content='The finding failed validation: '+str(exc)+'. Return a corrected JSON finding using only available references.'))
                     continue
             for call in calls:
@@ -149,8 +169,7 @@ class Investigation:
         return self.finish(final)
     def finish(self,final):
         report=dict(result_schema_version=2,benchmark_eligible=False,event_id=self.event_id,mode=self.mode,model=self.model,final=final,findings=self.findings,evidence=list(self.results.values()),metrics=dict(model_calls=self.calls,tool_calls=self.tool_calls,latency_s=round(time.perf_counter()-self.started,3),input_tokens=self.input_tokens if self.usage_known else None,output_tokens=self.output_tokens if self.usage_known else None,input_characters=self.input_chars,cost_usd=None,cost_note='Provider pricing/cost not returned; no estimate assumed.',unsupported_claims=None,unsupported_claims_note='Requires human claim-by-claim review; reference validation is not semantic verification.'))
-        report['provider']='none' if self.mode=='smoke' else getattr(self.client,'provider','flower')
-        report['model_execution_path']='No model called' if self.mode=='smoke' else ('Direct Chat Completions from AgentApp; bypasses Flower model tasks' if report['provider']=='nebius-chat' else 'Flower runtime Responses endpoint and model tasks')
+        report['model_execution_path']='No model called' if self.mode=='smoke' else 'Flower runtime Responses endpoint and model tasks'
         self.publish('report',dict(report=report));return report
     def smoke(self,question=''):
         """Explicit deterministic harness; never represented as model collaboration."""

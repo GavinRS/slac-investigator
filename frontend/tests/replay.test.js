@@ -33,3 +33,12 @@ test('unknown evidence and non-replay origin fail closed',()=>{
 test('all model prose is escaped before HTML rendering',()=>{
  assert.equal(escapeHTML('<img onerror="oops"> &'), '&lt;img onerror=&quot;oops&quot;&gt; &amp;');
 });
+
+test('Grid node refs validate without inventing raw tool evidence',()=>{
+ const event=read('slac-001');
+ event.runs[0].report.evidence=[];
+ event.runs[0].report.node_reports=[{instrument:'rf',tool_refs:event.runs[0].report.findings.flatMap(f=>f.tool_result_refs)}];
+ assert.equal(validateReplay(event),event);
+ event.runs[0].report.node_reports=[];
+ assert.throws(()=>validateReplay(event),/missing evidence/);
+});

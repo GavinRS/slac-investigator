@@ -2,7 +2,8 @@
   "result_schema_version": 2,
   "benchmark_eligible": false,
   "event_id": "slac-001",
-  "mode": "smoke",
+  "mode": "grid",
+  "execution_mode": "smoke",
   "model": "flwrlabs/endeavor-1.0",
   "final": {
     "finding_id": "F-001",
@@ -14,12 +15,12 @@
       1604277203201922048
     ],
     "tool_result_refs": [
-      "T-3a2fadf861bc",
-      "T-15af068318a7",
-      "T-30d4d5591764",
       "T-5b9daa7a0c67",
       "T-7d5df38f9fad",
       "T-062709e28882",
+      "T-3a2fadf861bc",
+      "T-15af068318a7",
+      "T-30d4d5591764",
       "T-f666597a478b",
       "T-0502105af3eb",
       "T-2b3057db7872"
@@ -37,24 +38,24 @@
       "status": "corroborated",
       "rationale": "Deterministic charge-valid beam heuristic.",
       "tool_result_refs": [
-        "T-3a2fadf861bc",
-        "T-15af068318a7",
-        "T-30d4d5591764",
         "T-5b9daa7a0c67",
         "T-7d5df38f9fad",
-        "T-062709e28882"
+        "T-062709e28882",
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764"
       ]
     },
     "unique_cause": {
       "status": "not_established",
       "rationale": "Aggregate coincidence cannot establish unique RF causation.",
       "tool_result_refs": [
-        "T-3a2fadf861bc",
-        "T-15af068318a7",
-        "T-30d4d5591764",
         "T-5b9daa7a0c67",
         "T-7d5df38f9fad",
         "T-062709e28882",
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764",
         "T-f666597a478b",
         "T-0502105af3eb",
         "T-2b3057db7872"
@@ -72,12 +73,12 @@
         1604277203201922048
       ],
       "tool_result_refs": [
-        "T-3a2fadf861bc",
-        "T-15af068318a7",
-        "T-30d4d5591764",
         "T-5b9daa7a0c67",
         "T-7d5df38f9fad",
         "T-062709e28882",
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764",
         "T-f666597a478b",
         "T-0502105af3eb",
         "T-2b3057db7872"
@@ -95,24 +96,24 @@
         "status": "corroborated",
         "rationale": "Deterministic charge-valid beam heuristic.",
         "tool_result_refs": [
-          "T-3a2fadf861bc",
-          "T-15af068318a7",
-          "T-30d4d5591764",
           "T-5b9daa7a0c67",
           "T-7d5df38f9fad",
-          "T-062709e28882"
+          "T-062709e28882",
+          "T-3a2fadf861bc",
+          "T-15af068318a7",
+          "T-30d4d5591764"
         ]
       },
       "unique_cause": {
         "status": "not_established",
         "rationale": "Aggregate coincidence cannot establish unique RF causation.",
         "tool_result_refs": [
-          "T-3a2fadf861bc",
-          "T-15af068318a7",
-          "T-30d4d5591764",
           "T-5b9daa7a0c67",
           "T-7d5df38f9fad",
           "T-062709e28882",
+          "T-3a2fadf861bc",
+          "T-15af068318a7",
+          "T-30d4d5591764",
           "T-f666597a478b",
           "T-0502105af3eb",
           "T-2b3057db7872"
@@ -121,246 +122,6 @@
     }
   ],
   "evidence": [
-    {
-      "ref": "T-3a2fadf861bc",
-      "kind": "node_summary",
-      "event_id": "slac-001",
-      "instrument": "dump",
-      "result": {
-        "quality": {
-          "samples": 2075,
-          "nonmonotonic": 0,
-          "duplicates": 0,
-          "median_dt_s": 0.008388611,
-          "max_gap_s": 0.008440323,
-          "fraction_120hz": 1.0,
-          "nonfinite_values": 0
-        },
-        "channels": {
-          "BPMS:DMPH:502:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 1022946560.0,
-            "baseline_robust_sigma": 23506872.0768,
-            "score_available": 1,
-            "peak_robust_z": 43.3504769018474,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 300,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:502:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": 3.534819575266225,
-            "baseline_robust_sigma": 0.7087379014343647,
-            "score_available": 1,
-            "peak_robust_z": 20.207844380644627,
-            "invalid_position_samples": 300,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 2,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 336,
-            "masked_samples": 300
-          },
-          "BPMS:DMPH:693:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 663369088.0,
-            "baseline_robust_sigma": 128863037.45279999,
-            "score_available": 1,
-            "peak_robust_z": 5.112773837426601,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 301,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:693:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": -0.478297154278135,
-            "baseline_robust_sigma": 0.35916821778710206,
-            "score_available": 1,
-            "peak_robust_z": 11.50499660945214,
-            "invalid_position_samples": 301,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 1,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 335,
-            "masked_samples": 301
-          }
-        },
-        "quality_adequate": 1,
-        "disturbance_detected": 1,
-        "charge_disturbance_detected": 1,
-        "samples_in_candidate": 636,
-        "onset_ns": 1604277200697686480
-      }
-    },
-    {
-      "ref": "T-15af068318a7",
-      "kind": "node_summary",
-      "event_id": "slac-001",
-      "instrument": "dump",
-      "result": {
-        "quality": {
-          "samples": 2075,
-          "nonmonotonic": 0,
-          "duplicates": 0,
-          "median_dt_s": 0.008388611,
-          "max_gap_s": 0.008440323,
-          "fraction_120hz": 1.0,
-          "nonfinite_values": 0
-        },
-        "channels": {
-          "BPMS:DMPH:502:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 1022946560.0,
-            "baseline_robust_sigma": 23506872.0768,
-            "score_available": 1,
-            "peak_robust_z": 43.3504769018474,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 300,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:502:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": 3.534819575266225,
-            "baseline_robust_sigma": 0.7087379014343647,
-            "score_available": 1,
-            "peak_robust_z": 20.207844380644627,
-            "invalid_position_samples": 300,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 2,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 336,
-            "masked_samples": 300
-          },
-          "BPMS:DMPH:693:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 663369088.0,
-            "baseline_robust_sigma": 128863037.45279999,
-            "score_available": 1,
-            "peak_robust_z": 5.112773837426601,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 301,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:693:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": -0.478297154278135,
-            "baseline_robust_sigma": 0.35916821778710206,
-            "score_available": 1,
-            "peak_robust_z": 11.50499660945214,
-            "invalid_position_samples": 301,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 1,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 335,
-            "masked_samples": 301
-          }
-        },
-        "quality_adequate": 1,
-        "disturbance_detected": 1,
-        "charge_disturbance_detected": 1,
-        "samples_in_candidate": 636,
-        "onset_ns": 1604277200697686480
-      }
-    },
-    {
-      "ref": "T-30d4d5591764",
-      "kind": "node_summary",
-      "event_id": "slac-001",
-      "instrument": "dump",
-      "result": {
-        "quality": {
-          "samples": 2075,
-          "nonmonotonic": 0,
-          "duplicates": 0,
-          "median_dt_s": 0.008388611,
-          "max_gap_s": 0.008440323,
-          "fraction_120hz": 1.0,
-          "nonfinite_values": 0
-        },
-        "channels": {
-          "BPMS:DMPH:502:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 1022946560.0,
-            "baseline_robust_sigma": 23506872.0768,
-            "score_available": 1,
-            "peak_robust_z": 43.3504769018474,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 300,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:502:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": 3.534819575266225,
-            "baseline_robust_sigma": 0.7087379014343647,
-            "score_available": 1,
-            "peak_robust_z": 20.207844380644627,
-            "invalid_position_samples": 300,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 2,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 336,
-            "masked_samples": 300
-          },
-          "BPMS:DMPH:693:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 663369088.0,
-            "baseline_robust_sigma": 128863037.45279999,
-            "score_available": 1,
-            "peak_robust_z": 5.112773837426601,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 301,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:693:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": -0.478297154278135,
-            "baseline_robust_sigma": 0.35916821778710206,
-            "score_available": 1,
-            "peak_robust_z": 11.50499660945214,
-            "invalid_position_samples": 301,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 1,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 335,
-            "masked_samples": 301
-          }
-        },
-        "quality_adequate": 1,
-        "disturbance_detected": 1,
-        "charge_disturbance_detected": 1,
-        "samples_in_candidate": 636,
-        "onset_ns": 1604277200697686480
-      }
-    },
     {
       "ref": "T-5b9daa7a0c67",
       "kind": "node_summary",
@@ -602,6 +363,246 @@
       }
     },
     {
+      "ref": "T-3a2fadf861bc",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "dump",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      }
+    },
+    {
+      "ref": "T-15af068318a7",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "dump",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      }
+    },
+    {
+      "ref": "T-30d4d5591764",
+      "kind": "node_summary",
+      "event_id": "slac-001",
+      "instrument": "dump",
+      "result": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      }
+    },
+    {
       "ref": "T-f666597a478b",
       "kind": "node_summary",
       "event_id": "slac-001",
@@ -684,112 +685,6 @@
     }
   ],
   "node_reports": [
-    {
-      "kind": "node_report",
-      "instrument": "dump",
-      "role_source": "local_data",
-      "event_id": "slac-001",
-      "assessment": "suspicious",
-      "observation": "Charge-valid beam checks detect a sustained disturbance.",
-      "summary": {
-        "quality": {
-          "samples": 2075,
-          "nonmonotonic": 0,
-          "duplicates": 0,
-          "median_dt_s": 0.008388611,
-          "max_gap_s": 0.008440323,
-          "fraction_120hz": 1.0,
-          "nonfinite_values": 0
-        },
-        "channels": {
-          "BPMS:DMPH:502:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 1022946560.0,
-            "baseline_robust_sigma": 23506872.0768,
-            "score_available": 1,
-            "peak_robust_z": 43.3504769018474,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 300,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:502:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": 3.534819575266225,
-            "baseline_robust_sigma": 0.7087379014343647,
-            "score_available": 1,
-            "peak_robust_z": 20.207844380644627,
-            "invalid_position_samples": 300,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 2,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 336,
-            "masked_samples": 300
-          },
-          "BPMS:DMPH:693:TMIT": {
-            "baseline_samples": 1439,
-            "baseline_median": 663369088.0,
-            "baseline_robust_sigma": 128863037.45279999,
-            "score_available": 1,
-            "peak_robust_z": 5.112773837426601,
-            "invalid_position_samples": 0,
-            "low_charge_samples": 301,
-            "longest_consecutive_samples": 301,
-            "sustained": 1,
-            "first_sustained_ns": 1604277200697686480,
-            "valid_samples": 636,
-            "masked_samples": 0
-          },
-          "BPMS:DMPH:693:Y": {
-            "baseline_samples": 1439,
-            "baseline_median": -0.478297154278135,
-            "baseline_robust_sigma": 0.35916821778710206,
-            "score_available": 1,
-            "peak_robust_z": 11.50499660945214,
-            "invalid_position_samples": 301,
-            "low_charge_samples": null,
-            "longest_consecutive_samples": 1,
-            "sustained": 0,
-            "first_sustained_ns": null,
-            "valid_samples": 335,
-            "masked_samples": 301
-          }
-        },
-        "quality_adequate": 1,
-        "disturbance_detected": 1,
-        "charge_disturbance_detected": 1,
-        "samples_in_candidate": 636,
-        "onset_ns": 1604277200697686480
-      },
-      "tool_refs": [
-        "T-3a2fadf861bc",
-        "T-15af068318a7",
-        "T-30d4d5591764"
-      ],
-      "raw_bytes_held": 83000,
-      "payload_bytes": 2611,
-      "limitations": [
-        "No RF phase data in this extract",
-        "No protein measurements",
-        "Sparse RF updates; leading missing values remain unknown",
-        "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
-        "Candidate association is not proof of causation",
-        "Neighboring station columns may be missing or inactive",
-        "Low-charge positions and sentinel values are masked.",
-        "A negative heuristic is limited evidence, not proof of normality.",
-        "Beam observations cannot establish a unique RF cause."
-      ],
-      "metrics": {
-        "model_calls": 0,
-        "input_characters": 0,
-        "input_tokens": 0,
-        "output_tokens": 0
-      }
-    },
     {
       "kind": "node_report",
       "instrument": "ltu",
@@ -898,6 +793,112 @@
     },
     {
       "kind": "node_report",
+      "instrument": "dump",
+      "role_source": "local_data",
+      "event_id": "slac-001",
+      "assessment": "suspicious",
+      "observation": "Charge-valid beam checks detect a sustained disturbance.",
+      "summary": {
+        "quality": {
+          "samples": 2075,
+          "nonmonotonic": 0,
+          "duplicates": 0,
+          "median_dt_s": 0.008388611,
+          "max_gap_s": 0.008440323,
+          "fraction_120hz": 1.0,
+          "nonfinite_values": 0
+        },
+        "channels": {
+          "BPMS:DMPH:502:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 1022946560.0,
+            "baseline_robust_sigma": 23506872.0768,
+            "score_available": 1,
+            "peak_robust_z": 43.3504769018474,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 300,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:502:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": 3.534819575266225,
+            "baseline_robust_sigma": 0.7087379014343647,
+            "score_available": 1,
+            "peak_robust_z": 20.207844380644627,
+            "invalid_position_samples": 300,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 2,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 336,
+            "masked_samples": 300
+          },
+          "BPMS:DMPH:693:TMIT": {
+            "baseline_samples": 1439,
+            "baseline_median": 663369088.0,
+            "baseline_robust_sigma": 128863037.45279999,
+            "score_available": 1,
+            "peak_robust_z": 5.112773837426601,
+            "invalid_position_samples": 0,
+            "low_charge_samples": 301,
+            "longest_consecutive_samples": 301,
+            "sustained": 1,
+            "first_sustained_ns": 1604277200697686480,
+            "valid_samples": 636,
+            "masked_samples": 0
+          },
+          "BPMS:DMPH:693:Y": {
+            "baseline_samples": 1439,
+            "baseline_median": -0.478297154278135,
+            "baseline_robust_sigma": 0.35916821778710206,
+            "score_available": 1,
+            "peak_robust_z": 11.50499660945214,
+            "invalid_position_samples": 301,
+            "low_charge_samples": null,
+            "longest_consecutive_samples": 1,
+            "sustained": 0,
+            "first_sustained_ns": null,
+            "valid_samples": 335,
+            "masked_samples": 301
+          }
+        },
+        "quality_adequate": 1,
+        "disturbance_detected": 1,
+        "charge_disturbance_detected": 1,
+        "samples_in_candidate": 636,
+        "onset_ns": 1604277200697686480
+      },
+      "tool_refs": [
+        "T-3a2fadf861bc",
+        "T-15af068318a7",
+        "T-30d4d5591764"
+      ],
+      "raw_bytes_held": 83000,
+      "payload_bytes": 2611,
+      "limitations": [
+        "No RF phase data in this extract",
+        "No protein measurements",
+        "Sparse RF updates; leading missing values remain unknown",
+        "BPM position channels are preprocessed/scaled; low-charge positions can be sentinel 100",
+        "Candidate association is not proof of causation",
+        "Neighboring station columns may be missing or inactive",
+        "Low-charge positions and sentinel values are masked.",
+        "A negative heuristic is limited evidence, not proof of normality.",
+        "Beam observations cannot establish a unique RF cause."
+      ],
+      "metrics": {
+        "model_calls": 0,
+        "input_characters": 0,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    {
+      "kind": "node_report",
       "instrument": "rf",
       "role_source": "local_data",
       "event_id": "slac-001",
@@ -963,7 +964,7 @@
     "input_characters": 0,
     "input_tokens": 0,
     "output_tokens": 0,
-    "latency_s": 9.535,
+    "latency_s": 6.77,
     "tool_calls": 9,
     "cost_usd": null,
     "cost_note": "Provider cost not returned; no estimate assumed.",
@@ -999,18 +1000,19 @@
     "applied_shift_ns": 0,
     "caveat": "RF timestamps reflect sparse, approximately delayed reporting; no fixed reporting delay or timestamp shift is assumed. Recorded onset coincidence or ordering does not establish a unique RF cause."
   },
-  "grid": "connected",
-  "node_assignments": {
-    "rf": "2699105273840443524",
-    "ltu": "3255786443616163789",
-    "dump": "8461644415169068579"
+  "grid": {
+    "nodes_seen": 3,
+    "assignment": {
+      "rf": "3862240917147745236",
+      "ltu": "13029384255262264237",
+      "dump": "4030024869246012011"
+    },
+    "fallback": false
   },
-  "provider": "none",
   "model_execution_path": "No model called",
   "limitations": [],
-  "flower_run_id": "6786869610723567452",
-  "flower_series_id": "10025448941597990672",
+  "flower_run_id": "7023786850553398589",
+  "flower_series_id": "17353970445007331863",
   "runtime": "Flower 1.39.0 local SuperLink",
-  "runtime_status": "run_dict {\n  key: 6786869610723567452\n  value {\n    run_id: 6786869610723567452\n    fab_id: \"hackathon/slac-investigator\"\n    fab_version: \"0.1.0\"\n    fab_hash: \"a6eb643dae1cc67e8f4cd41e1f42e532c359d4c915b7af785abfdd3150577f87\"\n    pending_at: \"2026-09-29T22:22:42.448426+00:00\"\n    starting_at: \"2026-09-29T22:22:43.416407+00:00\"\n    running_at: \"2026-09-29T22:22:43.996631+00:00\"\n    finished_at: \"2026-09-29T22:22:55.082887+00:00\"\n    status {\n      status: \"finished\"\n      sub_status: \"completed\"\n    }\n    flwr_aid: \"<id:none>\"\n    federation: \"@none/default\"\n    bytes_sent: 6375\n    bytes_recv: 11702\n    clientapp_runtime: 1.6838629245758057\n    primary_task_type: \"flwr-agentapp\"\n    primary_task_id: 140132676669804836\n    series_id: 10025448941597990672\n    account_name: \"none\"\n  }\n}\nnow: \"2026-09-29T22:22:55.136076+00:00\"\n",
-  "wall_latency_s": 12.704
+  "wall_latency_s": 9.674
 }

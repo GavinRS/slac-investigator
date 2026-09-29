@@ -3,10 +3,10 @@ import json
 from scripts import evaluate
 
 
-def report(mode='collaborative'):
+def report(mode='grid'):
     return dict(event_id='slac-001', mode=mode, model='fixture', final={}, findings=[], evidence=[],
                 metrics={'model_calls': 4, 'input_tokens': None, 'output_tokens': None},
-                wall_latency_s=3.5, grid='none (local fallback)',
+                wall_latency_s=3.5, grid={'nodes_seen': 0, 'assignment': {}, 'fallback': True},
                 data_shared={'raw_bytes_held': 1000, 'payload_bytes': 20, 'percent_shared': 2, 'raw_samples_shared': 0})
 
 
@@ -47,8 +47,8 @@ def test_run_uses_same_model_address_and_persists_after_every_attempt(monkeypatc
         return report(mode), 'series'
     monkeypatch.setattr(evaluate, 'run_flower', fake_run)
     assert evaluate.main(['--model', 'fixture', '--address', 'http://127.0.0.1:18000', '--output-dir', str(tmp_path)]) == 1
-    assert [mode for _, mode, _ in calls] == ['collaborative', 'baseline', 'baseline', 'collaborative']
-    assert all(kwargs == {'model': 'fixture', 'address': 'http://127.0.0.1:18000'} for _, _, kwargs in calls)
+    assert [mode for _, mode, _ in calls] == ['grid', 'baseline', 'baseline', 'grid']
+    assert all(kwargs == {'model': 'fixture', 'address': 'http://127.0.0.1:18000', 'node_timeout': 120} for _, _, kwargs in calls)
     data = (tmp_path / 'comparison.json').read_text()
     assert 'secret-that-must-not-be-logged' not in data
     assert json.loads(data)['failed_runs'] == 2
@@ -56,7 +56,8 @@ def test_run_uses_same_model_address_and_persists_after_every_attempt(monkeypatc
 
 def test_smoke_does_not_require_model_identity(monkeypatch, tmp_path):
     monkeypatch.setattr(evaluate, 'event_ids', lambda: ['slac-001'])
-    smoke = report('smoke')
+    smoke = report('grid')
+    smoke['execution_mode'] = 'smoke'
     smoke['model'] = 'none (deterministic check)'
     monkeypatch.setattr(evaluate, 'run_flower', lambda *a, **kw: (smoke, 'series'))
     assert evaluate.main(['--smoke-only', '--output-dir', str(tmp_path)]) == 0
@@ -130,3 +131,78 @@ def test_interruption_saves_attempt_and_stops(monkeypatch, tmp_path):
     saved = json.loads((tmp_path / 'comparison.json').read_text())
     assert saved['completed_runs'] == 0
     assert saved['failed_attempts'][0]['error_type'] == 'KeyboardInterrupt'
+
+
+def test_rev2_smoke_resume_uses_execution_mode(monkeypatch, tmp_path):
+    monkeypatch.setattr(evaluate, 'event_ids', lambda: ['slac-001'])
+    calls = []
+    def smoke_run(event, mode, **kwargs):
+        calls.append(mode)
+        result = report('grid')
+        result['execution_mode'] = 'smoke'
+        return result, 'series'
+    monkeypatch.setattr(evaluate, 'run_flower', smoke_run)
+    argv = ['--smoke-only', '--model', 'fixture', '--output-dir', str(tmp_path)]
+    assert evaluate.main(argv) == 0
+    assert evaluate.main(argv + ['--resume']) == 0
+    assert calls == ['smoke']
+    saved = json.loads((tmp_path / 'smoke-evaluation.json').read_text())
+    assert saved['reports'][0]['mode'] == 'grid'
+    assert saved['rows'][0]['execution_mode'] == 'smoke'
+    assert 'grid (smoke)' in (tmp_path / 'smoke-evaluation.md').read_text()
+
+
+def test_model_comparison_rejects_smoke_grid_report(monkeypatch, tmp_path):
+    monkeypatch.setattr(evaluate, 'event_ids', lambda: ['slac-001'])
+    def unexpected_smoke(event, mode, **kwargs):
+        result = report('grid')
+        result['execution_mode'] = 'smoke'
+        return result, 'series'
+    monkeypatch.setattr(evaluate, 'run_flower', unexpected_smoke)
+    assert evaluate.main(['--model', 'fixture', '--output-dir', str(tmp_path)]) == 1
+    saved = json.loads((tmp_path / 'comparison.json').read_text())
+    assert saved['completed_runs'] == 0
+    assert saved['failed_runs'] == 2
+
+
+def test_partial_accounting_does_not_present_known_calls_as_totals():
+    r = report()
+    r['metrics'].update(accounting_complete=False, model_calls=3, tool_calls=2, input_tokens=40,
+                        output_tokens=20, cost_usd=0.1, latency_s=3)
+    row = evaluate.summarize([r], {'slac-001': {'is_anom': True}})[0]
+    for key in ('model_calls', 'tool_calls', 'input_tokens', 'output_tokens', 'cost_usd'):
+        assert row[key] is None
+    assert row['latency_s'] == 3 and row['wall_latency_s'] == 3.5
+    assert 'Incomplete node accounting' in row['accounting_note']
+    assert r['metrics']['model_calls'] == 3  # Source report retained for audit.
+
+
+def test_partial_grid_retried_on_resume_with_report_and_attempt_retained(monkeypatch, tmp_path):
+    monkeypatch.setattr(evaluate, 'event_ids', lambda: ['slac-001'])
+    calls = []
+    partial = report('grid')
+    partial['flower_run_id'] = '123'
+    partial['data_shared']['complete'] = False
+    partial['metrics']['accounting_complete'] = False
+    def first(event, mode, **kwargs):
+        return (partial if mode == 'grid' else report('baseline')), 'series'
+    monkeypatch.setattr(evaluate, 'run_flower', first)
+    argv = ['--model', 'fixture', '--output-dir', str(tmp_path)]
+    assert evaluate.main(argv) == 1
+    saved = json.loads((tmp_path / 'comparison.json').read_text())
+    assert saved['completed_runs'] == 1 and saved['partial_runs'] == 1
+    assert saved['all_runs_completed'] is False
+    assert next(row for row in saved['rows'] if row['mode'] == 'grid')['status'] == 'partial'
+    assert saved['failed_attempts'][0]['flower_run_id'] == '123'
+    def complete(event, mode, **kwargs):
+        calls.append(mode)
+        return report(mode), 'series'
+    monkeypatch.setattr(evaluate, 'run_flower', complete)
+    assert evaluate.main(argv + ['--resume']) == 0
+    assert calls == ['grid']
+    saved = json.loads((tmp_path / 'comparison.json').read_text())
+    assert saved['completed_runs'] == 2 and saved['partial_runs'] == 1
+    assert saved['all_runs_completed'] is True and len(saved['reports']) == 3
+    calls.clear()
+    assert evaluate.main(argv + ['--resume']) == 0
+    assert calls == []

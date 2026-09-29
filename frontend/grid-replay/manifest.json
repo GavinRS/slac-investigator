@@ -1,0 +1,13 @@
+{
+  "schema": "frontend-replay-v1",
+  "execution_source": "saved_run",
+  "description": "Completed recorded model Grid runs. Opening or replaying does not execute a model.",
+  "events": [
+    {
+      "id": "slac-001",
+      "station": "KLYS:LI29:11",
+      "file": "./slac-001.json",
+      "run_count": 1
+    }
+  ]
+}

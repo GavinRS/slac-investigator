@@ -1,5 +1,5 @@
 import {InvestigationAPI,SubmissionUncertainError,observeJob,normalizePlot} from './api.js';
-import {escapeHTML as h,pretty} from './replay.js';
+import {escapeHTML as h,pretty,ACTIVITY_KINDS,sharingHTML,sharingHeadline,evidenceDetails} from './replay.js';
 import {plot} from './charts.js';
 const $=s=>document.querySelector(s);
 const live={api:null,events:[],selected:null,data:null,history:[],activity:[],status:null,busy:false,error:'',uncertain:false,focus:false};
@@ -10,11 +10,11 @@ function storeJob(){
 function dimensions(f){return `<div class="dimension-grid">${[['beam_disturbance','Beam disturbance corroborated?'],['unique_cause','Unique cause established?']].map(([key,title])=>`<div><strong>${title}</strong><span>${h(pretty(f[key].status))}</span><p>${h(f[key].rationale)}</p>${refButtons(f[key].tool_result_refs)}</div>`).join('')}</div>`;}
 function reportCard(item,index){
   const r=item.report,f=r.final;
-  return `<section class="panel"><div class="assessment-header"><span class="eyebrow">COMPLETED LIVE RUN · SCHEMA V2</span><h2>${index===0?'Initial assessment':'Follow-up assessment'}</h2></div><div class="assessment-body">${dimensions(f)}<p>${h(f.observation)}</p><details><summary>Limitations and evidence</summary><ul>${f.data_limitations.map(x=>`<li>${h(x)}</li>`).join('')}</ul>${refButtons(f.tool_result_refs)}<p><strong>Requested next check</strong><br>${h(f.requested_next_check||'None')}</p><p class="muted small">A requested check has not necessarily been performed.</p></details></div><div class="run-details"><span>Flower run <span class="code">${h(r.flower_run_id)}</span></span><span>${r.metrics.model_calls} model / ${r.metrics.tool_calls} tool calls</span><span>Cost: ${r.metrics.cost_usd===null?'unavailable':h(r.metrics.cost_usd)}</span></div></section>`;
+  return `<section class="panel"><div class="assessment-header"><span class="eyebrow">COMPLETED LIVE RUN · SCHEMA V2</span><h2>${index===0?'Initial assessment':'Follow-up assessment'}</h2></div><div class="assessment-body">${dimensions(f)}${sharingHTML(r)}<p>${h(f.observation)}</p><details><summary>Limitations and evidence</summary><ul>${f.data_limitations.map(x=>`<li>${h(x)}</li>`).join('')}</ul>${refButtons(f.tool_result_refs)}<p><strong>Requested next check</strong><br>${h(f.requested_next_check||'None')}</p><p class="muted small">A requested check has not necessarily been performed.</p></details></div><div class="run-details"><span>Flower run <span class="code">${h(r.flower_run_id)}</span></span><span>${r.metrics.model_calls} model / ${r.metrics.tool_calls} tool calls</span><span>Cost: ${r.metrics.cost_usd===null?'unavailable':h(r.metrics.cost_usd)}</span></div></section>`;
 }
-function activity(){return live.activity.filter(item=>['started','delegation','tool_request','tool_result','finding','finding_rejected','failed'].includes(item.event.kind)).map(item=>{
+function activity(){return live.activity.filter(item=>ACTIVITY_KINDS.includes(item.event.kind)).map(item=>{
   const e=item.event,f=e.finding;
-  const text=e.kind==='delegation'?e.question:e.kind==='tool_request'?`Requests ${pretty(e.analysis)}`:e.kind==='tool_result'?`Evidence returned · ${pretty(e.evidence.analysis)}`:e.kind==='finding'?f.observation:e.kind==='finding_rejected'?'Finding rejected by validation':e.kind==='failed'?e.error.message:'Flower investigation started';
+  const text=e.kind==='node_report'?(e.report||e.node_report)?.observation||'Instrument summary received':e.kind==='data_shared'?sharingHeadline({data_shared:e.data_shared}):e.kind==='delegation'?e.question:e.kind==='tool_request'?`Requests ${pretty(e.analysis)}`:e.kind==='tool_result'?`Evidence returned · ${pretty(e.evidence.analysis||e.evidence.kind)}`:e.kind==='finding'?f.observation:e.kind==='finding_rejected'?'Finding rejected by validation':e.kind==='failed'?e.error.message:'Flower investigation started';
   return `<div class="activity-row"><span class="activity-icon">${item.seq}</span><span class="activity-role">${h(f?.agent||e.agent||'Flower')}</span><div class="activity-content"><p class="activity-label">${h(pretty(e.kind))}</p><p>${h(text)}</p>${f?dimensions(f):e.evidence?refButtons([e.evidence.ref]):''}</div></div>`;
 }).join('')||'<p class="empty">No activity yet. Starting an investigation submits a real job to the local backend.</p>';}
 function render(){
@@ -63,11 +63,12 @@ async function resume(id,historyIds=[]){
   finally{live.busy=false;render();}
 }
 function evidence(ref){
-  const candidates=[...live.history.flatMap(r=>r.report.evidence),...live.activity.filter(e=>e.event.kind==='tool_result').map(e=>e.event.evidence)];
-  const result=candidates.find(e=>e.ref===ref);if(!result)return;
-  $('#evidence-dialog-title').textContent=`${result.ref} · ${pretty(result.analysis)}`;
-  $('#evidence-content').innerHTML='<p class="source-note">Read-only backend tool evidence. Exact timestamps remain strings.</p><pre></pre>';
-  $('#evidence-content pre').textContent=JSON.stringify(result,null,2);$('#evidence-dialog').showModal();
+  const reports=[...live.history.map(item=>item.report),{evidence:live.activity.filter(e=>e.event.kind==='tool_result').map(e=>e.event.evidence)}];
+  const detail=evidenceDetails(reports,ref);if(!detail)return;
+  $('#evidence-dialog-title').textContent=detail.title;
+  $('#evidence-content').innerHTML='<p class="source-note"></p><pre></pre>';
+  $('#evidence-content .source-note').textContent=detail.note;
+  $('#evidence-content pre').textContent=JSON.stringify(detail.evidence,null,2);$('#evidence-dialog').showModal();
 }
 export async function initLive(){
   live.api=new InvestigationAPI();

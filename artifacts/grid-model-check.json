@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "endpoint": "https://api.flower.ai/v1/responses",
+  "model": "flwrlabs/endeavor-1.0",
+  "latency_s": 15.806
+}
