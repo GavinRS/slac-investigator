@@ -29,7 +29,8 @@ export class InvestigationAPI {
     if(this.submitting)throw new Error('A submission is already pending.');
     this.submitting=true;try{return await this.request(path,{method:'POST',body});}finally{this.submitting=false;}
   }
-  start(eventId){return this.submit('/api/v1/investigations',{event_id:eventId,mode:'collaborative'});}
+  // question is sent only when given (grid demo); the collaborative default body is unchanged.
+  start(eventId,{mode='collaborative',question=''}={}){const q=question.trim();if(q.length>4000)throw new Error('Enter a question of at most 4,000 characters.');return this.submit('/api/v1/investigations',q?{event_id:eventId,mode,question:q}:{event_id:eventId,mode});}
   followup(seriesId,question){
     const q=question.trim();if(!q||q.length>4000)throw new Error('Enter a question of 1–4,000 characters.');
     return this.submit(`/api/v1/series/${encodeURIComponent(seriesId)}/follow-ups`,{question:q});

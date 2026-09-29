@@ -210,3 +210,13 @@ def test_plot_preserves_exact_timestamps_and_masks_invalid_positions(tmp_path):
         assert all(isinstance(t,str) for t in position['time_ns'])
         assert client.get('/api/v1/events/slac-999/plot').status_code == 404
         assert client.get('/api/v1/events/slac-999').status_code == 404
+
+
+def test_start_passes_question_to_runner(tmp_path):
+    runner = Runner()
+    with TestClient(create_app(tmp_path/'api.db', runner)) as client:
+        job = client.post('/api/v1/investigations', json={'event_id':'slac-003', 'mode':'collaborative', 'question':' Did the RF glitch disturb the beam? '}).json()
+        for _ in range(50):
+            if runner.calls: break
+            time.sleep(0.02)
+    assert runner.calls[0][0] == 'slac-003' and runner.calls[0][1]['question'] == 'Did the RF glitch disturb the beam?'

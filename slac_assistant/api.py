@@ -64,6 +64,7 @@ class StartRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
     event_id: str = Field(pattern=r'^slac-\d{3}$')
     mode: Literal['collaborative', 'baseline', 'smoke', 'grid'] = 'collaborative'
+    question: str = Field(default='', max_length=4000)
 
 
 class FollowupRequest(BaseModel):
@@ -288,7 +289,7 @@ def create_app(db_path=None, runner=run_flower):
     def start(request: StartRequest):
         if request.event_id not in event_ids():
             raise HTTPException(404, detail='Event not found')
-        return submit(store.enqueue(request=request, model=configured_model))
+        return submit(store.enqueue(request=request, question=request.question.strip(), model=configured_model))
 
     @app.get('/api/v1/investigations/{investigation_id}', response_model=StatusResponse)
     def get_status(investigation_id: str):

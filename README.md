@@ -1,8 +1,25 @@
 # RF investigation assistant — Flower hackathon prototype
 
-A human-supervised replay tool for investigating SLAC RF candidates against beam evidence. It uses one Flower AgentApp with equipment, beam and lead investigator loops. Python handles calculations and read-only data access. There are no equipment-write tools.
+Three instrument agents (`rf`, `ltu`, `dump`) each run as a Flower SuperNode that holds only its own slice of real SLAC data.
+Each one runs read-only checks on that slice and sends back only a summary, not the raw data.
+An orchestrator uses Flower's Grid tools (`get_nodes`, `push_messages`, `pull_messages`) to ask the nodes and collect their summaries.
+It combines them into a two-part verdict for a human: was the beam disturbed, and is there a unique cause.
+There are no equipment-write tools. Walkthrough: [docs/DEMO.md](docs/DEMO.md).
 
-**Status:** real public SLAC cases, deterministic tools, model collaboration inside the Flower AgentApp, a human follow-up, and the operator dashboard have been exercised. Those earlier live runs used OpenAI models (api.openai.com), not the Nebius or Endeavor models this project now defaults to. In their review, the slac-001 main conclusions were supported with an onset-precision caveat; slac-003 exposed a misleading assessment headline despite a supported explanation. The baseline comparison remains unevaluated. Deterministic checks remain explicitly labeled and are not model results.
+The older design, one Flower AgentApp with equipment, beam and lead investigator loops, is still here as the single-process baseline.
+
+## Results so far
+
+- Local 3-node grid: all three SuperNodes on one laptop, using the same Grid API as SuperGrid.
+- Live Nebius MiniMax-M3 runs:
+  - slac-001: beam disturbance corroborated, unique cause not established, 0.9% of raw data shared, about 24 s.
+  - slac-003: RF node insufficient evidence, LTU insufficient evidence, dump normal. Beam disturbance not corroborated, unique cause not established, 0.79% shared, 23 s, model final accepted.
+- In 2 of 4 earlier slac-001 runs the orchestrator's model final came back incomplete, and the app used a labeled rule-based combine instead.
+- Endeavor (`flwrlabs/endeavor-1.0`, via Flower's gateway), slac-001: all 3 nodes suspicious, beam disturbance corroborated, unique cause not established, model final accepted, 0.86% of raw data shared, 148 s
+- Our SuperGrid personal federation has 0 nodes today, so on SuperGrid the app runs the three instruments in one process and labels it "none (local fallback)".
+- Four hand-picked events. No accuracy claim.
+
+**Earlier single-process runs:** real public SLAC cases, deterministic tools, model collaboration inside the Flower AgentApp, a human follow-up, and the operator dashboard have been exercised. Those earlier live runs used OpenAI models (api.openai.com), not the Nebius or Endeavor models this project now defaults to. In their review, the slac-001 main conclusions were supported with an onset-precision caveat; slac-003 exposed a misleading assessment headline despite a supported explanation. The baseline comparison remains unevaluated. Deterministic checks remain explicitly labeled and are not model results.
 
 ## Start locally
 
@@ -71,9 +88,22 @@ insecure = true
 FLWR_HOME=$PWD/.flower .venv/bin/flwr supernode list grid   # 3 nodes, status online
 ```
 
-Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. State is local under ignored `.flower/`; the startup script configures `.flower/slac.sqlite` for subsequent launches. Restart durability of the currently serving instance has not been verified; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
+Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. The SuperLink keeps its state in memory (flwr 1.39 creates no SQLite tables when the repo path contains a space), so Flower runs and follow-up context are lost when it stops; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
 
-## Demonstration flow
+## Talk to it in flwr chat
+
+```sh
+flwr chat
+/load <repo path>
+/federation            # pick @<you>/personal
+Was the beam disturbed during slac-001, and do we know why?
+```
+
+Plain-English prompts run the collaborative Grid on the event named in the text (`slac-001` if none). On SuperGrid our personal federation has 0 nodes, so it runs in local-fallback mode: the three instruments run in one process (labeled `none (local fallback)`), and it needs the event data files from this repo; the local 3-node grid (`scripts/start_grid.sh`) is where nodes really hold their own data.
+
+## Single-agent baseline flow
+
+This is the older single-process design, kept as the baseline. For the grid demo, see [docs/DEMO.md](docs/DEMO.md).
 
 1. Select a measured event and inspect its source, RF and beam plots. The shaded candidate interval comes from the source metadata; no timestamp fitting occurs.
 2. The lead's initial assignments send RF evidence to equipment and beam/quality evidence to beam. They inspect independently in separate model contexts (executed sequentially, not on separate machines).
@@ -113,13 +143,28 @@ The external evaluator reads source labels only after investigations and records
 
 ## Data credit and disclaimer
 
-The four events in `data/events/` are small extracts (about 3 MB) from SLAC National Accelerator Laboratory's public klystron RF anomaly dataset ([dataset index](https://www.slac.stanford.edu/grp/ad/ard/rfanom/rfanom.html), [DOE catalog entry](https://www.osti.gov/biblio/1869296)). All credit for the data goes to SLAC and the dataset authors. We did not find an explicit reuse license. They are included here, and in the Flower Hub app, only to demo this non-commercial hackathon project, and we will remove them if asked. This project is not affiliated with or endorsed by SLAC. See [data provenance](docs/DATA_PROVENANCE.md).
+The four events in `data/events/` are small extracts (about 3 MB) from SLAC National Accelerator Laboratory's public klystron RF anomaly dataset ([dataset index](https://www.slac.stanford.edu/grp/ad/ard/rfanom/rfanom.html), [DOE catalog entry](https://www.osti.gov/biblio/1869296)). All credit for the data goes to SLAC and the dataset authors. We did not find an explicit reuse license. They are included in this repo only to demo this non-commercial hackathon project, and we will remove them if asked. This project is not affiliated with or endorsed by SLAC. The Flower Hub upload currently leaves out the event data files because of the upload size limit; they are in this repo. See [data provenance](docs/DATA_PROVENANCE.md).
 
 ## Evidence and limitations
 
+Grid vs single agent, all four events (`scripts/evaluate.py`, live, same model: Nebius MiniMax-M3, 2026-09-29). Every final verdict was written by the model and accepted.
+
+| event | mode | agents | beam disturbance | unique cause | model calls | latency s | raw data shared |
+|---|---|---|---|---|---|---|---|
+| slac-001 | grid | 4 | corroborated | not established | 4 | 22.2 | 0.87% |
+| slac-001 | single agent | 1 | corroborated | not established | 2 | 14.1 | 100% |
+| slac-002 | grid | 4 | corroborated | not established | 4 | 23.2 | 0.81% |
+| slac-002 | single agent | 1 | corroborated | not established | 2 | 15.6 | 100% |
+| slac-003 | grid | 4 | not corroborated | not established | 4 | 17.2 | 0.78% |
+| slac-003 | single agent | 1 | not corroborated | not established | 2 | 14.1 | 100% |
+| slac-004 | grid | 4 | not corroborated | not established | 4 | 18.7 | 0.83% |
+| slac-004 | single agent | 1 | not corroborated | not established | 2 | 14.1 | 100% |
+
+The grid reached the same verdicts as the single agent on all four events while sharing under 1% of the raw bytes; it takes a few seconds longer and uses more model calls. Earlier grid runs sometimes got an incomplete orchestrator reply and fell back to the labeled rule-based combine (2 of 4 earlier slac-001 runs); none did in this run. Four hand-picked cases, not a benchmark. Full reports: `artifacts/comparison.json`.
+
 Each finding includes its ID/agent, observation, channels and interval, tool references, supporting and conflicting evidence, limitations and requested next check. Tools return stable content-derived references. Schema, reference and channel checks reject malformed evidence; semantic claim support still needs operator review.
 
-The signal detector is a transparent demonstration heuristic, not a reproduction or improvement of SLAC's published detector. It uses a time-weighted RF baseline and robust beam deviations sustained for ten valid consecutive samples, with charge checks. Four label-selected cases are not a benchmark. There is no training, distributed deployment, federated learning, live control or protein analysis.
+The signal detector is a transparent demonstration heuristic, not a reproduction or improvement of SLAC's published detector. It uses a time-weighted RF baseline and robust beam deviations sustained for ten valid consecutive samples, with charge checks. Four label-selected cases are not a benchmark. The grid runs as separate SuperNode processes on one machine; there is no multi-machine deployment yet. There is no training, federated learning, live control or protein analysis.
 
 See [data provenance](docs/DATA_PROVENANCE.md) for exact source files, channels, transformations, timestamps and unresolved dataset licensing. `scripts/fetch_cases.py` documents the small extraction. Raw downloads and all labels stay outside the AgentApp bundle.
 

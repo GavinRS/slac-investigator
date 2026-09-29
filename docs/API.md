@@ -31,7 +31,7 @@ POST requests must use `Content-Type: application/json`. There is no SSE or WebS
 {"event_id":"slac-001","mode":"collaborative"}
 ```
 
-`mode` is `collaborative` (default), `baseline`, `smoke`, or `grid`. Smoke performs deterministic software checks and no inference. `grid` runs the Grid orchestrator (three instrument nodes, each replying with a summary only; see `node_report`/`data_shared` below). The API accepts `grid` now; until the AgentApp's Grid orchestrator lands, a `grid` job fails with `workflow_failed` rather than running a single-agent path under the `grid` label. The event must exist in `/events`. No human question or series ID is accepted here; use the follow-up route to continue.
+`mode` is `collaborative` (default), `baseline`, `smoke`, or `grid`. Smoke performs deterministic software checks and no inference. `grid` runs the Grid orchestrator (three instrument nodes, each replying with a summary only; see `node_report`/`data_shared` below). The API accepts `grid` now; until the AgentApp's Grid orchestrator lands, a `grid` job fails with `workflow_failed` rather than running a single-agent path under the `grid` label. The event must exist in `/events`. An optional `question` (up to 4,000 characters) is passed to the agents. No series ID is accepted here; use the follow-up route to continue.
 
 The 202 response and subsequent status responses use the same shape (the job may already be running when 202 arrives):
 
