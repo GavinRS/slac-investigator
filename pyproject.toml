@@ -16,4 +16,4 @@ fab-include = ["slac_assistant/**", "data/events/**"]
 [tool.flwr.app.components]
 agentapp = "slac_assistant.agent_app:app"
 [tool.flwr.app.config]
-model = "openai/gpt-5.6-sol"
+model = "dedicated/flowerai/MiniMax-M3-OOLI9o"

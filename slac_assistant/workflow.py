@@ -5,6 +5,8 @@ from pydantic import BaseModel,Field
 from .data import load_event
 from .tools import analyze,KINDS
 
+DEFAULT_MODEL='dedicated/flowerai/MiniMax-M3-OOLI9o'  # INVESTIGATOR_MODEL overrides it (agent_app, api, ui)
+
 class BeamAssessment(BaseModel):
     status:Literal['corroborated','not_corroborated','insufficient_evidence','not_assessed']
     rationale:str
@@ -53,7 +55,7 @@ TOOL={"type":"function","name":"analyze","description":"Run a deterministic read
 DELEGATE={"type":"function","name":"delegate","description":"Ask an equipment or beam specialist for a focused follow-up. Use a specific check supported by the available analyses.","parameters":{"type":"object","properties":{"agent":{"type":"string","enum":["equipment","beam"]},"kind":{"type":"string","enum":list(KINDS)},"question":{"type":"string"}},"required":["agent","kind","question"],"additionalProperties":False}}
 
 class Investigation:
-    def __init__(self,event_id,emit,client=None,model='openai/gpt-5.6-sol',mode='collaborative',max_calls=12):
+    def __init__(self,event_id,emit,client=None,model=DEFAULT_MODEL,mode='collaborative',max_calls=12):
         self.event_id=event_id;self.meta,_=load_event(event_id);self.emit=emit;self.client=client;self.model=model;self.mode=mode
         self.max_calls=max_calls;self.calls=0;self.tool_calls=0;self.input_chars=0;self.input_tokens=0;self.output_tokens=0;self.usage_known=True
         self.results={};self.findings=[];self.started=time.perf_counter();self.delegations=0

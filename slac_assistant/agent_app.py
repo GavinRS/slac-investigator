@@ -2,7 +2,7 @@
 import json,os
 from flwr.agentapp import AgentApp,AgentSession
 from flwr.app import Context,ConfigRecord
-from .workflow import Investigation
+from .workflow import Investigation,DEFAULT_MODEL
 app=AgentApp()
 @app.main()
 def main(agent:AgentSession,context:Context)->None:
@@ -16,7 +16,7 @@ def main(agent:AgentSession,context:Context)->None:
     if mode!='smoke':
         from openai import OpenAI
         client=OpenAI(base_url=os.environ['FLWR_RUNTIME_BASE_URL'],api_key=os.environ['FLWR_RUNTIME_API_KEY'],max_retries=0,timeout=120)
-    model=request.get('model') or context.run_config.get('model','openai/gpt-5.6-sol')
+    model=request.get('model') or os.environ.get('INVESTIGATOR_MODEL') or context.run_config.get('model',DEFAULT_MODEL)
     inv=Investigation(request['event_id'],emit,client,model,mode)
     prior=None
     if 'investigation' in context.state:
