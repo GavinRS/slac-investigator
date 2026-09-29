@@ -1,0 +1,26 @@
+{
+  "inspected_date": "2026-09-29",
+  "installed_flower": "1.39.0",
+  "installed_openai_sdk": "2.54.0",
+  "default_provider_configuration_changed": false,
+  "existing_services_restarted": false,
+  "flower_native_chat_completions_supported": false,
+  "regional_responses_support": "unverified",
+  "regional_public_openapi_status": 404,
+  "general_schema_version": "20260928-144ca2fd4",
+  "general_schema_sha256": "706e7e02930deaf91672a0f507ed28dfd27d4fac607c532cb636efce2c442793",
+  "adapter_path": "Flower AgentApp -> application NebiusChatAdapter -> SDK chat.completions.create -> https://api.tokenfactory.us-central1.nebius.com/v1/chat/completions",
+  "offline_tests_passed": 26,
+  "flower_bundle_build": "passed",
+  "live_tests": {
+    "text": "not run",
+    "tool_round_trip": "not run",
+    "slac_investigation": "not run"
+  },
+  "remaining_blockers": [
+    "Event credit coverage unconfirmed",
+    "NEBIUS_API_KEY not configured in inspected task shell",
+    "Event-approved NEBIUS_MODEL not supplied"
+  ],
+  "provisioned_infrastructure": false
+}

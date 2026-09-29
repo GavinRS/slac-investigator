@@ -1,0 +1,23 @@
+{
+  "purpose": "Post-run evidence review only; not supplied to agents",
+  "threshold": 100000000.0,
+  "timestamps_shifted": false,
+  "rows": [
+    {
+      "channel": "BPMS:DMPH:502:TMIT",
+      "first_low_charge_ns": 1604277200706075091
+    },
+    {
+      "channel": "BPMS:DMPH:693:TMIT",
+      "first_low_charge_ns": 1604277200697686480
+    },
+    {
+      "channel": "BPMS:LTUH:250:TMIT",
+      "first_low_charge_ns": null
+    },
+    {
+      "channel": "BPMS:LTUH:450:TMIT",
+      "first_low_charge_ns": 1604277200706075091
+    }
+  ]
+}
