@@ -147,7 +147,20 @@ The four events in `data/events/` are small extracts (about 3 MB) from SLAC Nati
 
 ## Evidence and limitations
 
-Grid vs single agent (`scripts/evaluate.py --events slac-001`, one live run, same model): both reported beam disturbance corroborated / unique cause not established. The Grid (3 node agents + orchestrator, 4 model calls, 23.7 s) shared 0.92% of the raw bytes, while the single-agent baseline (2 model calls, 21.2 s) needs 100% of them in one place. In that Grid run the orchestrator's model reply came back incomplete, so its final was the deterministic combine of the three node reports; the model final was accepted in only 2 of the 4 recorded Grid model runs at a 4000-token output budget. One case, not a benchmark.
+Grid vs single agent, all four events (`scripts/evaluate.py`, live, same model: Nebius MiniMax-M3, 2026-09-29). Every final verdict was written by the model and accepted.
+
+| event | mode | agents | beam disturbance | unique cause | model calls | latency s | raw data shared |
+|---|---|---|---|---|---|---|---|
+| slac-001 | grid | 4 | corroborated | not established | 4 | 22.2 | 0.87% |
+| slac-001 | single agent | 1 | corroborated | not established | 2 | 14.1 | 100% |
+| slac-002 | grid | 4 | corroborated | not established | 4 | 23.2 | 0.81% |
+| slac-002 | single agent | 1 | corroborated | not established | 2 | 15.6 | 100% |
+| slac-003 | grid | 4 | not corroborated | not established | 4 | 17.2 | 0.78% |
+| slac-003 | single agent | 1 | not corroborated | not established | 2 | 14.1 | 100% |
+| slac-004 | grid | 4 | not corroborated | not established | 4 | 18.7 | 0.83% |
+| slac-004 | single agent | 1 | not corroborated | not established | 2 | 14.1 | 100% |
+
+The grid reached the same verdicts as the single agent on all four events while sharing under 1% of the raw bytes; it takes a few seconds longer and uses more model calls. Earlier grid runs sometimes got an incomplete orchestrator reply and fell back to the labeled rule-based combine (2 of 4 earlier slac-001 runs); none did in this run. Four hand-picked cases, not a benchmark. Full reports: `artifacts/comparison.json`.
 
 Each finding includes its ID/agent, observation, channels and interval, tool references, supporting and conflicting evidence, limitations and requested next check. Tools return stable content-derived references. Schema, reference and channel checks reject malformed evidence; semantic claim support still needs operator review.
 
