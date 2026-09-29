@@ -29,8 +29,8 @@ def build():
         runs=[]
         for i,rid in enumerate(ids):
             d=json.loads((ROOT/'artifacts/runs'/f'{rid}.json').read_text());r=d['report']
-            assert r['event_id']==event_id and r['mode']=='collaborative' and r['provider']=='flower'
-            keep={k:r[k] for k in ('event_id','mode','model','provider','model_execution_path','final','findings','evidence','metrics')}
+            assert r['event_id']==event_id and r['mode']=='collaborative'
+            keep={k:r[k] for k in ('event_id','mode','model','model_execution_path','final','findings','evidence','metrics')}
             runs.append({'id':rid,'series_id':d.get('flower_series_id',r.get('flower_series_id')),
                 'phase':'initial' if i==0 else 'followup','question':d.get('human_question',''),
                 'wall_latency_s':d.get('wall_latency_s',r.get('wall_latency_s')),
