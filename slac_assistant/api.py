@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 import re
 import sqlite3
-import tomllib
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Query
@@ -20,6 +19,7 @@ from typing import Literal
 
 from .data import ROOT, event_ids, load_event
 from .runtime import run_flower
+from .workflow import configured_model as configured_model_setting
 
 
 def now():
@@ -186,7 +186,7 @@ def status(row):
 def create_app(db_path=None, runner=run_flower):
     store = Store(db_path or ROOT/'artifacts/api/state.sqlite3')
     executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='flower-api')
-    configured_model = os.environ.get('INVESTIGATOR_MODEL') or tomllib.loads((ROOT/'pyproject.toml').read_text())['tool']['flwr']['app']['config']['model']
+    configured_model = configured_model_setting()
     address = os.environ.get('FLOWER_CONTROL_URL', 'http://127.0.0.1:8000')
 
     def work(job_id):

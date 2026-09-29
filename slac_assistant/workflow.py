@@ -1,11 +1,21 @@
 """Application-managed specialist collaboration inside one Flower AgentApp."""
-import json,time
+import json,os,time
 from typing import Literal
 from pydantic import BaseModel,Field
-from .data import load_event
+from .data import ROOT,load_event
 from .tools import analyze,KINDS
 
-DEFAULT_MODEL='dedicated/flowerai/MiniMax-M3-OOLI9o'  # INVESTIGATOR_MODEL overrides it (agent_app, api, ui)
+DEFAULT_MODEL='dedicated/flowerai/MiniMax-M3-OOLI9o'  # INVESTIGATOR_MODEL overrides it
+
+def configured_model(env_file=ROOT/'.env'):
+    """INVESTIGATOR_MODEL from the environment, else the private .env (only that line is read), else the default."""
+    if os.environ.get('INVESTIGATOR_MODEL'):return os.environ['INVESTIGATOR_MODEL']
+    try:lines=env_file.read_text().splitlines()
+    except OSError:lines=[]
+    for line in lines:
+        name,_,value=line.strip().removeprefix('export ').partition('=')
+        if name.strip()=='INVESTIGATOR_MODEL' and value.strip():return value.strip().strip('\'"')
+    return DEFAULT_MODEL
 
 class BeamAssessment(BaseModel):
     status:Literal['corroborated','not_corroborated','insufficient_evidence','not_assessed']

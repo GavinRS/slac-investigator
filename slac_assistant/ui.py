@@ -3,12 +3,13 @@ import os
 os.environ.setdefault('MPLBACKEND','Agg')
 os.environ.setdefault('MPLCONFIGDIR','/tmp/slac-mpl')
 os.environ.setdefault('XDG_CACHE_HOME','/tmp/slac-cache')
-import json,tomllib
+import json
 import matplotlib.pyplot as plt
 import streamlit as st
 from slac_assistant.data import ROOT,event_ids,load_event,plot_event
 from slac_assistant.runtime import run_flower
 from slac_assistant.api import failure
+from slac_assistant.workflow import configured_model
 st.set_page_config(page_title='RF Investigation | SLAC replay',page_icon='🔎',layout='wide')
 st.markdown('''<style>.block-container{padding-top:4rem;max-width:1400px}h1{letter-spacing:-.04em}div[data-testid="stMetric"]{background:#edf5f6;padding:1rem;border-radius:8px}</style>''',unsafe_allow_html=True)
 st.caption('FLOWER AGENTAPP • HUMAN-SUPERVISED INVESTIGATION • ARCHIVED DATA')
@@ -19,8 +20,7 @@ with st.sidebar:
     event=st.selectbox('Selected event',event_ids())
     mode_name=st.selectbox('Investigation mode',['Specialist collaboration','Single-agent baseline','Deterministic runtime check'])
     mode={'Specialist collaboration':'collaborative','Single-agent baseline':'baseline','Deterministic runtime check':'smoke'}[mode_name]
-    configured_model=tomllib.loads((ROOT/'pyproject.toml').read_text())['tool']['flwr']['app']['config']['model']
-    model=st.text_input('Model',value=os.environ.get('INVESTIGATOR_MODEL',configured_model))
+    model=st.text_input('Model',value=configured_model())
     st.caption('Model modes require a provider configured on the local Flower SuperLink.')
     start=st.button('Start investigation',type='primary',use_container_width=True)
     if mode=='smoke':st.warning('Software check only. No model or specialist agents are invoked.')
