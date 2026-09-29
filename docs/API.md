@@ -8,7 +8,7 @@ This is a **local, single-user development API**, bound to loopback, with **one 
 
 **GitHub Pages stays in saved-run replay mode.** This service is not a hosted backend and does not promise that an HTTPS Pages origin can reach localhost. Public live execution requires an authenticated HTTPS backend deployment, explicit origin configuration, and an authorization policy; that deployment is not implemented by this local API. Do not expose this server publicly or add a provider credential to browser code.
 
-The browser never supplies provider keys, provider names, model IDs, Flower addresses, or Flower internal credentials. Unknown request fields are rejected without echoing their values. SuperLink alone loads its existing local provider configuration through `scripts/start.sh`. The API reads the model from `pyproject.toml` (server-only optional override `INVESTIGATOR_MODEL`), uses Flower's Control API (`FLOWER_CONTROL_URL`, default `http://127.0.0.1:8000`), and never makes direct provider requests. The API startup script does not source `.env.local`.
+The browser never supplies provider keys, provider names, model IDs, Flower addresses, or Flower internal credentials. Unknown request fields are rejected without echoing their values. SuperLink alone loads the model provider from the private `.env` through `scripts/start.sh`. The API reads the model from `INVESTIGATOR_MODEL` (environment, then `.env`, then the app default), uses Flower's Control API (`FLOWER_CONTROL_URL`, default `http://127.0.0.1:8000`), and never makes direct provider requests. The API never reads the provider key.
 
 ## Endpoints
 
@@ -41,7 +41,7 @@ The 202 response and subsequent status responses use the same shape (the job may
   "series_id": "api-series-uuid",
   "event_id": "slac-001",
   "mode": "collaborative",
-  "model": "gpt-5.6-sol",
+  "model": "dedicated/flowerai/MiniMax-M3-OOLI9o",
   "status": "queued",
   "created_at": "2026-09-29T22:00:00+00:00",
   "updated_at": "2026-09-29T22:00:00+00:00",
@@ -68,7 +68,7 @@ States: `queued` → `running` → `completed` or `failed`; `interrupted` marks 
   "investigation_id": "api-investigation-uuid",
   "status": "running",
   "events": [
-    {"seq":1,"created_at":"2026-09-29T22:00:01+00:00","event":{"kind":"started","event_id":"slac-001","mode":"collaborative","model":"gpt-5.6-sol"}},
+    {"seq":1,"created_at":"2026-09-29T22:00:01+00:00","event":{"kind":"started","event_id":"slac-001","mode":"collaborative","model":"dedicated/flowerai/MiniMax-M3-OOLI9o"}},
     {"seq":2,"created_at":"2026-09-29T22:00:02+00:00","event":{"kind":"tool_request","agent":"equipment","analysis":"equipment"}}
   ],
   "next_cursor": 2,
@@ -123,7 +123,7 @@ Display headings **“Beam disturbance corroborated?”** and **“Unique cause 
 - Each dimension has its own rationale and evidence refs; assessed dimensions require refs validated against the finding's available evidence. Structural citation validation does not establish semantic accuracy.
 - There is **no combined `assessment` field in v2**. The external evaluator emits no prediction/agreement scores; the source anomaly labels do not provide separately adjudicated truth for these questions.
 
-The three successful historical runs remain unchanged under `artifacts/preserved-successful-runs/`, with `manifest.json` SHA-256 checksums. They use the old mixed-scope enum. Show their original narratives and review caveats as **saved-run replay**; do not automatically convert their enums to either dimension or score them. If a frontend requires a dimension for a legacy run, show `not_assessed` with “Legacy mixed-scope output; requires review.” These archival IDs are not API series UUIDs and cannot be submitted to this API's follow-up route.
+The historical runs in the frontend's saved-run replay (`frontend/data/`) use the old mixed-scope enum. Show their original narratives and review caveats as **saved-run replay**; do not automatically convert their enums to either dimension or score them. If a frontend requires a dimension for a legacy run, show `not_assessed` with “Legacy mixed-scope output; requires review.” These archival IDs are not API series UUIDs and cannot be submitted to this API's follow-up route.
 
 ### Follow-up in the same series
 
@@ -154,10 +154,10 @@ Request errors: 404 for unknown event/run/series, 422 for invalid bodies/query p
 
 Asynchronous failure is returned via status `failed`, its `error`, and a final activity event. Error codes are `missing_environment`, `credential_rejected`, `billing_quota`, `model_unavailable`, `rate_limited`, or `workflow_failed`; unrecognized failures remain unclassified. Provider exception bodies and credentials are not returned. `server_restarted` accompanies `interrupted` records. No automatic retry or replay fallback occurs.
 
-API records/activity/results live in Git-ignored `artifacts/api/state.sqlite3` (user-only permissions), independently of the preserved historical traces. Reloading the browser loses no recorded activity. Restarting the API marks its queued/running records interrupted; it does not cancel or resubmit Flower work, which may still finish independently. Completed API records remain available. Follow-up continuity across a **Flower** restart additionally depends on Flower's own persistent series store; the API does not reconstruct missing Context. If that series is unavailable, continuation fails explicitly.
+API records/activity/results live in Git-ignored `artifacts/api/state.sqlite3` (user-only permissions). Reloading the browser loses no recorded activity. Restarting the API marks its queued/running records interrupted; it does not cancel or resubmit Flower work, which may still finish independently. Completed API records remain available. Follow-up continuity across a **Flower** restart additionally depends on Flower's own persistent series store; the API does not reconstruct missing Context. If that series is unavailable, continuation fails explicitly.
 
 ## Verification scope
 
-Contract tests cover asynchronous start/poll/results, pagination, same-series continuation, concurrent follow-up rejection, input validation, error classification/redaction, interrupted-run recovery, smoke follow-up rejection, nanosecond strings, and preserved trace hashes. These tests use protocol fixtures and do not establish model accuracy. A separate local smoke check exercises real Flower through the HTTP API without new model inference.
+Contract tests cover asynchronous start/poll/results, pagination, same-series continuation, concurrent follow-up rejection, input validation, error classification/redaction, interrupted-run recovery, smoke follow-up rejection, and nanosecond strings. These tests use protocol fixtures and do not establish model accuracy. A separate local smoke check exercises real Flower through the HTTP API without new model inference.
 
-Verified on 2026-09-29: 44 tests passed. The real HTTP smoke run `11974507849853747006` completed with 0 investigation-model calls, beam `not_corroborated`, and unique cause `not_established`; see `artifacts/frontend-api-smoke.json`. Flower's separate automatic series-title request logged its existing nonblocking HTTP 404. No new paid investigation was used to validate model adherence to the v2 schema; that remains a live-validation limitation. All six preserved source/copy files were compared byte-for-byte after the check.
+On 2026-09-29 a real HTTP smoke run completed with 0 investigation-model calls, beam `not_corroborated`, and unique cause `not_established` (its record is not kept in the repository). Flower's separate automatic series-title request logged its existing nonblocking HTTP 404. No new paid investigation was used to validate model adherence to the v2 schema; that remains a live-validation limitation.

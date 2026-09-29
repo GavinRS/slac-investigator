@@ -1,4 +1,4 @@
-// Browser client for docs/FRONTEND_API.md v1. No provider configuration or credentials.
+// Browser client for docs/API.md v1. No provider configuration or credentials.
 export const LOCAL_ORIGINS=new Set(['http://localhost:3000','http://127.0.0.1:3000','http://localhost:5173','http://127.0.0.1:5173']);
 export class SubmissionUncertainError extends Error {}
 export class InvestigationAPI {

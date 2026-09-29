@@ -2,13 +2,13 @@
 
 A human-supervised replay tool for investigating SLAC RF candidates against beam evidence. It uses one Flower AgentApp with equipment, beam and lead investigator loops. Python handles calculations and read-only data access. There are no equipment-write tools.
 
-**Status:** real public SLAC cases, deterministic tools, Flower model collaboration, a human follow-up, and the operator dashboard have been exercised with live OpenAI responses through Flower. The default launcher now uses Flower inference with a separate private local credential; the historical runs below used direct OpenAI inference through Flower. The slac-001 main conclusions are supported with an onset-precision caveat; slac-003 exposed a misleading assessment headline despite a supported explanation. See the [live execution and evidence review](artifacts/flower-provider-resolution.md). The baseline comparison remains unevaluated. Deterministic checks remain explicitly labeled and are not model results.
+**Status:** real public SLAC cases, deterministic tools, model collaboration inside the Flower AgentApp, a human follow-up, and the operator dashboard have been exercised. Those earlier live runs used OpenAI models (api.openai.com), not the Nebius or Endeavor models this project now defaults to. In their review, the slac-001 main conclusions were supported with an onset-precision caveat; slac-003 exposed a misleading assessment headline despite a supported explanation. The baseline comparison remains unevaluated. Deterministic checks remain explicitly labeled and are not model results.
 
 ## Start locally
 
-Frontend integrations use the [HTTP API contract](docs/FRONTEND_API.md). Start the local API with `./scripts/start_api.sh` after SuperLink; interactive documentation is at `http://127.0.0.1:8080/docs`. It supports asynchronous investigation start, durable activity polling/results, event plots, and same-series follow-ups. This is a local development service; GitHub Pages remains saved-run replay until an authenticated HTTPS backend exists.
+Frontend integrations use the [HTTP API contract](docs/API.md). Start the local API with `./scripts/start_api.sh` after SuperLink; interactive documentation is at `http://127.0.0.1:8080/docs`. It supports asynchronous investigation start, durable activity polling/results, event plots, and same-series follow-ups. This is a local development service; GitHub Pages remains saved-run replay until an authenticated HTTPS backend exists.
 
-New result schema v2 separates **beam disturbance corroboration** from **unique causal attribution**, with independent evidence and rationale. The three earlier successful runs are preserved byte-for-byte in [the archive](artifacts/preserved-successful-runs/manifest.json). Their mixed-scope labels are not converted into scores; original traces and review caveats remain available.
+New result schema v2 separates **beam disturbance corroboration** from **unique causal attribution**, with independent evidence and rationale. Earlier runs, including those in the frontend's saved-run replay, used a single mixed-scope label; it is not converted into scores.
 
 Python 3.11+ and uv are required. Flower is pinned to **1.39.0**, matching the APIs inspected in the installed package and [current AgentApp documentation](https://flower.ai/docs/agent/explanations/agentapp-runtime.html).
 
@@ -16,18 +16,22 @@ Python 3.11+ and uv are required. Flower is pinned to **1.39.0**, matching the A
 uv sync
 ```
 
-In terminal 1, enter your Flower key privately, then start SuperLink:
+In terminal 1, set the model provider in a private `.env` at the repository root, then start SuperLink:
 
 ```sh
 .venv/bin/python scripts/configure_flower.py
 ./scripts/start.sh
 ```
 
-The helper requires an interactive terminal and hides input. It writes only to `.env.flower.json`, which is git-ignored and owner-readable/writable (mode 600). Never put a key into chat, a command argument, or source code. Re-run the helper to replace the key, then restart SuperLink.
+The helper requires an interactive terminal and hides input. It writes only the `FLWR_MODEL_API_KEY` line of `.env`, which is git-ignored and owner-readable/writable (mode 600). Never put a key into chat, a command argument, or source code. Re-run the helper to replace the key, then restart SuperLink.
 
-The launcher explicitly uses `https://api.flower.ai/v1/responses` and the app defaults to `openai/gpt-5.6-sol`, the provider-qualified model shown in [Flower's AgentApp documentation](https://flower.ai/docs/agent/explanations/agentapp-runtime.html). The endpoint is also the installed Flower 1.39.0 default in `flwr/supercore/task_process/model/provider.py`. The app continues to use Flower's injected runtime endpoint and credential through the OpenAI-compatible SDK.
+`.env` holds three settings, which `scripts/start.sh` passes into the SuperLink's environment:
 
-The previous `.env.local` remains intact for recovery, but the launcher no longer sources it or Pacterra. It discards inherited OpenAI, Pacterra, Flower model and Flower runtime variables before setting the explicit Flower endpoint and private key. Missing or invalid private configuration stops startup; it never falls back to an inherited credential. The pre-migration startup script, project configuration and README are preserved locally under ignored `.flower/provider-migration-backup/`. Existing application state and completed runs are retained.
+- `FLWR_MODEL_API_ENDPOINT`: the provider's Responses endpoint. Blank means Flower's gateway (`https://api.flower.ai/v1/responses`).
+- `FLWR_MODEL_API_KEY`: the key for that provider. Required when the endpoint is blank.
+- `INVESTIGATOR_MODEL`: the model ID. The default is Nebius Token Factory's `dedicated/flowerai/MiniMax-M3-OOLI9o`; the fallback is Endeavor (`flwrlabs/endeavor-1.0`) through Flower's gateway. Set the endpoint and key to match the model.
+
+Provider endpoints and where each key comes from are listed in the [design spec's provider table](docs/superpowers/specs/2026-09-29-grid-investigator-design.md). The AgentApp never talks to a provider directly; it uses only the `FLWR_RUNTIME_BASE_URL`/`FLWR_RUNTIME_API_KEY` that Flower injects. The launcher discards inherited `OPENAI_*`, `FLWR_MODEL_*`, `FLWR_RUNTIME_*` and `INVESTIGATOR_*` variables, so shell settings cannot redirect it. A missing or invalid `.env` stops startup; it never falls back to an inherited credential. It prints the endpoint and model at startup, never the key.
 
 In terminal 2:
 
@@ -41,8 +45,8 @@ To run from the terminal:
 
 ```sh
 .venv/bin/python -m slac_assistant.runtime --mode smoke --event slac-001
-.venv/bin/python -m slac_assistant.runtime --mode collaborative --event slac-001 --model openai/gpt-5.6-sol
-.venv/bin/python -m slac_assistant.runtime --mode baseline --event slac-001 --model openai/gpt-5.6-sol
+.venv/bin/python -m slac_assistant.runtime --mode collaborative --event slac-001
+.venv/bin/python -m slac_assistant.runtime --mode baseline --event slac-001
 ```
 
 Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. State is local under ignored `.flower/`; the startup script configures `.flower/slac.sqlite` for subsequent launches. Restart durability of the currently serving instance has not been verified; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
@@ -92,7 +96,3 @@ Each finding includes its ID/agent, observation, channels and interval, tool ref
 The signal detector is a transparent demonstration heuristic, not a reproduction or improvement of SLAC's published detector. It uses a time-weighted RF baseline and robust beam deviations sustained for ten valid consecutive samples, with charge checks. Four label-selected cases are not a benchmark. There is no training, distributed deployment, federated learning, live control or protein analysis.
 
 See [data provenance](docs/DATA_PROVENANCE.md) for exact source files, channels, transformations, timestamps and unresolved dataset licensing. `scripts/fetch_cases.py` documents the small extraction. Raw downloads and all labels stay outside the AgentApp bundle.
-
-## Optional Nebius Chat Completions path
-
-The original Flower Responses configuration remains the default. See [Nebius compatibility and gated validation](docs/NEBIUS_INTEGRATION.md) for the opt-in AgentApp adapter, protocol limits, credit/credential prerequisites and three-stage live test runner. Offline adapter tests do not establish live provider compatibility.

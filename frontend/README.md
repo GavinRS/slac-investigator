@@ -1,6 +1,6 @@
 # Fieldnote — GitHub Pages frontend
 
-Static operator interface for SLAC RF investigations. Frontend ownership only; backend/authentication and Flower services belong to the other window. The reconciliation handoff is [../docs/FRONTEND_HANDOFF.md](../docs/FRONTEND_HANDOFF.md).
+Static operator interface for SLAC RF investigations. Frontend ownership only; backend/authentication and Flower services belong to the other window.
 
 ## Preview, verify, package
 
@@ -26,7 +26,7 @@ Included saved runs are 4210859065409350628 (slac-001 initial), 1608516925798767
 
 ## Backend contract and local live mode
 
-The sole authoritative contract is [../docs/FRONTEND_API.md](../docs/FRONTEND_API.md), supplied by the backend owner. `assets/api.js` implements that contract; `assets/live.js` provides a separate local development surface at `http://127.0.0.1:5173/?mode=live`.
+The sole authoritative contract is [../docs/API.md](../docs/API.md), supplied by the backend owner. `assets/api.js` implements that contract; `assets/live.js` provides a separate local development surface at `http://127.0.0.1:5173/?mode=live`.
 
 The live client is allowed only on the four documented localhost/127.0.0.1 origins with ports 3000/5173. On GitHub Pages and every other origin it cannot instantiate a live client, even with `?mode=live`. Pages therefore remains saved replay. Public live operation requires the backend owner's authenticated HTTPS service and explicit origin policy; this frontend does not invent one.
 
