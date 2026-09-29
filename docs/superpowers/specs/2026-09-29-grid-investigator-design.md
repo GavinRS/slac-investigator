@@ -1,4 +1,6 @@
-# Grid investigator design (2026-09-29, rev 2)
+# Grid investigator design (2026-09-29, rev 2.1)
+
+> **Rev 2.1:** Nebius Token Factory (MiniMax-M3) is the default model; Endeavor via Flower's gateway is the fallback.
 
 > **Rev 2 (after reviewing `backup/pre-grid-prototype`):** keep this spec's Grid topology; adopt the prototype's product layer (Finding v2 result schema, FastAPI job API, static Fieldnote frontend, single-process `Investigation` as the baseline). See §10.
 
@@ -18,7 +20,7 @@ Architecture, bottom to top: **machines (instrument nodes) → tools (local read
 | Nodes | 3: `rf` (klystron `health` columns), `ltu` (`BPMS:LTUH:*`), `dump` (`BPMS:DMPH:*`). |
 | Node role | **C with A fallback.** A node first looks for a local instrument slice (C). If none, it uses the role the orchestrator assigns and loads that slice from the bundled data (A). |
 | Node replies | Assessment plus summary numbers only. **Never raw samples.** Matches Flower's federated-analytics pattern. |
-| Model | **Endeavor** (`flwrlabs/endeavor-1.0` via Flower's gateway; challenge bonus) by default; Nebius Token Factory (`MiniMax-M3`) as the fast fallback; Groq and Ollama as further swaps. Provider is swappable by env vars only (see Providers). |
+| Model | **Nebius Token Factory** (`MiniMax-M3`, event keys) by default; **Endeavor** (`flwrlabs/endeavor-1.0` via Flower's gateway; challenge bonus) as the fallback; Groq and Ollama as further swaps. Provider is swappable by env vars only (see Providers). |
 | Result schema | **Finding v2** from the prototype: two separate verdicts, `beam_disturbance` (`corroborated\|not_corroborated\|insufficient_evidence\|not_assessed`) and `unique_cause` (`established\|not_established\|insufficient_evidence\|not_assessed`), each with its own rationale and evidence refs; `unique_cause=established` requires `beam_disturbance=corroborated`; `result_schema_version=2`. Used for the orchestrator's final and the baseline. |
 | Baseline | The prototype's single-process `Investigation` (`workflow.py`, v2) is the `baseline` mode for the Grid-vs-single-agent comparison (#14). |
 | Human surfaces | `flwr chat` (always works), the prototype's **FastAPI job API** (`/api/v1`, polling), and the prototype's **static Fieldnote frontend** (`frontend/`, live on localhost:5173, replay of recorded runs as the stage fallback). Streamlit stays as-is as a dev view. Lovable is dropped. |
@@ -84,7 +86,7 @@ Python-driven for reliability; the model is used for judgment, not plumbing.
 
 1. `get_nodes`. If 3+ nodes: one instrument each. If fewer: nodes take several instruments (noted in the report). If 0 nodes: run all three instruments in-process and label the report `grid: none (local fallback)`.
 2. `push_messages` with `{"kind":"node_task","event_id","instrument","mode","question"}` to each node, then `pull_messages` (timeout from run config, default 120 s).
-   Push to all nodes first, then one pull, so nodes work in parallel (Endeavor is ~21 s per call). Each node makes at most 1 model call; the orchestrator 1-2.
+   Push to all nodes first, then one pull, so nodes work in parallel (Endeavor, the fallback, is ~21 s per call). Each node makes at most 1 model call; the orchestrator 1-2.
 3. Combine: align onsets across `rf`, `ltu`, `dump`; model (or deterministic smoke rule) writes the final **Finding v2** citing node `tool_refs`, reusing `workflow.py`'s `Finding` model, `validate()` guards and one correction turn.
 4. Events (frozen list): `started`, `delegation` (with `node_id`, `instrument`), `tool_request`, `tool_result`, `finding`, `finding_rejected`, `node_report`, `data_shared` = `{raw_bytes_held, payload_bytes, percent_shared}`, `report`. Same framing as today (NDJSON lines inside `response.output_text.delta`). Report keys: `final` (Finding v2), `findings`, `metrics`, `evidence`, `mode` (`grid` for this path), `result_schema_version: 2`, `grid` = `{nodes_seen, assignment, fallback}`, `data_shared`.
 
@@ -94,12 +96,12 @@ Python-driven for reliability; the model is used for judgment, not plumbing.
 
 | Provider | `FLWR_MODEL_API_ENDPOINT` | `FLWR_MODEL_API_KEY` | model |
 |---|---|---|---|
-| Nebius Token Factory (fast fallback, event keys) | `https://api.tokenfactory.tf-ca1.nebius.com/v1/responses` | event key (shared privately, never commit) | `dedicated/flowerai/MiniMax-M3-OOLI9o` or `dedicated/flowerai/Kimi-K2.7-Code-1OUHWL` |
+| **Nebius Token Factory (default, event keys)** | `https://api.tokenfactory.tf-ca1.nebius.com/v1/responses` | event key (shared privately, never commit) | `dedicated/flowerai/MiniMax-M3-OOLI9o` or `dedicated/flowerai/Kimi-K2.7-Code-1OUHWL` |
 | Groq | `https://api.groq.com/openai/v1/responses` | Groq key | `openai/gpt-oss-20b` |
 | Ollama | `http://localhost:11434/v1/responses` | blank | `gpt-oss:20b` |
-| **Flower gateway: Endeavor (default)** | blank (Flower's default `https://api.flower.ai/v1/responses`) | Flower key (flower.ai → Profile → Settings → API Keys; never commit) | `flwrlabs/endeavor-1.0` |
+| Flower gateway: Endeavor (fallback, challenge bonus) | blank (Flower's default `https://api.flower.ai/v1/responses`) | Flower key (flower.ai → Profile → Settings → API Keys; never commit) | `flwrlabs/endeavor-1.0` |
 
-Rules: agent code never names a provider; it uses only `FLWR_RUNTIME_BASE_URL`/`FLWR_RUNTIME_API_KEY` injected by Flower (the prototype's `provider`/`probe` request fields and `nebius.py` chat adapter are removed). `scripts/start.sh` runs the prototype's `scripts/start_flower.py`, changed to read `FLWR_MODEL_API_ENDPOINT` (blank = Flower gateway), `FLWR_MODEL_API_KEY` and `INVESTIGATOR_MODEL` from a gitignored `.env` and pass them **into the SuperLink's environment** (the prototype's gateway runs failed with 502 `FLWR_MODEL_API_KEY not set` because the key didn't reach the SuperLink). Keep its key hygiene (getpass setup via `configure_flower.py`, mode 600, no keys in output). Replace every hard-coded `openai/gpt-5.6-sol` with `INVESTIGATOR_MODEL` (default `flwrlabs/endeavor-1.0`). `check_model.py` sends one tool-calling Responses request to the configured provider and prints pass/fail. The run-config `model` default follows `INVESTIGATOR_MODEL` from `.env`.
+Rules: agent code never names a provider; it uses only `FLWR_RUNTIME_BASE_URL`/`FLWR_RUNTIME_API_KEY` injected by Flower (the prototype's `provider`/`probe` request fields and `nebius.py` chat adapter are removed). `scripts/start.sh` runs the prototype's `scripts/start_flower.py`, changed to read `FLWR_MODEL_API_ENDPOINT` (blank = Flower gateway), `FLWR_MODEL_API_KEY` and `INVESTIGATOR_MODEL` from a gitignored `.env` and pass them **into the SuperLink's environment** (the prototype's gateway runs failed with 502 `FLWR_MODEL_API_KEY not set` because the key didn't reach the SuperLink). Keep its key hygiene (getpass setup via `configure_flower.py`, mode 600, no keys in output). Replace every hard-coded `openai/gpt-5.6-sol` with `INVESTIGATOR_MODEL` (default `dedicated/flowerai/MiniMax-M3-OOLI9o`). `check_model.py` sends one tool-calling Responses request to the configured provider and prints pass/fail. The run-config `model` default follows `INVESTIGATOR_MODEL` from `.env`.
 
 ### 6. Local demo runtime (`scripts/start_grid.sh`)
 
@@ -119,7 +121,7 @@ Reuse the prototype's job API and `docs/FRONTEND_API.md` (renamed `docs/API.md`)
 
 - Existing tests stay green (the prototype suite minus its Nebius-adapter tests, plus `node --test frontend/tests/*.test.js`).
 - New: slices partition the data exactly; node payloads contain no raw arrays; `% shared` math; orchestrator routing with a fake grid (3 nodes, 1 node, 0 nodes); API endpoints respond.
-- Live, in this order: one local 3-node **smoke** round trip (no model); `check_model.py` against Endeavor; one Endeavor Grid run, recorded and exported as a Fieldnote replay before the demo.
+- Live, in this order: one local 3-node **smoke** round trip (no model); `check_model.py` against Nebius and Endeavor; one Grid run on Nebius (plus one on Endeavor if time allows), recorded and exported as a Fieldnote replay before the demo.
 
 ## Out of scope today
 
@@ -134,7 +136,7 @@ Run the 3 instrument SuperNodes on Nebius Serverless following Flower's guide, e
 Merge `origin/backup/pre-grid-prototype` into `main` once, then:
 - **Keep:** `workflow.py` v2, `api.py`, `scripts/start_api.sh`, fastapi/uvicorn deps, `tests/test_api.py`, `tests/test_flower_configuration.py`, `docs/FRONTEND_API.md` (→ `docs/API.md`), `frontend/**`, `scripts/start_flower.py` + `configure_flower.py` (generalized per §5), `scripts/evaluate.py` (no accuracy scoring), `runtime.py`'s `on_started`, `ui.py` v2 display, `.gitignore` additions.
 - **Delete:** `slac_assistant/nebius.py`, `provider_checks.py`, `scripts/start_nebius_check.py`, `scripts/verify_nebius.py`, `tests/test_nebius.py`, `docs/NEBIUS_INTEGRATION.md`, `docs/FRONTEND_HANDOFF.md`, all prototype-added `artifacts/**` (they contain local machine paths and runs routed to a non-Flower provider), the `provider`/`probe` plumbing in `agent_app.py` and `runtime.py`.
-- **Change:** `openai/gpt-5.6-sol` → `INVESTIGATOR_MODEL` (default `flwrlabs/endeavor-1.0`); start scripts read `.env` per §5.
+- **Change:** `openai/gpt-5.6-sol` → `INVESTIGATOR_MODEL` (default `dedicated/flowerai/MiniMax-M3-OOLI9o`); start scripts read `.env` per §5.
 - Then Soren's `soren/3-node-agent-path` rebases on top (one small `agent_app.py` conflict).
 
 ## Team split (3 people, file ownership)
