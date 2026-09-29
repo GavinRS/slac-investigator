@@ -1,0 +1,15 @@
+{
+  "scope": "Frontend only; backend/authentication owned by other window",
+  "tests_passed": 13,
+  "saved_ui_checks": [
+    "slac-001 initial assessment and three measured signal plots rendered",
+    "slac-001 saved human follow-up selected",
+    "evidence dialog resolves exact ref and original nanosecond timestamp",
+    "slac-003 headline mismatch review visible",
+    "legacy dimensions not inferred from original enum",
+    "historical replay controls work and retain zero-new-inference notice"
+  ],
+  "live_api": "Contract fixture-tested; no live POST submitted. Native fetch binding corrected; browser-to-API success remains unverified after browser became unavailable. Backend owner separately confirmed host availability and CORS.",
+  "pages": "Build prepared with static asset allowlist; not published. Visibility decision pending.",
+  "lovable": "Not used; handoff instructions in frontend/README.md"
+}

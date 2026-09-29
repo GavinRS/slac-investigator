@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light"><meta name="description" content="Human-supervised investigation of archived SLAC RF events. Review measured signals, specialist findings and traceable evidence.">
+  <title>Fieldnote · RF investigations</title>
+  <link rel="stylesheet" href="./assets/styles.css"><script type="module" src="./assets/app.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to investigation</a>
+<header class="topbar"><a class="brand" href="./"><span class="brandmark" aria-hidden="true">∿</span> fieldnote<span class="brand-divider"></span><span class="brand-context">RF INVESTIGATIONS</span></a><div class="top-meta"><span class="mode-pill"><i></i> Saved-run replay</span><span class="prototype">FLOWER PROTOTYPE</span></div></header>
+<div class="shell">
+<aside class="sidebar" aria-label="Event selection">
+  <div class="workspace-label">INVESTIGATION LIBRARY</div><h2>Archived events</h2><p class="muted small">Real SLAC measurements.<br>Saved Flower investigations.</p>
+  <nav id="event-list" aria-label="Available events"><p class="muted">Loading events…</p></nav>
+  <div class="side-note"><span class="eyebrow">HUMAN SUPERVISION</span><p>Evidence supports a decision.<br>The operator makes it.</p><span class="small muted">Read-only tools. No machine controls.</span></div>
+</aside>
+<main id="main" tabindex="-1">
+  <div class="replay-notice"><span class="notice-icon" aria-hidden="true">↺</span><div><strong>Viewing a saved investigation</strong><span>These findings came from a real Flower run. Replaying them makes no new model calls.</span></div><button class="text-button" id="connection-button" aria-expanded="false" aria-controls="connection-panel">Live connection <span aria-hidden="true">↗</span></button></div>
+  <section id="connection-panel" class="connection-panel" hidden><h3>Live execution is not connected</h3><p>This GitHub Pages frontend is saved-run replay only. The current backend is local development software; public live execution requires an authenticated HTTPS backend. Provider credentials never belong in this page.</p><button disabled class="button secondary">Start live investigation</button><p class="small muted">Saved replay remains available. A live error will never silently switch to replay.</p></section>
+  <div id="error" role="alert" hidden></div>
+  <div id="content" aria-busy="true"><div class="loading">Opening the evidence workspace…</div></div>
+  <footer>Flower executes the investigation · SLAC public archive · No timestamp shifts · Operator review required</footer>
+</main>
+</div>
+<dialog id="evidence-dialog" aria-labelledby="evidence-dialog-title"><div class="dialog-top"><div><span class="eyebrow">DETERMINISTIC TOOL RESULT</span><h2 id="evidence-dialog-title">Evidence</h2></div><button class="icon-button" id="close-evidence" aria-label="Close evidence">×</button></div><div id="evidence-content"></div></dialog>
+</body>
+</html>

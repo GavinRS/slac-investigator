@@ -3,8 +3,10 @@ __pycache__/
 .pytest_cache/
 .env*
 .flower/
+.flower-*/
 *.fab
 artifacts/runs/
+artifacts/api/
 .streamlit/secrets.toml
 data/raw/*.h5
 

@@ -2428,6 +2428,7 @@ name = "slac-investigator"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "fastapi" },
     { name = "flwr" },
     { name = "h5py" },
     { name = "matplotlib" },
@@ -2437,10 +2438,12 @@ dependencies = [
     { name = "pandas" },
     { name = "pytest" },
     { name = "streamlit" },
+    { name = "uvicorn" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "fastapi", specifier = ">=0.138,<1" },
     { name = "flwr", specifier = "==1.39.0" },
     { name = "h5py", specifier = ">=3.12,<4" },
     { name = "matplotlib", specifier = ">=3.9,<4" },
@@ -2449,6 +2452,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2,<4" },
     { name = "pytest", specifier = ">=8,<10" },
     { name = "streamlit", specifier = ">=1.40,<2" },
+    { name = "uvicorn", specifier = ">=0.49,<1" },
 ]
 
 [[package]]
