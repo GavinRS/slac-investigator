@@ -43,11 +43,11 @@ def check(endpoint,key,model,timeout=20):
     try:
         with urllib.request.urlopen(request,timeout=timeout) as response:
             payload=json.loads(response.read())
+        calls=[item for item in payload.get('output',[]) if item.get('type')=='function_call']
     except urllib.error.HTTPError as e:
         return False,f'HTTP {e.code} from provider',time.perf_counter()-started
     except Exception as e:
         return False,f'{type(e).__name__}: {e}',time.perf_counter()-started
-    calls=[item for item in payload.get('output',[]) if item.get('type')=='function_call']
     if not calls:
         return False,'Response contained no function_call',time.perf_counter()-started
     return True,f'Received function_call {calls[0].get("name","")!r}',time.perf_counter()-started

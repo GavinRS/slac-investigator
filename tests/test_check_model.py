@@ -53,7 +53,7 @@ def test_fail_on_timeout(monkeypatch):
     assert SECRET not in reason
 
 
-def test_key_sent_but_never_in_reason_or_request(monkeypatch):
+def test_key_sent_in_header_but_never_in_reason(monkeypatch):
     seen = {}
     def opener(request, timeout=None):
         seen['auth'] = request.headers.get('Authorization')
@@ -89,3 +89,14 @@ def test_missing_model_fails_cleanly(monkeypatch, capsys):
     assert checker.main() == 1
     out = capsys.readouterr().out
     assert 'FAIL' in out and SECRET not in out
+
+
+def test_main_output_never_contains_key(monkeypatch, capsys):
+    monkeypatch.setattr(checker, 'load_config', lambda: ('https://example.invalid', SECRET, 'test/model'))
+    for result in ({'output': [{'type': 'function_call', 'name': 'ping'}]},
+                   checker.urllib.error.HTTPError('https://example.invalid', 401, 'Unauthorized', {}, None),
+                   ['not', 'a', 'dict']):
+        monkeypatch.setattr(checker.urllib.request, 'urlopen', fake_urlopen(result))
+        checker.main()
+        out = capsys.readouterr().out
+        assert out.startswith(('PASS', 'FAIL')) and SECRET not in out
