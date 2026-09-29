@@ -3,9 +3,13 @@ import json,os
 from flwr.agentapp import AgentApp,AgentSession
 from flwr.app import Context,ConfigRecord
 from .workflow import Investigation,DEFAULT_MODEL
+from .node import node_task,run_node
 app=AgentApp()
 @app.main()
 def main(agent:AgentSession,context:Context)->None:
+    node=node_task(agent.prompt)
+    if node:
+        run_node(agent,*node);agent.events.emit({'type':'response.completed'});return
     request=json.loads(agent.prompt)
     mode=request.get('mode','collaborative')
     if mode not in ('collaborative','baseline','smoke'):raise ValueError('Unknown mode')
