@@ -29,13 +29,14 @@ def build():
         runs=[]
         for i,rid in enumerate(ids):
             d=json.loads((ROOT/'artifacts/runs'/f'{rid}.json').read_text());r=d['report']
-            assert r['event_id']==event_id and r['mode']=='collaborative'
-            keep={k:r[k] for k in ('event_id','mode','model','model_execution_path','final','findings','evidence','metrics')}
+            # mode may be 'collaborative' (single-agent) or 'grid'.
+            assert r['event_id']==event_id and r['mode'] in ('collaborative','grid')
+            keep={k:r[k] for k in ('event_id','mode','model','model_execution_path','final','findings','evidence','metrics')}|{k:r[k] for k in ('grid','data_shared') if k in r}
             runs.append({'id':rid,'series_id':d.get('flower_series_id',r.get('flower_series_id')),
                 'phase':'initial' if i==0 else 'followup','question':d.get('human_question',''),
                 'wall_latency_s':d.get('wall_latency_s',r.get('wall_latency_s')),
                 'review':d.get('evidence_review'), 'report':keep,
-                'events':[e for e in d['events'] if e.get('kind') in ('started','delegation','tool_request','tool_result','finding','finding_rejected')],
+                'events':[e for e in d['events'] if e.get('kind') in ('started','delegation','tool_request','tool_result','finding','finding_rejected','node_report','data_shared')],
                 'recorded_state':'completed','execution_source':'saved_run'})
         payload={'id':event_id,'station':meta['station'],'provenance':{k:meta[k] for k in ('source_url','hdf5_group','license','timing','timestamp_unit','limitations')},
             'time_origin_ns':str(end),'candidate_interval_s':[(meta['candidate_start_ns']-end)/1e9,0],
