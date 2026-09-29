@@ -23,3 +23,6 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Generated local instrument slices
+nodes/

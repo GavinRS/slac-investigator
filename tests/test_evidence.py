@@ -19,7 +19,8 @@ def test_label_material_absent_from_bundle():
     b=build_bundle()
     with zipfile.ZipFile(io.BytesIO(b)) as z:
         assert 'data/events/slac-001.arrays.json' in z.namelist()
-        assert not any('labels' in n or n.startswith(('scripts/','artifacts/','data/raw/')) for n in z.namelist())
+        assert not any('labels' in n or n.startswith(('scripts/','artifacts/','data/raw/','nodes/')) for n in z.namelist())
+        assert not any(part.startswith('.env') for n in z.namelist() for part in n.split('/'))
         for n in z.namelist():
             if n.startswith('data/'):
                 text=z.read(n).decode();assert 'is_anom' not in text and 'anom_type' not in text

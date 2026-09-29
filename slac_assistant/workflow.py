@@ -5,6 +5,10 @@ from pydantic import BaseModel,Field
 from .data import load_event
 from .tools import analyze,KINDS
 
+# Shared per-call ceiling for the centralized and Grid comparison paths.
+# 1,600 tokens truncated a real structured response before a valid finding.
+MAX_OUTPUT_TOKENS=4096
+
 class BeamAssessment(BaseModel):
     status:Literal['corroborated','not_corroborated','insufficient_evidence','not_assessed']
     rationale:str
@@ -96,7 +100,7 @@ class Investigation:
             self.input_chars+=size;self.calls+=1
             last=turn>=cap-1 or self.calls==self.max_calls
             tools=[] if last else [TOOL]+([DELEGATE] if allow_delegate and self.delegations<2 and self.calls<self.max_calls-2 else [])
-            response=self.client.responses.create(model=self.model,input=history,instructions=instructions,tools=tools,max_output_tokens=1600)
+            response=self.client.responses.create(model=self.model,input=history,instructions=instructions,tools=tools,max_output_tokens=MAX_OUTPUT_TOKENS)
             if getattr(response,'status',None) not in (None,'completed'):raise RuntimeError('Model response incomplete; no assessment accepted')
             usage=getattr(response,'usage',None)
             if usage:self.input_tokens+=usage.input_tokens;self.output_tokens+=usage.output_tokens
@@ -129,7 +133,7 @@ class Investigation:
         raise RuntimeError('Model budget exhausted without a valid finding')
     def run(self,question='',prior=None):
         if self.client is None:raise RuntimeError('Model client required; use explicit smoke mode for deterministic verification')
-        self.publish('started',dict(event_id=self.event_id,mode=self.mode,model=self.model,budget=dict(model_calls=self.max_calls,max_output_tokens_per_call=1600,total_input_characters=300000,tool_calls=24)))
+        self.publish('started',dict(event_id=self.event_id,mode=self.mode,model=self.model,budget=dict(model_calls=self.max_calls,max_output_tokens_per_call=MAX_OUTPUT_TOKENS,total_input_characters=300000,tool_calls=24)))
         if self.mode=='baseline':
             # Same initial measurements and all the same analysis tools, one investigator.
             initial=[self.tool('single',k) for k in ('quality','equipment','beam')]

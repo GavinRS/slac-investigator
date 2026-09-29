@@ -13,7 +13,8 @@ st.set_page_config(page_title='RF Investigation | SLAC replay',page_icon='🔎',
 st.markdown('''<style>.block-container{padding-top:4rem;max-width:1400px}h1{letter-spacing:-.04em}div[data-testid="stMetric"]{background:#edf5f6;padding:1rem;border-radius:8px}</style>''',unsafe_allow_html=True)
 st.caption('FLOWER AGENTAPP • HUMAN-SUPERVISED INVESTIGATION • ARCHIVED DATA')
 st.title('RF fault investigation')
-st.write('Inspect an RF candidate, compare beam evidence, and review the limits of the assessment.')
+st.write('Three instrument agents share summaries for human review.')
+st.caption('Four-case demonstration, not a benchmark. Source RF labels cannot score beam disturbance or unique cause.')
 with st.sidebar:
     st.subheader('Investigation setup')
     event=st.selectbox('Selected event',event_ids())
@@ -21,12 +22,13 @@ with st.sidebar:
     mode={'Specialist collaboration':'collaborative','Single-agent baseline':'baseline','Deterministic runtime check':'smoke'}[mode_name]
     configured_model=tomllib.loads((ROOT/'pyproject.toml').read_text())['tool']['flwr']['app']['config']['model']
     model=st.text_input('Model',value=os.environ.get('INVESTIGATOR_MODEL',configured_model))
-    st.caption('Model modes require a provider configured on the local Flower SuperLink.')
+    address=st.text_input('SuperLink address',value=os.environ.get('SLAC_SUPERLINK_ADDRESS','http://127.0.0.1:8000'))
+    st.caption('Use port 18000 for scripts/start_grid.sh. Model modes require a configured provider.')
     start=st.button('Start investigation',type='primary',use_container_width=True)
     if mode=='smoke':st.warning('Software check only. No model or specialist agents are invoked.')
     st.divider();st.caption('Replay only. No machine-control tools. Operator review is required for any real-world interpretation.')
 m,_=load_event(event)
-key=(event,mode,model)
+key=(event,mode,model,address)
 if st.session_state.get('selection')!=key:
     st.session_state.update(selection=key,report=None,series=None,events=[],questions=[])
 a,b,c=st.columns(3)
@@ -49,6 +51,8 @@ with right:
 def show_event(e,container):
     with container:
         if e['kind']=='delegation':st.info(f"{e['agent'].title()} → {e['to']}: {e['question']}")
+        elif e['kind']=='node_report':
+            with st.expander('Instrument summary',expanded=True):st.json(e.get('report',e.get('node_report',e)))
         elif e['kind']=='tool_request':st.caption(f"{e['agent']} requests {e['analysis']}")
         elif e['kind']=='finding':
             f=e['finding']
@@ -63,7 +67,7 @@ def execute(question=''):
         with st.spinner('Flower is executing the investigation…'):
             def receive(e):
                 st.session_state.events.append(e);show_event(e,activity)
-            report,series=run_flower(event,mode,question,model,st.session_state.series,on_event=receive)
+            report,series=run_flower(event,mode,question,model,st.session_state.series,on_event=receive,address=address)
         st.session_state.report=report;st.session_state.series=series
         if question:st.session_state.questions.append(question)
     except Exception as exc:
@@ -83,6 +87,18 @@ with assessment_box:
             dimension=f.get(field,{'status':'not_assessed','rationale':'Legacy mixed-scope result; no automatic reinterpretation.'})
             st.markdown('**'+label+'** '+dimension['status'].replace('_',' ').title())
             st.caption(dimension['rationale'])
+        sharing=report.get('data_shared',{})
+        if report['mode']=='baseline':
+            st.metric('Centralized data access (conceptual)', '100%')
+            st.caption('The baseline can access all instrument data. This is not the percentage of raw arrays sent to the model.')
+        elif sharing:
+            fraction=sharing.get('percent_shared') if sharing.get('complete',True) else None
+            st.metric('Summary / raw data bytes', f'{fraction:.3f}%' if fraction is not None else 'Unavailable')
+            st.caption(f"{sharing.get('payload_bytes', 'Unknown')} summary payload bytes / {sharing.get('raw_bytes_held', 'unknown')} raw instrument bytes held. This ratio measures summary size, not raw-sample disclosure.")
+            if sharing.get('raw_samples_shared') == 0:
+                st.caption('Raw samples shared: 0.')
+            st.caption('Grid execution: '+str(report.get('grid','not recorded')))
+            if not sharing.get('complete',True):st.warning('Incomplete node replies; complete data-sharing accounting is unavailable.')
         st.write(f['observation'])
         st.caption('Separate evidence assessments. These demonstration results are not benchmark scores.')
         if report['mode']=='smoke':st.warning('Deterministic runtime check. This is not an agent-generated assessment.')
@@ -93,6 +109,8 @@ with assessment_box:
     else:st.info('Select an event and start an investigation. A supported insufficient-evidence outcome is valid.')
 if report:
     st.subheader('Evidence ledger')
+    for node in report.get('node_reports',[]):
+        with st.expander(node['instrument']+' instrument summary'):st.json(node)
     for result in report['evidence']:
         with st.expander(f"{result['ref']} · {result['analysis']} · {result['event_id']}"):st.json(result)
     if mode!='smoke':

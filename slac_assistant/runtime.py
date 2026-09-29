@@ -11,7 +11,7 @@ def build_bundle():
     fab=build_fab_from_disk(ROOT)
     with zipfile.ZipFile(io.BytesIO(fab)) as z:
         names=z.namelist()
-        if any('labels' in n or n.startswith(('artifacts/','data/raw/','scripts/')) for n in names):raise ValueError('Evaluation material leaked into bundle')
+        if any('labels' in n or n.startswith(('artifacts/','data/raw/','scripts/','nodes/')) or Path(n).name.startswith('.env') for n in names):raise ValueError('Evaluation material or private configuration leaked into bundle')
         if 'data/events/slac-001.arrays.json' not in names:raise ValueError('Event data missing from bundle')
     return fab
 

@@ -71,3 +71,105 @@ def analyze(event_id,kind):
     body=dict(event_id=event_id,analysis=kind,source=m['source_url'],hdf5_group=m['hdf5_group'],interval_ns=[int(a['health_time_ns'][0]) if kind in ('equipment','neighbors','quality') else int(a['bpm_time_ns'][0]),int(a['health_time_ns'][-1]) if kind in ('equipment','neighbors','quality','timing') else int(a['bpm_time_ns'][-1])],result=result,limitations=limitations)
     body['ref']='T-'+hashlib.sha256(json.dumps(body,sort_keys=True).encode()).hexdigest()[:12]
     return body
+
+
+def serialize_node_report(report):
+    """Serialize a node reply with its exact UTF-8 wire size, including the size."""
+    report['payload_bytes'] = 0
+    while True:
+        payload = json.dumps(report, ensure_ascii=False, allow_nan=False, separators=(',', ':'))
+        size = len(payload.encode('utf-8'))
+        if report['payload_bytes'] == size:
+            return payload
+        report['payload_bytes'] = size
+
+
+def node_summary(event_id, instrument, arrays, role_source='assigned', *, meta=None):
+    """Run instrument-local checks and return compact evidence, never raw samples.
+
+    The instrument assessment is a local heuristic result, not a combined beam /
+    RF causality assessment. The orchestrator must assess those two independently.
+    """
+    from .instruments import INSTRUMENTS, load_slice
+    if instrument not in INSTRUMENTS:
+        raise ValueError('Unknown instrument')
+    if role_source not in ('local_data', 'assigned'):
+        raise ValueError('Unknown role source')
+    if meta is None:
+        meta, _ = load_slice(event_id, instrument)
+    family = 'health' if instrument == 'rf' else 'bpm'
+    expected = {family, family + '_time_ns'}
+    if set(arrays) != expected or set(meta['channels']) != {family}:
+        raise ValueError('Node checks require an instrument-only data slice')
+    channels = meta['channels'][family]
+    prefix = 'BPMS:LTUH:' if instrument == 'ltu' else 'BPMS:DMPH:'
+    if instrument != 'rf' and not all(c.startswith(prefix) for c in channels):
+        raise ValueError('Node checks cannot access another instrument')
+    if arrays[family].shape != (len(arrays[family + '_time_ns']), len(channels)):
+        raise ValueError('Instrument array dimensions do not match the channel catalog')
+    limitations = list(meta.get('limitations', []))
+    quality = timing_quality(arrays[family + '_time_ns'])
+    quality['nonfinite_values'] = int(np.sum(~np.isfinite(arrays[family])))
+    summary = {'quality': quality}
+    if instrument == 'rf':
+        equipment = equipment_summary(meta, arrays)
+        neighbors = [equipment_summary(meta, arrays, c.removesuffix(':AMPL')) for c in channels]
+        baseline = equipment['baseline_time_weighted_median']
+        onset = next((u['time_ns'] for u in equipment['updates']
+                      if baseline not in (None, 0) and abs(u['value'] - baseline) / abs(baseline) * 100 >= .5), None)
+        summary.update(baseline=baseline, peak_deviation_pct=equipment['max_abs_deviation_pct'],
+                       onset_ns=onset, valid_updates=equipment['finite_updates'],
+                       no_update_count=int(np.sum(~np.isfinite(arrays['health'][:, channels.index(equipment['channel'])]))),
+                       suspicious=int(equipment['suspicious']),
+                       quality_adequate=int(baseline not in (None, 0) and equipment['max_abs_deviation_pct'] is not None),
+                       neighbor_columns=len(neighbors),
+                       neighbor_unknown_baselines=sum(r['baseline_time_weighted_median'] is None for r in neighbors),
+                       neighbor_suspicious=sum(r['suspicious'] for r in neighbors))
+        assessment = ('insufficient_evidence' if not summary['quality_adequate'] else
+                      'suspicious' if equipment['suspicious'] else 'normal')
+        observation = ('RF amplitude crosses the exploratory deviation threshold.' if assessment == 'suspicious' else
+                       'RF evidence is insufficient for the deviation check.' if assessment == 'insufficient_evidence' else
+                       'The RF deviation check does not cross its exploratory threshold.')
+        limitations += ['Sparse RF NaNs mean no new update; never backfill unknown leading data.',
+                        'RF amplitude alone cannot corroborate beam disturbance or establish a unique cause.',
+                        'Neighbor column presence does not establish station completeness.']
+        checks = ('equipment', 'neighbors', 'quality')
+    else:
+        beam = beam_summary(meta, arrays)
+        charge = beam_summary(meta, arrays, charge_only=True)
+        compact = {}
+        for row in beam['channels']:
+            compact[row['channel']] = {key: int(value) if isinstance(value, bool) else value
+                                       for key, value in row.items() if key != 'channel'}
+            j = channels.index(row['channel'])
+            candidate = ((arrays['bpm_time_ns'] >= meta['candidate_start_ns']) &
+                         (arrays['bpm_time_ns'] <= meta['candidate_end_ns']))
+            valid = np.isfinite(arrays['bpm'][:, j])
+            if not row['channel'].endswith('TMIT'):
+                valid &= np.isfinite(arrays['bpm'][:, j-1]) & (arrays['bpm'][:, j-1] >= 1e8) & (arrays['bpm'][:, j] != 100)
+            compact[row['channel']]['valid_samples'] = int(np.sum(candidate & valid))
+            compact[row['channel']]['masked_samples'] = int(np.sum(candidate & ~valid))
+        onsets = [r['first_sustained_ns'] for r in beam['channels'] if r['first_sustained_ns'] is not None]
+        summary.update(channels=compact, quality_adequate=int(beam['quality_adequate']),
+                       disturbance_detected=int(beam['disturbance_detected']),
+                       charge_disturbance_detected=int(charge['disturbance_detected']),
+                       samples_in_candidate=beam['samples_in_candidate'], onset_ns=min(onsets) if onsets else None)
+        assessment = ('insufficient_evidence' if not beam['quality_adequate'] else
+                      'suspicious' if beam['disturbance_detected'] else 'normal')
+        observation = ('Charge-valid beam checks detect a sustained disturbance.' if assessment == 'suspicious' else
+                       'Beam quality is insufficient for a reliable heuristic assessment.' if assessment == 'insufficient_evidence' else
+                       'Beam checks do not detect a sustained disturbance at the exploratory threshold.')
+        limitations += ['Low-charge positions and sentinel values are masked.',
+                        'A negative heuristic is limited evidence, not proof of normality.',
+                        'Beam observations cannot establish a unique RF cause.']
+        checks = ('beam', 'charge_validity', 'quality')
+    refs = ['T-' + hashlib.sha256(json.dumps(dict(event_id=event_id, instrument=instrument,
+             analysis=kind, summary=summary), sort_keys=True, allow_nan=False).encode()).hexdigest()[:12]
+            for kind in checks]
+    report = dict(kind='node_report', instrument=instrument, role_source=role_source,
+                  event_id=event_id, assessment=assessment, observation=observation,
+                  summary=summary, tool_refs=refs,
+                  raw_bytes_held=sum(int(a.nbytes) for a in arrays.values()),
+                  payload_bytes=0, limitations=limitations)
+    serialize_node_report(report)
+    return report
