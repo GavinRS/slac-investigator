@@ -1,0 +1,83 @@
+"""Grid orchestrator (spec §4): Python drives get_nodes/push_messages/pull_messages; nodes reply with summaries only."""
+import json
+from .instruments import INSTRUMENTS,load_slice
+from .tools import INSTRUMENT_KINDS,node_summary
+from .workflow import Investigation
+
+def grid_call(grid,name,args):
+    return json.loads(grid.call({'type':'function_call','name':name,'arguments':args,'call_id':'grid-'+name})['output'])
+
+def assign(node_ids):
+    """3+ nodes: one instrument each. Fewer: round-robin, so a node takes several. None: in-process."""
+    if not node_ids:return {i:'local' for i in INSTRUMENTS},'none (local fallback)'
+    return {i:node_ids[k%len(node_ids)] for k,i in enumerate(INSTRUMENTS)},None if len(node_ids)>=3 else f'{len(node_ids)} node(s) for {len(INSTRUMENTS)} instruments; nodes take several instruments'
+
+def shared(reports):
+    raw=sum(r['raw_bytes_held'] for r,_ in reports.values());sent=sum(n for _,n in reports.values())
+    return dict(raw_bytes_held=raw,payload_bytes=sent,percent_shared=round(100*sent/raw,3) if raw else None)
+
+def collect(grid,event_id,assignment,mode,question,timeout):
+    """Push every node_task first, then pull once so nodes work in parallel. Returns {instrument:(report,bytes_received)}, problems."""
+    reports,problems={},[]
+    if all(n=='local' for n in assignment.values()):
+        for i in INSTRUMENTS:
+            r=node_summary(event_id,i,load_slice(event_id,i)[1]);reports[i]=(r,len(json.dumps(r).encode()))
+        return reports,problems
+    tasks=[(i,n,json.dumps(dict(kind='node_task',event_id=event_id,instrument=i,mode=mode,question=question))) for i,n in assignment.items()]
+    results=grid_call(grid,'push_messages',{'messages':[dict(dst_node_id=n,payload=p,reply_to_message_id=None) for _,n,p in tasks]})['results']
+    sent={}
+    for (i,n,_),res in zip(tasks,results):
+        if res['message_id']:sent[res['message_id']]=i
+        else:problems.append(f'{i} task was not accepted by node {n}: {res["error"]}')
+    if not sent:return reports,problems
+    out=grid_call(grid,'pull_messages',{'message_ids':list(sent),'timeout':timeout})
+    for m in out['messages']:
+        i=sent.get(m['reply_to_message_id'])
+        try:r=json.loads(m['payload']) if m['payload'] and i else None
+        except ValueError:r=None
+        if not(isinstance(r,dict) and r.get('kind')=='node_report' and r.get('instrument')==i and r.get('event_id')==event_id):
+            problems.append(f'{i or "unknown"} reply from node {m["src_node_id"]} unusable: {m["error"] or "not a matching node_report"}');continue
+        reports[i]=(r,len(m['payload'].encode()))
+    problems+=[f'{sent[x]} node gave no reply within {timeout} s' for x in out['pending_message_ids']]
+    return reports,problems
+
+def smoke_final(inv,reports,problems):
+    """Deterministic combine: align beam onsets across ltu/dump, cite node tool refs, never establish a unique cause."""
+    rep={i:r for i,(r,_) in reports.items()};beam=[rep[i] for i in ('ltu','dump') if i in rep];rf=rep.get('rf')
+    beam_refs=[x for r in beam for x in r['tool_refs']];all_refs=[x for r in rep.values() for x in r['tool_refs']]
+    onsets={r['instrument']:r['summary']['onset_ns'] for r in beam if r['summary']['onset_ns'] is not None}
+    if any(r['assessment']=='suspicious' for r in beam):status='corroborated'
+    elif beam and all(r['assessment']=='normal' for r in beam):status='not_corroborated'
+    else:status='insufficient_evidence'
+    align=[f'{i} onset {t} ns' for i,t in sorted(onsets.items(),key=lambda x:x[1])]
+    if len(onsets)==2:align.append(f"dump-ltu onset offset {(onsets['dump']-onsets['ltu'])/1e3:.1f} us")
+    supporting=[f"{r['instrument']}: {r['assessment']}. {r['observation']}" for r in rep.values()]+align
+    channels=([rf['summary']['station']] if rf else [])+[c for r in beam for c in r['summary']['channels']]
+    f=dict(finding_id='F-001',agent='lead',observation=f'Instrument node summaries: beam disturbance {status.replace("_"," ")}; RF node {rf["assessment"] if rf else "missing"}.',
+        source_channels=channels,time_interval_ns=[inv.meta['candidate_start_ns'],inv.meta['candidate_end_ns']],tool_result_refs=all_refs,
+        supporting_evidence=supporting,conflicting_evidence=['Unique RF cause is not established.'],
+        data_limitations=sorted({x for r in rep.values() for x in r['limitations']})+problems+['No model was called; deterministic combine of node summaries (smoke).'],
+        requested_next_check='Review timing, station completeness, and attribution with an operator.',
+        beam_disturbance=dict(status=status,rationale='Deterministic beam heuristic from the ltu/dump node summaries only; independent of RF amplitude.',tool_result_refs=beam_refs or all_refs),
+        unique_cause=dict(status='not_established',rationale='Summary-level replay checks cannot establish a unique causal RF station.',tool_result_refs=all_refs))
+    return inv.validate(json.dumps(f),'lead',all_refs)
+
+def run_grid(agent,event_id,emit,mode='smoke',question='',timeout=120,model=None):
+    inv=Investigation(event_id,emit,None,model or 'none (deterministic harness)','grid')
+    inv.publish('started',dict(event_id=event_id,mode='grid',model=inv.model))
+    nodes=grid_call(agent.grid,'get_nodes',{'sample_size':None})['nodes']
+    assignment,fallback=assign([n['id'] for n in nodes])
+    for i,n in assignment.items():
+        inv.publish('delegation',dict(agent='orchestrator',node_id=n,instrument=i,question=f'Run the {i} checks locally and reply with summary numbers only.'))
+        for k in INSTRUMENT_KINDS[i]:inv.publish('tool_request',dict(agent=i,analysis=k))
+    reports,problems=collect(agent.grid,event_id,assignment,mode,question,min(max(float(timeout),0),300))
+    if not reports:raise RuntimeError('No node reports received: '+'; '.join(problems))
+    for i,(r,_) in reports.items():
+        inv.emit(dict(r,node_id=assignment[i]))
+        for ref,k in zip(r['tool_refs'],INSTRUMENT_KINDS[i]):
+            ev=dict(ref=ref,analysis=k,event_id=event_id,instrument=i,node_id=assignment[i]);inv.results[ref]=ev;inv.tool_calls+=1
+            inv.publish('tool_result',dict(agent=i,evidence=ev))
+    data=shared(reports);inv.publish('data_shared',data)
+    # #7 hook: model modes replace smoke_final with one model call over the node reports, using inv.validate() and one correction turn.
+    final=smoke_final(inv,reports,problems)
+    return inv.finish(final,grid=dict(nodes_seen=len(nodes),assignment=assignment,fallback=fallback),data_shared=data)

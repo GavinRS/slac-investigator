@@ -1,0 +1,80 @@
+"""Orchestrator routing with a fake Grid (3, 1, 0 nodes); replies come from the real node path."""
+import json
+from types import SimpleNamespace
+import pytest
+from slac_assistant import agent_app,grid_workflow
+from slac_assistant.node import node_task,run_node
+
+class NodeGrid:
+    def __init__(self):self.sent=None
+    def tools(self):return [{'name':'push_reply_message'}]
+    def call(self,c):self.sent=c['arguments']['payload'];return {'output':'{}'}
+
+class FakeGrid:
+    def __init__(self,n,drop=()):self.n=n;self.drop=drop;self.names=[];self.inbox={}
+    def call(self,c):
+        self.names.append(c['name']);a=c['arguments']
+        if c['name']=='get_nodes':out={'nodes':[{'id':str(10+k),'name':None,'location':None} for k in range(self.n)],'num_available':self.n}
+        elif c['name']=='push_messages':
+            ids=[f'm{k}' for k in range(len(a['messages']))];self.inbox=dict(zip(ids,a['messages']))
+            out={'results':[{'message_id':i,'error':None} for i in ids]}
+        else:
+            msgs,pending=[],[]
+            for i in a['message_ids']:
+                m=self.inbox[i];prompt=json.dumps({'message_id':i,'src_node_id':'1','payload':m['payload']})
+                if json.loads(m['payload'])['instrument'] in self.drop:pending.append(i);continue
+                ng=NodeGrid();run_node(SimpleNamespace(grid=ng),*node_task(prompt))
+                msgs.append({'message_id':'r'+i,'reply_to_message_id':i,'src_node_id':m['dst_node_id'],'payload':ng.sent,'error':None})
+            out={'messages':msgs,'pending_message_ids':pending}
+        return {'type':'function_call_output','call_id':c['call_id'],'output':json.dumps(out)}
+
+@pytest.fixture(autouse=True)
+def no_local(monkeypatch):
+    monkeypatch.delenv('SLAC_NODE_DATA_DIR',raising=False);monkeypatch.delenv('FLWR_FILESYSTEM_ALLOWED_DIRS',raising=False)
+
+def run(n,event='slac-001',**kw):
+    events=[];g=FakeGrid(n,**kw)
+    report=grid_workflow.run_grid(SimpleNamespace(grid=g),event,events.append)
+    return report,events,g
+
+def test_three_nodes_one_instrument_each():
+    report,events,g=run(3)
+    assert g.names==['get_nodes','push_messages','pull_messages']
+    assert report['grid']=={'nodes_seen':3,'assignment':{'rf':'10','ltu':'11','dump':'12'},'fallback':None}
+    assert report['mode']=='grid' and report['result_schema_version']==2 and report['provider']=='none'
+    f=report['final'];assert f['beam_disturbance']['status']=='corroborated' and f['unique_cause']['status']=='not_established'
+    assert set(f['tool_result_refs'])=={e['ref'] for e in report['evidence']} and len(report['evidence'])==9
+    assert any('onset offset' in x for x in f['supporting_evidence'])
+    kinds=[e['kind'] for e in events]
+    assert kinds[0]=='started' and kinds[-1]=='report' and kinds.count('delegation')==3 and kinds.count('node_report')==3
+    assert {'tool_request','tool_result','finding','data_shared'}<=set(kinds)
+    assert {(e['node_id'],e['instrument']) for e in events if e['kind']=='delegation'}=={('10','rf'),('11','ltu'),('12','dump')}
+    ds=next(e for e in events if e['kind']=='data_shared');assert ds=={'kind':'data_shared',**report['data_shared']}
+    assert 0<ds['percent_shared']<5
+
+def test_one_node_takes_all_instruments():
+    report,events,g=run(1,'slac-003')
+    assert report['grid']['assignment']=={'rf':'10','ltu':'10','dump':'10'} and 'several' in report['grid']['fallback']
+    assert report['final']['beam_disturbance']['status']=='not_corroborated'
+    assert len([e for e in events if e['kind']=='node_report'])==3
+
+def test_zero_nodes_local_fallback():
+    report,events,g=run(0)
+    assert g.names==['get_nodes'] and report['grid']=={'nodes_seen':0,'assignment':{'rf':'local','ltu':'local','dump':'local'},'fallback':'none (local fallback)'}
+    assert report['final']['beam_disturbance']['status']=='corroborated'
+
+def test_missing_reply_is_a_limitation():
+    report,events,g=run(3,drop=('dump',))
+    assert 'dump node gave no reply within 120.0 s' in report['final']['data_limitations']
+    assert {e['instrument'] for e in events if e['kind']=='node_report'}=={'rf','ltu'}
+
+def test_percent_shared_math():
+    r=lambda raw:{'raw_bytes_held':raw}
+    assert grid_workflow.shared({'rf':(r(1000),10),'ltu':(r(3000),30)})=={'raw_bytes_held':4000,'payload_bytes':40,'percent_shared':1.0}
+    assert grid_workflow.shared({'rf':(r(0),5)})['percent_shared'] is None
+
+def test_agent_app_dispatches_grid_mode(monkeypatch):
+    got=[];monkeypatch.setattr(agent_app,'run_grid',lambda *a,**k:got.append((a,k)))
+    a=SimpleNamespace(prompt=json.dumps({'event_id':'slac-002','mode':'grid'}),grid=FakeGrid(3),events=SimpleNamespace(emit=lambda e:None))
+    agent_app.main(a,SimpleNamespace(state={},run_config={'grid-timeout':30}))
+    assert got[0][0][1]=='slac-002' and got[0][1]['timeout']==30

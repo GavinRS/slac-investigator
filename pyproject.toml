@@ -17,3 +17,4 @@ fab-include = ["slac_assistant/**", "data/events/**"]
 agentapp = "slac_assistant.agent_app:app"
 [tool.flwr.app.config]
 model = "dedicated/flowerai/MiniMax-M3-OOLI9o"
+grid-timeout = 120

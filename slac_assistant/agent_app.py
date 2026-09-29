@@ -4,6 +4,7 @@ from flwr.agentapp import AgentApp,AgentSession
 from flwr.app import Context,ConfigRecord
 from .workflow import Investigation,DEFAULT_MODEL
 from .node import node_task,run_node
+from .grid_workflow import run_grid
 app=AgentApp()
 @app.main()
 def main(agent:AgentSession,context:Context)->None:
@@ -12,10 +13,13 @@ def main(agent:AgentSession,context:Context)->None:
         run_node(agent,*node);agent.events.emit({'type':'response.completed'});return
     request=json.loads(agent.prompt)
     mode=request.get('mode','collaborative')
-    if mode not in ('collaborative','baseline','smoke'):raise ValueError('Unknown mode')
+    if mode not in ('collaborative','baseline','smoke','grid'):raise ValueError('Unknown mode')
     def emit(payload):
         # Only concise application events. No private model/reasoning events are forwarded.
         agent.events.emit({'type':'response.output_text.delta','delta':json.dumps(payload)+'\n'})
+    if mode=='grid':
+        run_grid(agent,request['event_id'],emit,question=request.get('question',''),timeout=context.run_config.get('grid-timeout',120))
+        agent.events.emit({'type':'response.completed'});return
     client=None
     if mode!='smoke':
         from openai import OpenAI

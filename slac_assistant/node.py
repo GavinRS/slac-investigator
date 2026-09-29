@@ -22,6 +22,6 @@ def run_node(agent,msg,task):
     local=detect_local_instrument()
     instrument,role_source,root=(local,'local_data',local_root()) if local else (task['instrument'],'assigned',None)
     _,arrays=load_slice(task['event_id'],instrument,root)
-    report=node_summary(task['event_id'],instrument,arrays);report['role_source']=role_source
+    report=node_summary(task['event_id'],instrument,arrays,role_source=role_source)
     # #7 hook: when task['mode']!='smoke', the node model rewrites observation/assessment from report['summary'] here.
     return reply(agent.grid,msg,json.dumps(report))

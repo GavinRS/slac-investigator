@@ -73,6 +73,7 @@ def analyze(event_id,kind,instrument=None,data=None):
         onsets=[r['first_sustained_ns'] for r in beam['channels'] if r['first_sustained_ns'] is not None]
         result=dict(recorded_rf_updates=eq['updates'],beam_onsets_ns=onsets,candidate_interval_ns=[m['candidate_start_ns'],m['candidate_end_ns']],documented_rf_reporting_delay_s=[0,5],delay_is_approximate=True,applied_shift_s=0,causal_attribution='Not established; asynchronous observations and candidate association alone cannot identify a unique cause.')
     body=dict(event_id=event_id,analysis=kind,source=m['source_url'],hdf5_group=m['hdf5_group'],interval_ns=[int(h[0]) if kind in ('equipment','neighbors','quality') else int(b[0]),int(h[-1]) if kind in ('equipment','neighbors','quality','timing') else int(b[-1])],result=result,limitations=limitations)
+    if instrument:body['instrument']=instrument  # per-node refs stay distinct when two nodes compute identical results
     body['ref']='T-'+hashlib.sha256(json.dumps(body,sort_keys=True).encode()).hexdigest()[:12]
     return body
 
