@@ -84,10 +84,8 @@ def test_rf_excursion_does_not_make_beam_corroboration_positive():
 
 def test_evaluator_never_scores_legacy_mixed_scope_labels():
     from scripts.evaluate import summarize
-    from pathlib import Path
-    root=Path(__file__).resolve().parents[1]
-    report=json.loads((root/'artifacts/preserved-successful-runs/flower-retry-slac-003.json').read_text())['report']
-    assert report['final']['assessment']=='corroborated'
+    report=dict(event_id='slac-003',mode='collaborative',model='legacy',final=dict(assessment='corroborated'),findings=[],evidence=[],wall_latency_s=1.0,
+                metrics=dict(model_calls=1,tool_calls=0,latency_s=1.0,input_tokens=None,output_tokens=None,cost_usd=None))
     row=summarize([report],{'slac-003':{'is_anom':False}})[0]
     assert row['prediction'] is None and row['agreement'] is None
     assert row['beam_disturbance']['status']=='not_assessed'

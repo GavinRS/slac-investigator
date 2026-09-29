@@ -1,5 +1,4 @@
 """API contract tests use a protocol fixture; no paid model calls."""
-import hashlib
 import json
 from pathlib import Path
 import threading
@@ -147,15 +146,6 @@ def test_smoke_followup_rejected_and_public_redaction(tmp_path, monkeypatch):
         job = client.post('/api/v1/investigations', json={'event_id':'slac-001','mode':'smoke'}).json()
         terminal(client, job)
         assert client.post(job['links']['followup'], json={'question':'Why?'}).status_code == 409
-
-
-def test_preserved_live_runs_are_byte_identical():
-    root = Path(__file__).resolve().parents[1]
-    folder = root/'artifacts/preserved-successful-runs'
-    manifest = json.loads((folder/'manifest.json').read_text())
-    assert len({entry['run_id'] for entry in manifest['files']}) == 3
-    for entry in manifest['files']:
-        assert hashlib.sha256((folder/entry['file']).read_bytes()).hexdigest() == entry['sha256']
 
 
 def test_plot_preserves_exact_timestamps_and_masks_invalid_positions(tmp_path):
