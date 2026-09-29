@@ -91,6 +91,10 @@ The single investigator gets the same initial equipment, beam and quality result
 
 The external evaluator reads source labels only after investigations and records the two separate assessments, tool calls, model calls, token usage, application and end-to-end latency. It does not score agreement: source anomaly labels are not separately adjudicated labels for beam disturbance and unique cause, and historical mixed-scope labels are unsuitable for scoring. Cost is null when provider cost is unavailable. Unsupported claims require manual review; invalid-reference counts are a separate structural measure, not a substitute. The generated claim-review CSV has reviewer fields.
 
+## Data credit and disclaimer
+
+The four events in `data/events/` are small extracts (about 3 MB) from SLAC National Accelerator Laboratory's public klystron RF anomaly dataset ([dataset index](https://www.slac.stanford.edu/grp/ad/ard/rfanom/rfanom.html), [DOE catalog entry](https://www.osti.gov/biblio/1869296)). All credit for the data goes to SLAC and the dataset authors. We did not find an explicit reuse license. They are included here, and in the Flower Hub app, only to demo this non-commercial hackathon project, and we will remove them if asked. This project is not affiliated with or endorsed by SLAC. See [data provenance](docs/DATA_PROVENANCE.md).
+
 ## Evidence and limitations
 
 Each finding includes its ID/agent, observation, channels and interval, tool references, supporting and conflicting evidence, limitations and requested next check. Tools return stable content-derived references. Schema, reference and channel checks reject malformed evidence; semantic claim support still needs operator review.
