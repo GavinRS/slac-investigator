@@ -1,4 +1,4 @@
-import {escapeHTML as h, validateReplay, pretty} from './replay.js';
+import {escapeHTML as h, validateReplay, pretty, nodeReportCard, dataSharedHeadline} from './replay.js';
 import {plot as drawPlot} from './charts.js';
 import {LOCAL_ORIGINS} from './api.js';
 const $ = selector => document.querySelector(selector);
@@ -47,6 +47,8 @@ function activityRow(e,index){
   else if(e.kind==='tool_result'){label=`Evidence returned · ${pretty(e.evidence.analysis)}`;extra=refs([e.evidence.ref]);icon='✓';}
   else if(e.kind==='finding'){role=e.finding.agent;label=`${e.finding.finding_id} · ${pretty(e.finding.assessment)}`;body=e.finding.observation;extra=refs(e.finding.tool_result_refs)+`<details><summary>Next check requested</summary><p>${h(e.finding.requested_next_check||'None')}</p></details>`;icon='✧';}
   else if(e.kind==='finding_rejected'){label='Finding rejected by validation';body=e.error;icon='!';}
+  else if(e.kind==='node_report'){role=pretty(e.instrument);label=`Node report · ${pretty(e.instrument)}`;extra=nodeReportCard(e);icon='⌂';}
+  else if(e.kind==='data_shared'){role='Flower';label='Raw data shared';extra=dataSharedHeadline(e);icon='%';}
   return `<div class="activity-row" data-step="${index+1}"><span class="activity-icon ${e.kind==='finding'?'finding':''}" aria-hidden="true">${icon}</span><span class="activity-role">${h(role)}</span><div class="activity-content"><p class="activity-label">${h(label)}</p>${body?`<p>${h(body)}</p>`:''}${extra}</div></div>`;
 }
 function updateActivity(){

@@ -1,5 +1,5 @@
 import {InvestigationAPI,SubmissionUncertainError,observeJob,normalizePlot} from './api.js';
-import {escapeHTML as h,pretty} from './replay.js';
+import {escapeHTML as h,pretty,nodeReportCard,dataSharedHeadline} from './replay.js';
 import {plot} from './charts.js';
 const $=s=>document.querySelector(s);
 const live={api:null,events:[],selected:null,data:null,history:[],activity:[],status:null,busy:false,error:'',uncertain:false,focus:false};
@@ -12,10 +12,11 @@ function reportCard(item,index){
   const r=item.report,f=r.final;
   return `<section class="panel"><div class="assessment-header"><span class="eyebrow">COMPLETED LIVE RUN · SCHEMA V2</span><h2>${index===0?'Initial assessment':'Follow-up assessment'}</h2></div><div class="assessment-body">${dimensions(f)}<p>${h(f.observation)}</p><details><summary>Limitations and evidence</summary><ul>${f.data_limitations.map(x=>`<li>${h(x)}</li>`).join('')}</ul>${refButtons(f.tool_result_refs)}<p><strong>Requested next check</strong><br>${h(f.requested_next_check||'None')}</p><p class="muted small">A requested check has not necessarily been performed.</p></details></div><div class="run-details"><span>Flower run <span class="code">${h(r.flower_run_id)}</span></span><span>${r.metrics.model_calls} model / ${r.metrics.tool_calls} tool calls</span><span>Cost: ${r.metrics.cost_usd===null?'unavailable':h(r.metrics.cost_usd)}</span></div></section>`;
 }
-function activity(){return live.activity.filter(item=>['started','delegation','tool_request','tool_result','finding','finding_rejected','failed'].includes(item.event.kind)).map(item=>{
+function activity(){return live.activity.filter(item=>['started','delegation','tool_request','tool_result','finding','finding_rejected','failed','node_report','data_shared'].includes(item.event.kind)).map(item=>{
   const e=item.event,f=e.finding;
-  const text=e.kind==='delegation'?e.question:e.kind==='tool_request'?`Requests ${pretty(e.analysis)}`:e.kind==='tool_result'?`Evidence returned · ${pretty(e.evidence.analysis)}`:e.kind==='finding'?f.observation:e.kind==='finding_rejected'?'Finding rejected by validation':e.kind==='failed'?e.error.message:'Flower investigation started';
-  return `<div class="activity-row"><span class="activity-icon">${item.seq}</span><span class="activity-role">${h(f?.agent||e.agent||'Flower')}</span><div class="activity-content"><p class="activity-label">${h(pretty(e.kind))}</p><p>${h(text)}</p>${f?dimensions(f):e.evidence?refButtons([e.evidence.ref]):''}</div></div>`;
+  const text=e.kind==='delegation'?e.question:e.kind==='tool_request'?`Requests ${pretty(e.analysis)}`:e.kind==='tool_result'?`Evidence returned · ${pretty(e.evidence.analysis)}`:e.kind==='finding'?f.observation:e.kind==='finding_rejected'?'Finding rejected by validation':e.kind==='failed'?e.error.message:e.kind==='node_report'?e.observation:e.kind==='data_shared'?`${Number(e.percent_shared).toFixed(1)}% of raw data shared`:'Flower investigation started';
+  const role=f?.agent||e.agent||(e.kind==='node_report'?pretty(e.instrument):'Flower');
+  return `<div class="activity-row"><span class="activity-icon">${item.seq}</span><span class="activity-role">${h(role)}</span><div class="activity-content"><p class="activity-label">${h(pretty(e.kind))}</p><p>${h(text)}</p>${f?dimensions(f):e.evidence?refButtons([e.evidence.ref]):e.kind==='node_report'?nodeReportCard(e):e.kind==='data_shared'?dataSharedHeadline(e):''}</div></div>`;
 }).join('')||'<p class="empty">No activity yet. Starting an investigation submits a real job to the local backend.</p>';}
 function render(){
   $('#event-list').innerHTML=live.events.map(id=>`<button class="event-button ${id===live.selected?'active':''}" data-live-event="${h(id)}" ${live.busy?'disabled':''}><span class="event-name">${h(id)} ↗</span><span class="event-count">Local backend event</span></button>`).join('');
