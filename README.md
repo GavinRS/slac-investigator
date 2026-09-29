@@ -71,7 +71,7 @@ insecure = true
 FLWR_HOME=$PWD/.flower .venv/bin/flwr supernode list grid   # 3 nodes, status online
 ```
 
-Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. State is local under ignored `.flower/`; the startup script configures `.flower/slac.sqlite` for subsequent launches. Restart durability of the currently serving instance has not been verified; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
+Use Ctrl+C in the server terminals to stop. All services bind to loopback. `scripts/start.sh` puts the venv on PATH so Flower can launch its workers. The SuperLink keeps its state in memory (flwr 1.39 creates no SQLite tables when the repo path contains a space), so Flower runs and follow-up context are lost when it stops; completed JSON traces are saved independently. Credentials are never stored in the bundle. The Control API adapter uses version-pinned Flower Python helpers; revalidate it when upgrading Flower.
 
 ## Demonstration flow
 

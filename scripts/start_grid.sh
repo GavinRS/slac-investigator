@@ -12,7 +12,7 @@ trap 'kill $pids 2>/dev/null; wait' INT TERM EXIT
 if [ -f .env ] && grep -qE '^(export[[:space:]]+)?FLWR_MODEL_API_KEY[[:space:]]*=[[:space:]]*[^[:space:]]' .env; then
   python scripts/start_flower.py & pids="$pids $!"
 else echo "No model key configured: smoke mode only (see scripts/configure_flower.py)."
-  mkdir -p .flower; FLWR_HOME="$PWD/.flower" flower-superlink --insecure --host 127.0.0.1 --fleet-api-address 127.0.0.1:19092 --database "$PWD/.flower/slac.sqlite" --disable-runtime-dependency-installation & pids="$pids $!"
+  mkdir -p .flower; FLWR_HOME="$PWD/.flower" flower-superlink --insecure --host 127.0.0.1 --fleet-api-address 127.0.0.1:19092 --disable-runtime-dependency-installation & pids="$pids $!"
 fi
 port=9094
 for i in rf ltu dump; do
