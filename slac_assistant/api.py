@@ -63,7 +63,7 @@ def failure(exc):
 class StartRequest(BaseModel):
     model_config = ConfigDict(extra='forbid')
     event_id: str = Field(pattern=r'^slac-\d{3}$')
-    mode: Literal['collaborative', 'baseline', 'smoke'] = 'collaborative'
+    mode: Literal['collaborative', 'baseline', 'smoke', 'grid'] = 'collaborative'
 
 
 class FollowupRequest(BaseModel):
