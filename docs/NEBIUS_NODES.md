@@ -1,5 +1,7 @@
 # Instrument SuperNodes on Nebius Serverless
 
+**Status: not yet run.** Written from Flower's guide; the local 3-node grid is what has been tested.
+
 Runs the three instrument SuperNodes (`rf`, `ltu`, `dump`) as Nebius Serverless AI endpoints registered to SuperGrid. Each node holds only its own instrument folder, so the node agent reports `role_source=local_data` (spec §1, §9). If this is blocked, the local 3-node runtime (`scripts/start_grid.sh`, spec §6) is the fallback.
 
 Never commit keys, tokens or private key files. `nebius-supernode-key-*` is gitignored. Everything in `<angle brackets>` is a placeholder.
