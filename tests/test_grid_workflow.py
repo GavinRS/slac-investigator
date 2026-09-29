@@ -43,7 +43,7 @@ def test_three_nodes_one_instrument_each():
     report,events,g=run(3)
     assert g.names==['get_nodes','push_messages','pull_messages']
     assert report['grid']=={'nodes_seen':3,'assignment':{'rf':'10','ltu':'11','dump':'12'},'fallback':None}
-    assert report['mode']=='grid' and report['result_schema_version']==2 and report['provider']=='none'
+    assert report['mode']=='grid' and report['result_schema_version']==2 and report['model_execution_path']=='No model called'
     f=report['final'];assert f['beam_disturbance']['status']=='corroborated' and f['unique_cause']['status']=='not_established'
     assert set(f['tool_result_refs'])=={e['ref'] for e in report['evidence']} and len(report['evidence'])==9
     assert any('onset offset' in x for x in f['supporting_evidence'])
@@ -121,7 +121,7 @@ def test_collaborative_models_on_nodes_and_orchestrator(monkeypatch):
     assert all('arrays' not in c['input'] and json.loads(c['input'])['summary'] for c in fm.node_calls)
     assert report['node_observation_source']=={'rf':'model','ltu':'model','dump':'model'}
     assert {e['observation'] for e in events if e['kind']=='node_report'}=={'Model note.'}
-    assert report['final']['observation']=='Model final.' and report['final']['agent']=='lead' and report['provider']=='flower'
+    assert report['final']['observation']=='Model final.' and report['final']['agent']=='lead' and report['model_execution_path']!='No model called'
     assert set(report['final']['tool_result_refs'])=={e['ref'] for e in report['evidence']}
     assert 'assessment: {"p": 1}' in json.loads(fm.lead_calls[0]['input'][0]['content'])['task']
 

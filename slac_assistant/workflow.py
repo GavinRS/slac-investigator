@@ -157,7 +157,7 @@ class Investigation:
         return self.finish(final)
     def finish(self,final,**extra):
         report=dict(result_schema_version=2,benchmark_eligible=False,event_id=self.event_id,mode=self.mode,model=self.model,final=final,findings=self.findings,evidence=list(self.results.values()),metrics=dict(model_calls=self.calls,tool_calls=self.tool_calls,latency_s=round(time.perf_counter()-self.started,3),input_tokens=self.input_tokens if self.usage_known else None,output_tokens=self.output_tokens if self.usage_known else None,input_characters=self.input_chars,cost_usd=None,cost_note='Provider pricing/cost not returned; no estimate assumed.',unsupported_claims=None,unsupported_claims_note='Requires human claim-by-claim review; reference validation is not semantic verification.'))
-        report['model_execution_path']='No model called' if self.mode=='smoke' else 'Flower runtime Responses endpoint and model tasks'
+        report['model_execution_path']='No model called' if self.client is None else 'Flower runtime Responses endpoint and model tasks'
         report.update(extra);self.publish('report',dict(report=report));return report
     def smoke(self,question=''):
         """Explicit deterministic harness; never represented as model collaboration."""
