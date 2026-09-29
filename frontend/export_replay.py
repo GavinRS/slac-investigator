@@ -31,7 +31,7 @@ def build():
             d=json.loads((ROOT/'artifacts/runs'/f'{rid}.json').read_text());r=d['report']
             # mode may be 'collaborative' (single-agent) or 'grid'.
             assert r['event_id']==event_id and r['mode'] in ('collaborative','grid')
-            keep={k:r[k] for k in ('event_id','mode','model','model_execution_path','final','findings','evidence','metrics')}
+            keep={k:r[k] for k in ('event_id','mode','model','model_execution_path','final','findings','evidence','metrics')}|{k:r[k] for k in ('grid','data_shared') if k in r}
             runs.append({'id':rid,'series_id':d.get('flower_series_id',r.get('flower_series_id')),
                 'phase':'initial' if i==0 else 'followup','question':d.get('human_question',''),
                 'wall_latency_s':d.get('wall_latency_s',r.get('wall_latency_s')),
