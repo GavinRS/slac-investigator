@@ -32,7 +32,7 @@ def load_config(env_path=None,environ=None):
     return endpoint,key,model
 
 
-def check(endpoint,key,model,timeout=20):
+def check(endpoint,key,model,timeout=90):
     """Return (ok, reason, elapsed_seconds). Never includes the key in the reason."""
     body=json.dumps({'model':model,'input':[{'role':'user','content':'Call ping once with no arguments.'}],
         'tools':[PING_TOOL],'tool_choice':{'type':'function','name':'ping'},'max_output_tokens':64}).encode()
