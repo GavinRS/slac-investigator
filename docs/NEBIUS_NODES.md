@@ -45,7 +45,7 @@ console.nebius.com → Serverless AI → Endpoints → Create Endpoint. Repeat f
 | Files | `nebius-supernode-key-<instrument>` (private key) mounted at `/tmp/nebius-supernode-key-<instrument>` |
 | Files | contents of `nodes/<instrument>/` mounted at `/data/<instrument>/` |
 | Environment variables | `SLAC_NODE_DATA_DIR=/data/<instrument>` |
-| Secret environment variables | `FLWR_MODEL_API_KEY=<Flower API key>` (leave `FLWR_MODEL_API_ENDPOINT` unset) |
+| Secret environment variables | `FLWR_MODEL_API_ENDPOINT` and `FLWR_MODEL_API_KEY`, see Model access below |
 | Compute | CPU preset is fine (no training). Otherwise the default. |
 | Network | Public |
 
@@ -57,16 +57,16 @@ exec flower-supernode --superlink=fleet-supergrid.flower.ai:443 --auth-supernode
 
 ### Model access on the node
 
-Default (Endeavor bonus): only `FLWR_MODEL_API_KEY=<Flower API key>` (flower.ai → Profile → Settings → API Keys). No endpoint means Flower's default gateway. Run with model `flwrlabs/endeavor-1.0`.
-
-Fallback (Nebius Token Factory), both as secret env vars:
+Default (Nebius Token Factory), both as secret env vars:
 
 ```text
 FLWR_MODEL_API_ENDPOINT=https://api.tokenfactory.tf-ca1.nebius.com/v1/responses
 FLWR_MODEL_API_KEY=<Nebius Token Factory event key>
 ```
 
-with a Token Factory model ID from the spec §5 table (e.g. `dedicated/flowerai/MiniMax-M3-OOLI9o`).
+Run with model `dedicated/flowerai/MiniMax-M3-OOLI9o` (or `dedicated/flowerai/Kimi-K2.7-Code-1OUHWL`, which has its own key). See the spec §5 table.
+
+Fallback (Endeavor, the challenge bonus model): only `FLWR_MODEL_API_KEY=<Flower API key>` (flower.ai → Profile → Settings → API Keys), with `FLWR_MODEL_API_ENDPOINT` unset so Flower's default gateway is used. Run with model `flwrlabs/endeavor-1.0`.
 
 ## 3. Confirm the nodes are online
 
