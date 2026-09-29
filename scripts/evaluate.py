@@ -34,7 +34,7 @@ def main():
             report,_=run_flower(event,mode,model=args.model);reports.append(report);print(event,mode,report['final']['beam_disturbance']['status'],report['final']['unique_cause']['status'],flush=True)
     labels=json.loads((ROOT/'data/evaluation_labels.json').read_text());rows=summarize(reports,labels)
     name='smoke-evaluation' if args.smoke_only else 'comparison';out=ROOT/'artifacts'/f'{name}.json'
-    out.write_text(json.dumps(dict(selection='Four label-selected demonstrations; not representative or held-out; no superiority claim is supported.',budget='Same model, 12 total model requests, 1600 output tokens per request, 300000 cumulative input characters, 24 tool calls per run. Actual usage reported; no extra baseline deprivation.',rows=rows,reports=reports),indent=2))
+    out.write_text(json.dumps(dict(selection='Four label-selected demonstrations; not representative or held-out; no superiority claim is supported.',budget='Same model, 12 total model requests, 4000 output tokens per baseline/orchestrator request (1200 per node model call), 300000 cumulative input characters, 24 tool calls per run. Actual usage reported; no extra baseline deprivation.',rows=rows,reports=reports),indent=2))
     with (ROOT/'artifacts'/f'{name}-claim-review.csv').open('w') as f:
         writer=csv.writer(f);writer.writerow(['event_id','mode','finding_id','observation','refs','supported_yes_no_uncertain','reviewer_notes'])
         for r in reports:

@@ -117,6 +117,8 @@ The four events in `data/events/` are small extracts (about 3 MB) from SLAC Nati
 
 ## Evidence and limitations
 
+Grid vs single agent (`scripts/evaluate.py --events slac-001`, one live run, same model): both reached beam disturbance corroborated / unique cause not established; the Grid (3 node agents + orchestrator, 4 model calls, 23.7 s) shared 0.92% of the raw bytes, while the single-agent baseline (2 model calls, 21.2 s) needs 100% of them in one place. One case, not a benchmark.
+
 Each finding includes its ID/agent, observation, channels and interval, tool references, supporting and conflicting evidence, limitations and requested next check. Tools return stable content-derived references. Schema, reference and channel checks reject malformed evidence; semantic claim support still needs operator review.
 
 The signal detector is a transparent demonstration heuristic, not a reproduction or improvement of SLAC's published detector. It uses a time-weighted RF baseline and robust beam deviations sustained for ten valid consecutive samples, with charge checks. Four label-selected cases are not a benchmark. There is no training, distributed deployment, federated learning, live control or protein analysis.
