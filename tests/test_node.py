@@ -62,3 +62,12 @@ def test_chat_answer_is_plain_english():
                      'unique_cause':{'status':'not_established','rationale':'Beam not disturbed.'}},'data_shared':{'percent_shared':0.78}}
     text=agent_app.answer('slac-003',report,[{'instrument':'rf','assessment':'insufficient_evidence','observation':'Sparse RF data.'}])
     assert '── Answer ──' in text and 'NOT CORROBORATED' in text and 'RF: insufficient evidence' in text and '0.78%' in text
+
+
+def test_node_model_env_overrides_task_model(fakes,monkeypatch):
+    used=[]
+    monkeypatch.setattr('slac_assistant.node.model_note',lambda m,r,*a:(used.append(m),r)[1])
+    monkeypatch.setenv('SLAC_NODE_MODEL','node-model')
+    task=dict(kind='node_task',event_id='slac-001',instrument='ltu',mode='collaborative',question='q',model='orchestrator-model')
+    run(json.dumps({'message_id':'m-1','src_node_id':'1','payload':json.dumps(task)}))
+    assert used==['node-model']
