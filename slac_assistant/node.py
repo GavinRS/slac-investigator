@@ -49,5 +49,7 @@ def run_node(agent,msg,task):
     instrument,role_source,root=(local,'local_data',local_root()) if local else (task['instrument'],'assigned',None)
     _,arrays=load_slice(task['event_id'],instrument,root)
     report=node_summary(task['event_id'],instrument,arrays,role_source=role_source)
-    if task.get('mode') not in (None,'smoke') and task.get('model'):report=model_note(task['model'],report)
+    # A SuperNode may use its own model provider (Flower docs: FLWR_MODEL_API_ENDPOINT/KEY on the node); SLAC_NODE_MODEL names its model.
+    model=os.environ.get('SLAC_NODE_MODEL') or task.get('model')
+    if task.get('mode') not in (None,'smoke') and model:report=model_note(model,report)
     return reply(agent.grid,msg,json.dumps(report))
